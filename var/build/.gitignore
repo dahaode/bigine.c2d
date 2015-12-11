@@ -1,0 +1,6 @@
+*.*
+
+!.gitignore
+!bigine.c2d.d.ts
+!bigine.c2d.js
+!bigine.c2d.js.map
