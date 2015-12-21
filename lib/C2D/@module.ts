@@ -22,5 +22,5 @@
 /// <reference path="_Animation/WaitForClick.ts" />
 
 namespace C2D {
-    export var version: string = '${BIGINE_C2D_VERSION}';
+    export var version: string = '${BIGINE_MODULE_VERSION}';
 }

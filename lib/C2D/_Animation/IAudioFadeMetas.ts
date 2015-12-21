@@ -7,7 +7,7 @@
  * @file      _Animation/IAudioFadeMetas.ts
  */
 
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;

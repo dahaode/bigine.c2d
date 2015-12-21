@@ -7,8 +7,8 @@
  * @file      _Animation/Animation.ts
  */
 
-/// <reference path="../../include/mozRequestAnimationFrame.d.ts" />
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/mozRequestAnimationFrame.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;

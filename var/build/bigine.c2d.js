@@ -47,8 +47,8 @@ var C2D;
  * @license   GPL-3.0
  * @file      _Animation/Animation.ts
  */
-/// <reference path="../../include/mozRequestAnimationFrame.d.ts" />
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/mozRequestAnimationFrame.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 var C2D;
 (function (C2D) {
     var Util = __Bigine_Util;
@@ -594,7 +594,7 @@ var C2D;
  * @license   GPL-3.0
  * @file      _Event/IMouseEventMetas.ts
  */
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../_Element/Stage.ts" />
 /**
  * 定义画面抽象鼠标事件组件。
@@ -1361,7 +1361,7 @@ var C2D;
  * @license   GPL-3.0
  * @file      _Animation/IFadeMetas.ts
  */
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义透明度渐变动画组件。
  *
@@ -1573,7 +1573,7 @@ var C2D;
  * @license   GPL-3.0
  * @file      _Animation/IAudioFadeMetas.ts
  */
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义透明度渐变动画组件。
  *
@@ -1616,7 +1616,7 @@ var C2D;
  * @license   GPL-3.0
  * @file      _Animation/IMoveMetas.ts
  */
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义位移动画组件。
  *
@@ -1851,7 +1851,7 @@ var C2D;
 /// <reference path="_Animation/WaitForClick.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.1.0';
+    C2D.version = '0.1.1';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

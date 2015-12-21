@@ -7,7 +7,7 @@
  * @file      _Event/IMouseEventMetas.ts
  */
 
-/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../_Element/Stage.ts" />
 
 namespace C2D {
