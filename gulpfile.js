@@ -28,15 +28,16 @@ $gulp.task('dist', function () {
 });
 
 $gulp.task('tsd', ['lint'], function () {
-    var ts = $gulp.src('lib/' + ns + '@module.ts')
+    var ts = $gulp.src('lib/' + ns + '/@module.ts')
             .pipe($tsc($tsc.createProject('tsconfig.json', {
                 declaration: true,
                 removeComments: true
             })));
     return ts.dts
+        .pipe($replace(/\/{3} <reference path=".+\.d\.ts" \/>\n/g, ''))
         .pipe($replace('    import Util = __Bigine_Util;\n', ''))
         .pipe($replace('}\ndeclare namespace ' + ns + ' {\n', ''))
-        .pipe($replace('\ndeclare namespace ' + ns + ' {\n', '\ndeclare namespace __Bigine_' + ns + ' {\n    import Util = __Bigine_Util;\n'))
+        .pipe($replace('declare namespace ' + ns + ' {\n', 'declare namespace __Bigine_' + ns + ' {\n    import Util = __Bigine_Util;\n'))
         .pipe($insert.append('\ndeclare module "bigine.' + ns.toLowerCase() + '" {\n    export = __Bigine_' + ns + ';\n}\n'))
         .pipe($gulp.dest('.'));
 });

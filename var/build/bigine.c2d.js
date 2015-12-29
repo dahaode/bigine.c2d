@@ -1851,7 +1851,7 @@ var C2D;
 /// <reference path="_Animation/WaitForClick.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.1.1';
+    C2D.version = '0.1.2';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

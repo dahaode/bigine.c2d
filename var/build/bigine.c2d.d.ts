@@ -1,5 +1,3 @@
-/// <reference path="../../include/mozRequestAnimationFrame.d.ts" />
-/// <reference path="../../include/tsd.d.ts" />
 declare namespace __Bigine_C2D {
     import Util = __Bigine_Util;
     class E extends Error {
