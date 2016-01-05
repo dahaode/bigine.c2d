@@ -40,15 +40,90 @@ var C2D;
  * @file      _Element/IBounds.ts
  */
 /**
+ * 定义画面动画管理中心组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      _Animation/ACenter.ts
+ */
+/// <reference path="Animation.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var ACenter = (function () {
+        function ACenter() {
+        }
+        /**
+         * 注册动画。
+         */
+        ACenter.a = function (animation) {
+            var _ = ACenter._;
+            _.push(animation);
+            return _.length;
+        };
+        /**
+         * 获取指定动画。
+         */
+        ACenter.g = function (id) {
+            return ACenter._[--id];
+        };
+        /**
+         * 播放完结。
+         */
+        ACenter.d = function (id) {
+            var _ = ACenter._;
+            if (_[--id])
+                delete _[id];
+        };
+        ACenter.h = function (id) {
+            var _ = ACenter._;
+            if (!id)
+                return Util.each(_, function (animation, index) {
+                    animation.h();
+                    delete _[index];
+                });
+            if (_[--id])
+                _[id].h();
+            delete _[id];
+        };
+        ACenter.w = function (id) {
+            var _ = ACenter._;
+            if (!id)
+                return Util.each(_, function (animation) {
+                    animation.w();
+                });
+            if (_[--id])
+                _[id].w();
+        };
+        ACenter.r = function (id) {
+            var _ = ACenter._;
+            if (!id)
+                return Util.each(_, function (animation) {
+                    animation.r();
+                });
+            if (_[--id])
+                _[id].r();
+        };
+        /**
+         * 已注册动画。
+         */
+        ACenter._ = [];
+        return ACenter;
+    })();
+    C2D.ACenter = ACenter;
+})(C2D || (C2D = {}));
+/**
  * 定义抽象画面动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      _Animation/Animation.ts
  */
 /// <reference path="../../../include/mozRequestAnimationFrame.d.ts" />
 /// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="ACenter.ts" />
 var C2D;
 (function (C2D) {
     var Util = __Bigine_Util;
@@ -64,6 +139,7 @@ var C2D;
             this._p =
                 this._h =
                     this._w = false;
+            this._i = C2D.ACenter.a(this);
         }
         /**
          * 链式动画。
@@ -109,6 +185,9 @@ var C2D;
             this._p = true;
             this._t = element;
             q = once();
+            q.then(function () {
+                C2D.ACenter.d(_this._i);
+            });
             if (!this._c.length)
                 return q;
             return q.then(function () { return Util.Q.every(_this._c, function (anime) { return anime.p(element); }); });
@@ -157,6 +236,12 @@ var C2D;
          */
         Animation.prototype.gW = function () {
             return this._w;
+        };
+        /**
+         * 获取编号。
+         */
+        Animation.prototype.gI = function () {
+            return this._i;
         };
         return Animation;
     })();
@@ -1851,7 +1936,7 @@ var C2D;
 /// <reference path="_Animation/WaitForClick.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.1.3';
+    C2D.version = '0.2.0';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

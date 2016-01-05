@@ -10,6 +10,18 @@ declare namespace __Bigine_C2D {
         w: number;
         h: number;
     }
+    class ACenter {
+        private static _;
+        static a(animation: Animation): number;
+        static g(id: number): Animation;
+        static d(id: number): void;
+        static h(id: number): void;
+        static h(): void;
+        static w(id: number): void;
+        static w(): void;
+        static r(id: number): void;
+        static r(): void;
+    }
     class Animation {
         protected _d: number;
         protected _m: Util.IHashTable<any>;
@@ -19,6 +31,7 @@ declare namespace __Bigine_C2D {
         protected _h: boolean;
         protected _t: any;
         protected _w: boolean;
+        protected _i: number;
         constructor(duration: number, metas?: Util.IHashTable<any>);
         c(next: Animation): Animation;
         l(times?: number): Animation;
@@ -29,6 +42,7 @@ declare namespace __Bigine_C2D {
         w(): Animation;
         r(): Animation;
         gW(): boolean;
+        gI(): number;
     }
     namespace Animation {
         function f(callback: FrameRequestCallback, draw?: boolean): void;

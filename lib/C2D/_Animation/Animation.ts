@@ -2,13 +2,14 @@
  * 定义抽象画面动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      _Animation/Animation.ts
  */
 
 /// <reference path="../../../include/mozRequestAnimationFrame.d.ts" />
 /// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="ACenter.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;
@@ -55,6 +56,11 @@ namespace C2D {
         protected _w: boolean;
 
         /**
+         * 序号。
+         */
+        protected _i: number;
+
+        /**
          * 构造函数。
          */
         constructor(duration: number, metas?: Util.IHashTable<any>) {
@@ -65,6 +71,7 @@ namespace C2D {
             this._p =
             this._h =
             this._w = false;
+            this._i = ACenter.a(this);
         }
 
         /**
@@ -87,13 +94,13 @@ namespace C2D {
          * 执行。
          */
         public p(element: any): Promise<any> {
-            var r: Promise<any> = Promise.resolve(element),
+            let r: Promise<any> = Promise.resolve(element),
                 counter: number = 0,
                 once: () => Promise<any> = () => {
                     if (this._h)
                         return r;
                     return new Promise((resolve: (value: any) => void) => {
-                        var index: number = 0,
+                        let index: number = 0,
                             done: () => void = () => {
                                 resolve(element);
                             },
@@ -117,6 +124,9 @@ namespace C2D {
             this._p = true;
             this._t = element;
             q = once();
+            q.then(() => {
+                ACenter.d(this._i);
+            });
             if (!this._c.length)
                 return q;
             return q.then(() => Util.Q.every(this._c, (anime: Animation) => anime.p(element)));
@@ -172,10 +182,17 @@ namespace C2D {
         public gW(): boolean {
             return this._w;
         }
+
+        /**
+         * 获取编号。
+         */
+        public gI(): number {
+            return this._i;
+        }
     }
 
     export namespace Animation {
-        var raf: typeof window.requestAnimationFrame,
+        let raf: typeof window.requestAnimationFrame,
             jobs: FrameRequestCallback[] = [],
             elapsed: number = 0,
             size: number;

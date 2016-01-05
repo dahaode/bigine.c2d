@@ -1,6 +1,6 @@
 {
   "name": "bigine.c2d",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Bigine 引擎 Canvas2D 包。",
   "main": "var/build/bigine.c2d.js",
   "scripts": {
@@ -24,6 +24,9 @@
     "var/build/bigine.c2d.js*"
   ],
   "typings": "var/build/bigine.c2d.d.ts",
+  "typescript": {
+    "definition": "var/build/bigine.c2d.d.ts"
+  },
   "dependencies": {
     "bigine.util": "^0.2.2"
   },
