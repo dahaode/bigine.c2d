@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/ACenter.ts
+ * @file      C2D/_Animation/ACenter.ts
  */
 
 /// <reference path="Animation.ts" />

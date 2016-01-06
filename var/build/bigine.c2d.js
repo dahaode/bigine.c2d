@@ -35,9 +35,9 @@ var C2D;
  * 声明画面元素区域接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/IBounds.ts
+ * @file      C2D/_Element/IBounds.ts
  */
 /**
  * 定义画面动画管理中心组件。
@@ -45,7 +45,7 @@ var C2D;
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/ACenter.ts
+ * @file      C2D/_Animation/ACenter.ts
  */
 /// <reference path="Animation.ts" />
 var C2D;
@@ -119,7 +119,7 @@ var C2D;
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/Animation.ts
+ * @file      C2D/_Animation/Animation.ts
  */
 /// <reference path="../../../include/mozRequestAnimationFrame.d.ts" />
 /// <reference path="../../../include/tsd.d.ts" />
@@ -286,9 +286,9 @@ var C2D;
  * 定义抽象画面元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Element.ts
+ * @file      C2D/_Element/Element.ts
  */
 /// <reference path="../E.ts" />
 /// <reference path="IBounds.ts" />
@@ -490,9 +490,9 @@ var C2D;
  * 定义画面组合元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Sprite.ts
+ * @file      C2D/_Element/Sprite.ts
  */
 /// <reference path="Element.ts" />
 var C2D;
@@ -675,9 +675,9 @@ var C2D;
  * 声明（画面）鼠标事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/IMouseEventMetas.ts
+ * @file      C2D/_Event/IMouseEventMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../_Element/Stage.ts" />
@@ -685,9 +685,9 @@ var C2D;
  * 定义画面抽象鼠标事件组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/SpriteMouseEvent.ts
+ * @file      C2D/_Event/SpriteMouseEvent.ts
  */
 /// <reference path="IMouseEventMetas.ts" />
 var C2D;
@@ -719,9 +719,9 @@ var C2D;
  * 定义画面鼠标聚焦事件组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/SpriteFocusEvent.ts
+ * @file      C2D/_Event/SpriteFocusEvent.ts
  */
 /// <reference path="SpriteMouseEvent.ts" />
 var C2D;
@@ -745,9 +745,9 @@ var C2D;
  * 定义画面鼠标失焦事件组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/SpriteBlurEvent.ts
+ * @file      C2D/_Event/SpriteBlurEvent.ts
  */
 /// <reference path="SpriteMouseEvent.ts" />
 var C2D;
@@ -771,9 +771,9 @@ var C2D;
  * 定义画面鼠标移动事件组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/SpriteMouseMoveEvent.ts
+ * @file      C2D/_Event/SpriteMouseMoveEvent.ts
  */
 /// <reference path="SpriteMouseEvent.ts" />
 var C2D;
@@ -797,9 +797,9 @@ var C2D;
  * 定义画面鼠标点击事件组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/SpriteClickEvent.ts
+ * @file      C2D/_Event/SpriteClickEvent.ts
  */
 /// <reference path="SpriteMouseEvent.ts" />
 var C2D;
@@ -823,9 +823,9 @@ var C2D;
  * 定义全画面舞台组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Stage.ts
+ * @file      C2D/_Element/Stage.ts
  */
 /// <reference path="Sprite.ts" />
 /// <reference path="../_Event/SpriteFocusEvent.ts" />
@@ -1064,9 +1064,9 @@ var C2D;
  * 定义色块画面元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Color.ts
+ * @file      C2D/_Element/Color.ts
  */
 /// <reference path="Element.ts" />
 var C2D;
@@ -1102,9 +1102,9 @@ var C2D;
  * 定义图像画面元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Image.ts
+ * @file      C2D/_Element/Image.ts
  */
 /// <reference path="Element.ts" />
 var C2D;
@@ -1164,9 +1164,9 @@ var C2D;
  * 定义画面文字组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/TextPhrase.ts
+ * @file      C2D/_Element/TextPhrase.ts
  */
 var C2D;
 (function (C2D) {
@@ -1306,9 +1306,9 @@ var C2D;
  * 定义文字画面元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Text.ts
+ * @file      C2D/_Element/Text.ts
  */
 /// <reference path="Element.ts" />
 /// <reference path="TextPhrase.ts" />
@@ -1442,18 +1442,18 @@ var C2D;
  * 声明透明度渐变动画元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/IFadeMetas.ts
+ * @file      C2D/_Animation/IFadeMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义透明度渐变动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/Fade.ts
+ * @file      C2D/_Animation/Fade.ts
  */
 /// <reference path="Animation.ts" />
 /// <reference path="IFadeMetas.ts" />
@@ -1484,9 +1484,9 @@ var C2D;
  * 定义透明度渐显动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/FadeIn.ts
+ * @file      C2D/_Animation/FadeIn.ts
  */
 /// <reference path="Fade.ts" />
 var C2D;
@@ -1509,9 +1509,9 @@ var C2D;
  * 定义透明度渐隐动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/FadeOut.ts
+ * @file      C2D/_Animation/FadeOut.ts
  */
 /// <reference path="Fade.ts" />
 var C2D;
@@ -1534,9 +1534,9 @@ var C2D;
  * 定义画面按钮元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Stage.ts
+ * @file      C2D/_Element/Stage.ts
  */
 /// <reference path="Sprite.ts" />
 /// <reference path="../_Event/SpriteMouseEvent.ts" />
@@ -1608,9 +1608,9 @@ var C2D;
  * 定义画面组合动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/Combo.ts
+ * @file      C2D/_Animation/Combo.ts
  */
 /// <reference path="Animation.ts" />
 /// <reference path="../_Element/Element.ts" />
@@ -1654,18 +1654,18 @@ var C2D;
  * 声明音频音量渐变动画元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/IAudioFadeMetas.ts
+ * @file      C2D/_Animation/IAudioFadeMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义透明度渐变动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/AudioFadeOut.ts
+ * @file      C2D/_Animation/AudioFadeOut.ts
  */
 /// <reference path="Animation.ts" />
 /// <reference path="IAudioFadeMetas.ts" />
@@ -1697,18 +1697,18 @@ var C2D;
  * 声明位移动画元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/IMoveMetas.ts
+ * @file      C2D/_Animation/IMoveMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义位移动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/Move.ts
+ * @file      C2D/_Animation/Move.ts
  */
 /// <reference path="Animation.ts" />
 /// <reference path="IMoveMetas.ts" />
@@ -1743,9 +1743,9 @@ var C2D;
  * 定义打字效果动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/Type.ts
+ * @file      C2D/_Animation/Type.ts
  */
 /// <reference path="Animation.ts" />
 /// <reference path="../_Element/Text.ts" />
@@ -1807,9 +1807,9 @@ var C2D;
  * 定义冻结（延时）动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/Delay.ts
+ * @file      C2D/_Animation/Delay.ts
  */
 /// <reference path="Animation.ts" />
 var C2D;
@@ -1827,9 +1827,9 @@ var C2D;
  * 定义打字延时动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/TypeDelay.ts
+ * @file      C2D/_Animation/TypeDelay.ts
  */
 /// <reference path="Delay.ts" />
 /// <reference path="../_Element/Text.ts" />
@@ -1867,9 +1867,9 @@ var C2D;
  * 定义等待点击动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Animation/WaitForClick.ts
+ * @file      C2D/_Animation/WaitForClick.ts
  */
 /// <reference path="Animation.ts" />
 /// <reference path="../_Event/SpriteClickEvent.ts" />
@@ -1917,26 +1917,26 @@ var C2D;
  * 定义包主程序文件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      @module.ts
+ * @file      @c2d.ts
  */
-/// <reference path="_Element/Stage.ts" />
-/// <reference path="_Element/Color.ts" />
-/// <reference path="_Element/Image.ts" />
-/// <reference path="_Element/Text.ts" />
-/// <reference path="_Element/Button.ts" />
-/// <reference path="_Animation/Combo.ts" />
-/// <reference path="_Animation/AudioFadeOut.ts" />
-/// <reference path="_Animation/FadeIn.ts" />
-/// <reference path="_Animation/FadeOut.ts" />
-/// <reference path="_Animation/Move.ts" />
-/// <reference path="_Animation/Type.ts" />
-/// <reference path="_Animation/TypeDelay.ts" />
-/// <reference path="_Animation/WaitForClick.ts" />
+/// <reference path="C2D/_Element/Stage.ts" />
+/// <reference path="C2D/_Element/Color.ts" />
+/// <reference path="C2D/_Element/Image.ts" />
+/// <reference path="C2D/_Element/Text.ts" />
+/// <reference path="C2D/_Element/Button.ts" />
+/// <reference path="C2D/_Animation/Combo.ts" />
+/// <reference path="C2D/_Animation/AudioFadeOut.ts" />
+/// <reference path="C2D/_Animation/FadeIn.ts" />
+/// <reference path="C2D/_Animation/FadeOut.ts" />
+/// <reference path="C2D/_Animation/Move.ts" />
+/// <reference path="C2D/_Animation/Type.ts" />
+/// <reference path="C2D/_Animation/TypeDelay.ts" />
+/// <reference path="C2D/_Animation/WaitForClick.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.2.0';
+    C2D.version = '0.2.1';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

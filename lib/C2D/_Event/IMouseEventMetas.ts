@@ -2,9 +2,9 @@
  * 声明（画面）鼠标事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Event/IMouseEventMetas.ts
+ * @file      C2D/_Event/IMouseEventMetas.ts
  */
 
 /// <reference path="../../../include/tsd.d.ts" />

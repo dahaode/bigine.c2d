@@ -2,9 +2,9 @@
  * 定义色块画面元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      _Element/Color.ts
+ * @file      C2D/_Element/Color.ts
  */
 
 /// <reference path="Element.ts" />
