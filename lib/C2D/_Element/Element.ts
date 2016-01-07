@@ -152,8 +152,8 @@ namespace C2D {
         public s(ratio: number): Element {
             if (1 == ratio)
                 return this;
-            this._b.w *= ratio;
-            this._b.h *= ratio;
+            this._b.w = 0 | this._b.w * ratio;
+            this._b.h = 0 | this._b.h * ratio;
             this._s *= ratio;
             if (!this.gO())
                 return this;

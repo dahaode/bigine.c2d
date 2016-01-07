@@ -388,8 +388,8 @@ var C2D;
         Element.prototype.s = function (ratio) {
             if (1 == ratio)
                 return this;
-            this._b.w *= ratio;
-            this._b.h *= ratio;
+            this._b.w = 0 | this._b.w * ratio;
+            this._b.h = 0 | this._b.h * ratio;
             this._s *= ratio;
             if (!this.gO())
                 return this;
@@ -1168,18 +1168,16 @@ var C2D;
  * @license   GPL-3.0
  * @file      C2D/_Element/TextPhrase.ts
  */
+/// <reference path="Text.ts" />
 var C2D;
 (function (C2D) {
     var TextPhrase = (function () {
         /**
          * 构造函数。
          */
-        function TextPhrase() {
-            this._t = '';
-            this._c =
-                this._sc = '#000';
-            this._f = 16;
-            this._ss = 0;
+        function TextPhrase(clob, color) {
+            this._t = clob || '';
+            this._c = color || '';
         }
         /**
          * 设置文本内容。
@@ -1196,24 +1194,10 @@ var C2D;
             return this;
         };
         /**
-         * 设置字号。
+         * 设置主画面元素。
          */
-        TextPhrase.prototype.f = function (size) {
-            this._f = size;
-            return this;
-        };
-        /**
-         * 获取字号。
-         */
-        TextPhrase.prototype.gF = function () {
-            return this._f;
-        };
-        /**
-         * 设置阴影。
-         */
-        TextPhrase.prototype.s = function (size, color) {
-            this._ss = size;
-            this._sc = color || this._sc;
+        TextPhrase.prototype.p = function (text) {
+            this._p = text;
             return this;
         };
         /**
@@ -1236,19 +1220,20 @@ var C2D;
                 result2[0] += result3[0];
                 result2[1] += result3[1];
                 return result2;
-            }, result;
+            }, font, shadow, result;
             offset = clob.length;
-            if (!offset)
+            if (!this._p || !offset)
                 return [0, 0];
+            font = this._p.gTf();
+            shadow = this._p.gTs();
             context.save();
-            context.fillStyle = this._c;
-            context.font = this._f + 'px ' + TextPhrase.FONT;
-            context.textBaseline = 'top';
-            if (this._ss) {
-                context.shadowBlur =
-                    context.shadowOffsetX =
-                        context.shadowOffsetY = this._ss;
-                context.shadowColor = this._sc;
+            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.textBaseline = 'middle';
+            if (shadow[2]) {
+                context.shadowBlur = shadow[2];
+                context.shadowOffsetX = shadow[0];
+                context.shadowOffsetY = shadow[1];
+                context.shadowColor = shadow[3];
             }
             if (context.measureText(clob[0]).width > maxWidth) {
                 result = [0, 0];
@@ -1262,18 +1247,20 @@ var C2D;
          * 绘制。
          */
         TextPhrase.prototype.d = function (context, x, y, offset, length) {
-            var clob = this._t.substr(offset || 0, length || this._t.length);
+            if (!this._p)
+                return;
+            var clob = this._t.substr(offset || 0, length || this._t.length), color = this._c || this._p.gTc(), font = this._p.gTf(), shadow = this._p.gTs();
             if (!clob.length)
                 return;
             context.save();
-            context.fillStyle = this._c;
-            context.font = this._f + 'px ' + TextPhrase.FONT;
-            context.textBaseline = 'top';
-            if (this._ss) {
-                context.shadowBlur =
-                    context.shadowOffsetX =
-                        context.shadowOffsetY = this._ss;
-                context.shadowColor = this._sc;
+            context.fillStyle = color;
+            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.textBaseline = 'middle';
+            if (shadow[2]) {
+                context.shadowBlur = shadow[2];
+                context.shadowOffsetX = shadow[0];
+                context.shadowOffsetY = shadow[1];
+                context.shadowColor = shadow[3];
             }
             context.fillText(clob, Math.ceil(x), Math.ceil(y));
             context.restore();
@@ -1288,11 +1275,7 @@ var C2D;
          * 截取。
          */
         TextPhrase.prototype.a = function (length) {
-            return new TextPhrase()
-                .t(this._t.substr(0, length))
-                .c(this._c)
-                .f(this._f)
-                .s(this._ss, this._sc);
+            return new TextPhrase(this._t.substr(0, length), this._c);
         };
         /**
          * 字体。
@@ -1317,17 +1300,21 @@ var C2D;
     var Util = __Bigine_Util;
     var Text = (function (_super) {
         __extends(Text, _super);
-        function Text(x, y, w, h, lineHeight, align, absolute) {
+        function Text(x, y, w, h, size, lineHeight, align, absolute) {
             _super.call(this, x, y, w, h, absolute);
+            this._t = [];
+            this._tf = [16, 24, '#000'];
+            this._ts = [0, 0, 0, '#000'];
             if (!x || 'number' == typeof x) {
-                this._h = lineHeight;
+                this._tf[0] = 0 | size;
+                this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
             }
             else {
-                this._h = y;
-                this._l = w;
+                this._tf[0] = 0 | y;
+                this._tf[1] = 0 | Math.max(y, w);
+                this._l = h;
             }
-            this._h |= 0;
             var aligns = Text.Align;
             switch (this._l) {
                 case aligns.Left:
@@ -1337,8 +1324,21 @@ var C2D;
                 default:
                     this._l = aligns.Left;
             }
-            this._d = [];
+            this._t = [];
         }
+        /**
+         * 缩放。
+         */
+        Text.prototype.s = function (ratio) {
+            if (1 == ratio)
+                return this;
+            this._tf[0] = 0 | this._tf[0] * ratio;
+            this._tf[1] = 0 | this._tf[1] * ratio;
+            this._ts[0] = 0 | this._ts[0] * ratio;
+            this._ts[1] = 0 | this._ts[1] * ratio;
+            this._ts[2] = 0 | this._ts[2] * ratio;
+            return _super.prototype.s.call(this, ratio);
+        };
         /**
          * 绘制。
          */
@@ -1347,8 +1347,8 @@ var C2D;
             var opacity = this.gO(), schedules = [[]], // width, TextPhrase, offset, length
             line = schedules[0], aligns = Text.Align, bounds = this.gB(), width = bounds.w, m, // length, width
             offset;
-            if (opacity && this._d.length) {
-                Util.each(this._d, function (phrase) {
+            if (opacity && this._t.length) {
+                Util.each(this._t, function (phrase) {
                     offset = 0;
                     while (offset != phrase.gL()) {
                         m = phrase.m(context, width, offset);
@@ -1381,9 +1381,9 @@ var C2D;
                     else
                         offset = 0; // x
                     offset += bounds.x;
-                    width = bounds.y + _this._h * (1 + index); // y
+                    width = bounds.y + _this._tf[1] * (1 + index); // y
                     Util.each(line2, function (section) {
-                        section[1].d(context, offset, width - section[1].gF(), section[2], section[3]);
+                        section[1].d(context, offset, width - _this._tf[0], section[2], section[3]);
                         offset += section[0];
                     });
                 });
@@ -1393,23 +1393,63 @@ var C2D;
             return _super.prototype.d.call(this, context);
         };
         /**
+         * 设置字号。
+         */
+        Text.prototype.tf = function (size, lineHeight) {
+            this._tf[0] = 0 | size;
+            this._tf[1] = 0 | Math.max(size, lineHeight);
+            return this;
+        };
+        /**
+         * 获取字号。
+         */
+        Text.prototype.gTf = function () {
+            return this._tf.slice(0, 2);
+        };
+        /**
+         * 设置颜色。
+         */
+        Text.prototype.tc = function (color) {
+            this._tf[2] = color || '#000';
+            return this;
+        };
+        /**
+         * 获取颜色。
+         */
+        Text.prototype.gTc = function () {
+            return this._tf[2];
+        };
+        /**
+         * 设置阴影。
+         */
+        Text.prototype.ts = function (size, offsetX, offsetY, color) {
+            this._ts = [0 | offsetX, 0 | offsetY, 0 | size, color || '#000'];
+            return this;
+        };
+        /**
+         * 获取阴影（横向偏移，纵向偏移，大小，颜色）。
+         */
+        Text.prototype.gTs = function () {
+            return this._ts;
+        };
+        /**
          * 添加文字。
          */
         Text.prototype.a = function (text) {
-            this._d.push(text);
+            this._t.push(text.p(this));
             return this.f();
         };
         /**
          * 获取文字。
          */
         Text.prototype.gT = function () {
-            return this._d;
+            return this._t;
         };
         /**
          * 清空所有已添加文字。
          */
         Text.prototype.c = function () {
-            this._d = [];
+            this._t = [];
             return this.f();
         };
         return Text;
@@ -1936,7 +1976,7 @@ var C2D;
 /// <reference path="C2D/_Animation/WaitForClick.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.2.1';
+    C2D.version = '0.2.2';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

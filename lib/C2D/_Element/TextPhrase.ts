@@ -7,6 +7,8 @@
  * @file      C2D/_Element/TextPhrase.ts
  */
 
+/// <reference path="Text.ts" />
+
 namespace C2D {
     export class TextPhrase {
         /**
@@ -25,29 +27,16 @@ namespace C2D {
         private _c: string;
 
         /**
-         * 字号。
+         * 宿主。
          */
-        private _f: number;
-
-        /**
-         * 阴影尺寸。
-         */
-        private _ss: number;
-
-        /**
-         * 阴影颜色。
-         */
-        private _sc: string;
+        private _p: Text;
 
         /**
          * 构造函数。
          */
-        constructor() {
-            this._t = '';
-            this._c =
-            this._sc = '#000';
-            this._f = 16;
-            this._ss = 0;
+        constructor(clob?: string, color?: string) {
+            this._t = clob || '';
+            this._c = color || '';
         }
 
         /**
@@ -67,26 +56,10 @@ namespace C2D {
         }
 
         /**
-         * 设置字号。
+         * 设置主画面元素。
          */
-        public f(size: number): TextPhrase {
-            this._f = size;
-            return this;
-        }
-
-        /**
-         * 获取字号。
-         */
-        public gF(): number {
-            return this._f;
-        }
-
-        /**
-         * 设置阴影。
-         */
-        public s(size: number, color?: string): TextPhrase {
-            this._ss = size;
-            this._sc = color || this._sc;
+        public p(text: Text): TextPhrase {
+            this._p = text;
             return this;
         }
 
@@ -94,11 +67,11 @@ namespace C2D {
          * 计算可绘制字符数。
          */
         public m(context: CanvasRenderingContext2D, maxWidth: number, offset?: number): [number, number] {
-            var clob: string = offset ?
+            let clob: string = offset ?
                     this._t.substr(offset) :
                     this._t,
                 compare: (text: string, maxWidth2: number) => [number, number] = (text: string, maxWidth2: number) => {
-                    var length: number = text.length,
+                    let length: number = text.length,
                         result2: [number, number] = [length, context.measureText(text).width],
                         result3: [number, number];
                     if (result2[1] <= maxWidth2) // 可以完全绘制
@@ -114,19 +87,22 @@ namespace C2D {
                     result2[1] += result3[1];
                     return result2;
                 },
+                font: [number, number],
+                shadow: [number, number, number, string],
                 result: [number, number];
             offset = clob.length;
-            if (!offset)
+            if (!this._p || !offset)
                 return [0, 0];
+            font = this._p.gTf();
+            shadow = this._p.gTs();
             context.save();
-            context.fillStyle = this._c;
-            context.font = this._f + 'px ' + TextPhrase.FONT;
-            context.textBaseline = 'top';
-            if (this._ss) {
-                context.shadowBlur =
-                context.shadowOffsetX =
-                context.shadowOffsetY = this._ss;
-                context.shadowColor = this._sc;
+            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.textBaseline = 'middle';
+            if (shadow[2]) {
+                context.shadowBlur = shadow[2];
+                context.shadowOffsetX = shadow[0];
+                context.shadowOffsetY = shadow[1];
+                context.shadowColor = shadow[3];
             }
             if (context.measureText(clob[0]).width > maxWidth) {
                 result = [0, 0];
@@ -140,17 +116,21 @@ namespace C2D {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D, x: number, y: number, offset?: number, length?: number): void {
-            var clob: string = this._t.substr(offset || 0, length || this._t.length);
+            if (!this._p) return;
+            let clob: string = this._t.substr(offset || 0, length || this._t.length),
+                color: string = this._c || this._p.gTc(),
+                font: [number, number] = this._p.gTf(),
+                shadow: [number, number, number, string] = this._p.gTs();
             if (!clob.length) return;
             context.save();
-            context.fillStyle = this._c;
-            context.font = this._f + 'px ' + TextPhrase.FONT;
-            context.textBaseline = 'top';
-            if (this._ss) {
-                context.shadowBlur =
-                context.shadowOffsetX =
-                context.shadowOffsetY = this._ss;
-                context.shadowColor = this._sc;
+            context.fillStyle = color;
+            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.textBaseline = 'middle';
+            if (shadow[2]) {
+                context.shadowBlur = shadow[2];
+                context.shadowOffsetX = shadow[0];
+                context.shadowOffsetY = shadow[1];
+                context.shadowColor = shadow[3];
             }
             context.fillText(clob, Math.ceil(x), Math.ceil(y));
             context.restore();
@@ -167,11 +147,7 @@ namespace C2D {
          * 截取。
          */
         public a(length: number): TextPhrase {
-            return new TextPhrase()
-                .t(this._t.substr(0, length))
-                .c(this._c)
-                .f(this._f)
-                .s(this._ss, this._sc);
+            return new TextPhrase(this._t.substr(0, length), this._c);
         }
     }
 }

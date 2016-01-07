@@ -15,14 +15,9 @@ namespace C2D {
 
     export class Text extends Element {
         /**
-         * 行高。
-         */
-        private _h: number;
-
-        /**
          * 文本。
          */
-        private _d: TextPhrase[];
+        private _t: TextPhrase[];
 
         /**
          * 对齐方式。
@@ -30,20 +25,34 @@ namespace C2D {
         private _l: Text.Align;
 
         /**
+         * 字体配置（字号，行高，颜色）。
+         */
+        private _tf: [number, number, string];
+
+        /**
+         * 阴影配置（横向偏移，纵向偏移，大小，颜色）。
+         */
+        private _ts: [number, number, number, string];
+
+        /**
          * 构造函数。
          */
-        constructor(x: number, y: number, w: number, h: number, lineHeight: number, align?: Text.Align, absolute?: boolean);
-        constructor(bounds: IBounds, lineHeight: number, align?: Text.Align, absolute?: boolean);
-        constructor(x: any, y: any, w?: any, h?: any, lineHeight?: any, align?: any, absolute?: boolean) {
+        constructor(x: number, y: number, w: number, h: number, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
+        constructor(bounds: IBounds, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
+        constructor(x: any, y?: any, w?: any, h?: any, size?: any, lineHeight?: any, align?: any, absolute?: boolean) {
             super(x, y, w, h, absolute);
+            this._t = [];
+            this._tf = [16, 24, '#000'];
+            this._ts = [0, 0, 0, '#000'];
             if (!x || 'number' == typeof x) {
-                this._h = lineHeight;
+                this._tf[0] = 0 | size;
+                this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
             } else {
-                this._h = y;
-                this._l = w;
+                this._tf[0] = 0 | y;
+                this._tf[1] = 0 | Math.max(y, w);
+                this._l = h;
             }
-            this._h |= 0;
             var aligns: typeof Text.Align = Text.Align;
             switch (this._l) {
                 case aligns.Left:
@@ -53,7 +62,21 @@ namespace C2D {
                 default:
                     this._l = aligns.Left;
             }
-            this._d = [];
+            this._t = [];
+        }
+
+        /**
+         * 缩放。
+         */
+        public s(ratio: number): Text {
+            if (1 == ratio)
+                return this;
+            this._tf[0] = 0 | this._tf[0] * ratio;
+            this._tf[1] = 0 | this._tf[1] * ratio;
+            this._ts[0] = 0 | this._ts[0] * ratio;
+            this._ts[1] = 0 | this._ts[1] * ratio;
+            this._ts[2] = 0 | this._ts[2] * ratio;
+            return <Text> super.s(ratio);
         }
 
         /**
@@ -68,8 +91,8 @@ namespace C2D {
                 width: number = bounds.w,
                 m: [number, number], // length, width
                 offset: number;
-            if (opacity && this._d.length) {
-                Util.each(this._d, (phrase: TextPhrase) => {
+            if (opacity && this._t.length) {
+                Util.each(this._t, (phrase: TextPhrase) => {
                     offset = 0;
                     while (offset != phrase.gL()) {
                         m = phrase.m(context, width, offset);
@@ -100,9 +123,9 @@ namespace C2D {
                     } else
                         offset = 0; // x
                     offset += bounds.x;
-                    width = bounds.y + this._h * (1 + index); // y
+                    width = bounds.y + this._tf[1] * (1 + index); // y
                     Util.each(line2, (section: [number, TextPhrase, number, number]) => {
-                        section[1].d(context, offset, width - section[1].gF(), section[2], section[3]);
+                        section[1].d(context, offset, width - this._tf[0], section[2], section[3]);
                         offset += section[0];
                     });
                 });
@@ -113,10 +136,56 @@ namespace C2D {
         }
 
         /**
+         * 设置字号。
+         */
+        public tf(size: number, lineHeight?: number): Text {
+            this._tf[0] = 0 | size;
+            this._tf[1] = 0 | Math.max(size, lineHeight);
+            return this;
+        }
+
+        /**
+         * 获取字号。
+         */
+        public gTf(): [number, number] {
+            return <[number, number]> this._tf.slice(0, 2);
+        }
+
+        /**
+         * 设置颜色。
+         */
+        public tc(color: string): Text {
+            this._tf[2] = color || '#000';
+            return this;
+        }
+
+        /**
+         * 获取颜色。
+         */
+        public gTc(): string {
+            return this._tf[2];
+        }
+
+        /**
+         * 设置阴影。
+         */
+        public ts(size: number, offsetX?: number, offsetY?: number, color?: string): Text {
+            this._ts = [0 | offsetX, 0 | offsetY, 0 | size, color || '#000'];
+            return this;
+        }
+
+        /**
+         * 获取阴影（横向偏移，纵向偏移，大小，颜色）。
+         */
+        public gTs(): [number, number, number, string] {
+            return this._ts;
+        }
+
+        /**
          * 添加文字。
          */
         public a(text: TextPhrase): Text {
-            this._d.push(text);
+            this._t.push(text.p(this));
             return <Text> this.f();
         }
 
@@ -124,14 +193,14 @@ namespace C2D {
          * 获取文字。
          */
         public gT(): TextPhrase[] {
-            return <TextPhrase[]> this._d;
+            return <TextPhrase[]> this._t;
         }
 
         /**
          * 清空所有已添加文字。
          */
         public c(): Text {
-            this._d = [];
+            this._t = [];
             return <Text> this.f();
         }
     }
