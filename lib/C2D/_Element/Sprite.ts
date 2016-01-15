@@ -24,12 +24,23 @@ namespace C2D {
         private _l: Util.IHashTable<Util.IEventListener<any>[]>;
 
         /**
+         * 是否透明（允许鼠标事件穿透）。
+         */
+        private _t: boolean;
+
+        /**
          * 构造函数。
          */
-        constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
-        constructor(bounds: IBounds, absolute?: boolean);
-        constructor(x: any, y?: any, w?: any, h?: any, absolute?: boolean) {
-            super(x, y, w, h, absolute);
+        constructor(x: number, y: number, w: number, h: number, transparent?: boolean, absolute?: boolean);
+        constructor(bounds: IBounds, transparent?: boolean, absolute?: boolean);
+        constructor(x: any, y?: any, w?: any, h?: any, transparent?: boolean, absolute?: boolean) {
+            if ('object' == typeof x) {
+                super(x, w);
+                this._t = !!y;
+            } else {
+                super(x, y, w, h, absolute);
+                this._t = !!transparent;
+            }
             this._d = [];
             this._f = false;
             this._l = {};
@@ -196,9 +207,11 @@ namespace C2D {
                 if (bounds.x > x || bounds.y > y || bounds.x + bounds.w < x || bounds.y + bounds.h < y)
                     return false;
                 els = els.concat(element.$m(x, y));
-                return true;
+                return !element._t;
             });
-            return els.concat(this);
+            return this._t ?
+                els :
+                els.concat(this);
         }
 
         /**

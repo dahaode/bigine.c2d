@@ -45,7 +45,7 @@ namespace C2D {
         /**
          * 鼠标座标对应组合元素树。
          */
-        private _t: Sprite[];
+        private _e: Sprite[];
 
         /**
          * 发生变化地组合元素序号。
@@ -62,7 +62,7 @@ namespace C2D {
          */
         constructor(context: CanvasRenderingContext2D) {
             var canvas: HTMLCanvasElement = context.canvas;
-            super(0, 0, canvas.width, canvas.height, true);
+            super(0, 0, canvas.width, canvas.height, false, true);
             this._c = context;
             this.z();
             this._m = {
@@ -103,7 +103,7 @@ namespace C2D {
                     this.$c();
                 }
             ];
-            this._t = [];
+            this._e = [];
             this._u = -1;
             this._k = [0, undefined];
             this.b(context.canvas);
@@ -249,7 +249,7 @@ namespace C2D {
                 bounds: IBounds,
                 inside: boolean,
                 out: boolean;
-            Util.each(this._t, (element: Sprite) => {
+            Util.each(this._e, (element: Sprite) => {
                 bounds = element.gB();
                 inside = -1 != Util.indexOf(els, element);
                 out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
@@ -259,7 +259,7 @@ namespace C2D {
                 }
                 sprites[inside ? 1 : 2].push(element);
             });
-            this._t = els;
+            this._e = els;
             this._m.fromX = this._m.x;
             this._m.fromY = this._m.y;
             this._m.x = x;

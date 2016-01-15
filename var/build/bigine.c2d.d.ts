@@ -77,8 +77,9 @@ declare namespace __Bigine_C2D {
     class Sprite extends Element implements Util.IEmittable {
         protected _d: Element[];
         private _l;
-        constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
-        constructor(bounds: IBounds, absolute?: boolean);
+        private _t;
+        constructor(x: number, y: number, w: number, h: number, transparent?: boolean, absolute?: boolean);
+        constructor(bounds: IBounds, transparent?: boolean, absolute?: boolean);
         s(ratio: number): Sprite;
         r(degrees: number): Sprite;
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
@@ -132,7 +133,7 @@ declare namespace __Bigine_C2D {
         private _v;
         private _h;
         private _m;
-        private _t;
+        private _e;
         private _u;
         private _k;
         constructor(context: CanvasRenderingContext2D);
@@ -219,7 +220,7 @@ declare namespace __Bigine_C2D {
     class Delay extends Animation {
     }
     class Button extends Sprite {
-        private _t;
+        private _y;
         private _c;
         constructor(x: number, y: number, w: number, h: number, delay?: number, absolute?: boolean);
         constructor(bounds: IBounds, delay?: number, absolute?: boolean);

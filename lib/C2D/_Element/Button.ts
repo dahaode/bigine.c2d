@@ -20,7 +20,7 @@ namespace C2D {
         /**
          * 按钮延时。
          */
-        private _t: number;
+        private _y: number;
 
         /**
          * 已点击。
@@ -34,13 +34,13 @@ namespace C2D {
         constructor(bounds: IBounds, delay?: number, absolute?: boolean);
         constructor(x: any, y?: any, w?: any, h?: any, delay?: number, absolute?: boolean) {
             if ('object' == typeof x) {
-                super(x, w);
-                this._t = 0 | y;
+                super(x, false, w);
+                this._y = 0 | y;
             } else {
-                super(x, y, w, h, absolute);
-                this._t = 0 | delay;
+                super(x, y, w, h, false, absolute);
+                this._y = 0 | delay;
             }
-            this._t = this._t || 100;
+            this._y = this._y || 100;
             this._c = false;
         }
 
@@ -95,7 +95,7 @@ namespace C2D {
                 if (this._c) return;
                 this._c = true;
                 callback(event);
-                this.p(new Delay(this._t)).then(() => {
+                this.p(new Delay(this._y)).then(() => {
                     this._c = false;
                 });
             });

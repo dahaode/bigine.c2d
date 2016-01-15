@@ -500,8 +500,15 @@ var C2D;
     var Util = __Bigine_Util;
     var Sprite = (function (_super) {
         __extends(Sprite, _super);
-        function Sprite(x, y, w, h, absolute) {
-            _super.call(this, x, y, w, h, absolute);
+        function Sprite(x, y, w, h, transparent, absolute) {
+            if ('object' == typeof x) {
+                _super.call(this, x, w);
+                this._t = !!y;
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._t = !!transparent;
+            }
             this._d = [];
             this._f = false;
             this._l = {};
@@ -651,9 +658,11 @@ var C2D;
                 if (bounds.x > x || bounds.y > y || bounds.x + bounds.w < x || bounds.y + bounds.h < y)
                     return false;
                 els = els.concat(element.$m(x, y));
-                return true;
+                return !element._t;
             });
-            return els.concat(this);
+            return this._t ?
+                els :
+                els.concat(this);
         };
         /**
          * 获取需绘制地图片集合。
@@ -843,7 +852,7 @@ var C2D;
         function Stage(context) {
             var _this = this;
             var canvas = context.canvas;
-            _super.call(this, 0, 0, canvas.width, canvas.height, true);
+            _super.call(this, 0, 0, canvas.width, canvas.height, false, true);
             this._c = context;
             this.z();
             this._m = {
@@ -883,7 +892,7 @@ var C2D;
                     _this.$c();
                 }
             ];
-            this._t = [];
+            this._e = [];
             this._u = -1;
             this._k = [0, undefined];
             this.b(context.canvas);
@@ -1018,7 +1027,7 @@ var C2D;
             y |= 0;
             var sprites = [[], [], []], els = this.$m(x, y).slice(0, -1), // 查找新座标点新树
             bounds, inside, out;
-            Util.each(this._t, function (element) {
+            Util.each(this._e, function (element) {
                 bounds = element.gB();
                 inside = -1 != Util.indexOf(els, element);
                 out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
@@ -1028,7 +1037,7 @@ var C2D;
                 }
                 sprites[inside ? 1 : 2].push(element);
             });
-            this._t = els;
+            this._e = els;
             this._m.fromX = this._m.x;
             this._m.fromY = this._m.y;
             this._m.x = x;
@@ -1610,14 +1619,14 @@ var C2D;
         __extends(Button, _super);
         function Button(x, y, w, h, delay, absolute) {
             if ('object' == typeof x) {
-                _super.call(this, x, w);
-                this._t = 0 | y;
+                _super.call(this, x, false, w);
+                this._y = 0 | y;
             }
             else {
-                _super.call(this, x, y, w, h, absolute);
-                this._t = 0 | delay;
+                _super.call(this, x, y, w, h, false, absolute);
+                this._y = 0 | delay;
             }
-            this._t = this._t || 100;
+            this._y = this._y || 100;
             this._c = false;
         }
         /**
@@ -1672,7 +1681,7 @@ var C2D;
                     return;
                 _this._c = true;
                 callback(event);
-                _this.p(new C2D.Delay(_this._t)).then(function () {
+                _this.p(new C2D.Delay(_this._y)).then(function () {
                     _this._c = false;
                 });
             });
