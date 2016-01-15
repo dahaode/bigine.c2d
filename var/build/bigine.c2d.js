@@ -1083,10 +1083,14 @@ var C2D;
     var Color = (function (_super) {
         __extends(Color, _super);
         function Color(x, y, w, h, color, absolute) {
-            _super.call(this, x, y, w, h, absolute);
-            this._d = 'number' == typeof x ?
-                color :
-                y;
+            if ('object' == typeof x) {
+                _super.call(this, x, w);
+                this._d = y;
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._d = color;
+            }
         }
         /**
          * 绘制。
@@ -1310,19 +1314,20 @@ var C2D;
     var Text = (function (_super) {
         __extends(Text, _super);
         function Text(x, y, w, h, size, lineHeight, align, absolute) {
-            _super.call(this, x, y, w, h, absolute);
             this._t = [];
             this._tf = [16, 24, '#000'];
             this._ts = [0, 0, 0, '#000'];
-            if (!x || 'number' == typeof x) {
-                this._tf[0] = 0 | size;
-                this._tf[1] = 0 | Math.max(size, lineHeight);
-                this._l = align;
-            }
-            else {
+            if ('object' == typeof x) {
+                _super.call(this, x, size);
                 this._tf[0] = 0 | y;
                 this._tf[1] = 0 | Math.max(y, w);
                 this._l = h;
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._tf[0] = 0 | size;
+                this._tf[1] = 0 | Math.max(size, lineHeight);
+                this._l = align;
             }
             var aligns = Text.Align;
             switch (this._l) {

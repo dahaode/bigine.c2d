@@ -22,10 +22,13 @@ namespace C2D {
         constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
         constructor(bounds: IBounds, color: string, absolute?: boolean);
         constructor(x: any, y: any, w?: any, h?: any, color?: any, absolute?: boolean) {
-            super(x, y, w, h, absolute);
-            this._d = 'number' == typeof x ?
-                color :
-                y;
+            if ('object' == typeof x) {
+                super(x, w);
+                this._d = y;
+            } else {
+                super(x, y, w, h, absolute);
+                this._d = color;
+            }
         }
 
         /**
