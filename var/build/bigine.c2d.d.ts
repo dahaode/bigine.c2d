@@ -216,7 +216,13 @@ declare namespace __Bigine_C2D {
     class FadeOut extends Fade {
         constructor(duration: number);
     }
+    class Delay extends Animation {
+    }
     class Button extends Sprite {
+        private _t;
+        private _c;
+        constructor(x: number, y: number, w: number, h: number, delay?: number, absolute?: boolean);
+        constructor(bounds: IBounds, delay?: number, absolute?: boolean);
         b(callback: Util.IEventListener<Button>, hover?: Element, defaults?: Element): Button;
     }
     class Combo extends Animation {
@@ -249,8 +255,6 @@ declare namespace __Bigine_C2D {
         constructor(rate?: number);
         protected $p(element: Text, elpased: number): void;
         $h(): void;
-    }
-    class Delay extends Animation {
     }
     class TypeDelay extends Delay {
         private _r;

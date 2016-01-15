@@ -1571,6 +1571,26 @@ var C2D;
     C2D.FadeOut = FadeOut;
 })(C2D || (C2D = {}));
 /**
+ * 定义冻结（延时）动画组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Delay.ts
+ */
+/// <reference path="Animation.ts" />
+var C2D;
+(function (C2D) {
+    var Delay = (function (_super) {
+        __extends(Delay, _super);
+        function Delay() {
+            _super.apply(this, arguments);
+        }
+        return Delay;
+    })(C2D.Animation);
+    C2D.Delay = Delay;
+})(C2D || (C2D = {}));
+/**
  * 定义画面按钮元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1582,18 +1602,29 @@ var C2D;
 /// <reference path="../_Event/SpriteMouseEvent.ts" />
 /// <reference path="../_Animation/FadeIn.ts" />
 /// <reference path="../_Animation/FadeOut.ts" />
+/// <reference path="../_Animation/Delay.ts" />
 var C2D;
 (function (C2D) {
     var Util = __Bigine_Util;
     var Button = (function (_super) {
         __extends(Button, _super);
-        function Button() {
-            _super.apply(this, arguments);
+        function Button(x, y, w, h, delay, absolute) {
+            if ('object' == typeof x) {
+                _super.call(this, x, w);
+                this._t = 0 | y;
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._t = 0 | delay;
+            }
+            this._t = this._t || 100;
+            this._c = false;
         }
         /**
          * 绑定功能。
          */
         Button.prototype.b = function (callback, hover, defaults) {
+            var _this = this;
             if (defaults)
                 this.a(defaults.o(1));
             if (hover)
@@ -1637,7 +1668,13 @@ var C2D;
                     hover.o(1);
                 if (defaults)
                     defaults.o(0);
+                if (_this._c)
+                    return;
+                _this._c = true;
                 callback(event);
+                _this.p(new C2D.Delay(_this._t)).then(function () {
+                    _this._c = false;
+                });
             });
         };
         return Button;
@@ -1844,26 +1881,6 @@ var C2D;
     C2D.Type = Type;
 })(C2D || (C2D = {}));
 /**
- * 定义冻结（延时）动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      C2D/_Animation/Delay.ts
- */
-/// <reference path="Animation.ts" />
-var C2D;
-(function (C2D) {
-    var Delay = (function (_super) {
-        __extends(Delay, _super);
-        function Delay() {
-            _super.apply(this, arguments);
-        }
-        return Delay;
-    })(C2D.Animation);
-    C2D.Delay = Delay;
-})(C2D || (C2D = {}));
-/**
  * 定义打字延时动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1976,7 +1993,7 @@ var C2D;
 /// <reference path="C2D/_Animation/WaitForClick.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.2.2';
+    C2D.version = '0.2.3';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map
