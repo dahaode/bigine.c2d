@@ -1189,7 +1189,7 @@ var C2D;
          * 构造函数。
          */
         function TextPhrase(clob, color) {
-            this._t = clob || '';
+            this._t = (clob || '').toString();
             this._c = color || '';
         }
         /**

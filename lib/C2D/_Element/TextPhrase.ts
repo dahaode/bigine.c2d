@@ -35,7 +35,7 @@ namespace C2D {
          * 构造函数。
          */
         constructor(clob?: string, color?: string) {
-            this._t = clob || '';
+            this._t = (clob || '').toString();
             this._c = color || '';
         }
 
