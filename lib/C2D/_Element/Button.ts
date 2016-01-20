@@ -52,8 +52,8 @@ namespace C2D {
                 this.a(defaults.o(1));
             if (hover)
                 this.a(hover.o(0));
-            var animes: Fade[] = [],
-                anime: Fade;
+            var animes: Animation[] = [],
+                anime: Animation;
             return <Button> this.addEventListener('focus', () => {
                 Util.each(animes, (animation: Animation) => {
                     animation.h();
@@ -63,11 +63,6 @@ namespace C2D {
                     anime = new FadeIn(250);
                     animes.push(anime);
                     hover.p(anime);
-                }
-                if (defaults) {
-                    anime = new FadeOut(250);
-                    animes.push(anime);
-                    defaults.p(anime);
                 }
             }).addEventListener('blur', () => {
                 Util.each(animes, (animation: Animation) => {
@@ -79,19 +74,12 @@ namespace C2D {
                     animes.push(anime);
                     hover.p(anime);
                 }
-                if (defaults) {
-                    anime = new FadeIn(250);
-                    animes.push(anime);
-                    defaults.p(anime);
-                }
             }).addEventListener('click', (event: Util.IEvent<Button>) => {
                 Util.each(animes, (animation: Animation) => {
                     animation.h();
                 });
                 if (hover)
                     hover.o(1);
-                if (defaults)
-                    defaults.o(0);
                 if (this._c) return;
                 this._c = true;
                 callback(event);

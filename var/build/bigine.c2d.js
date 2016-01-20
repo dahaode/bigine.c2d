@@ -1654,11 +1654,6 @@ var C2D;
                     animes.push(anime);
                     hover.p(anime);
                 }
-                if (defaults) {
-                    anime = new C2D.FadeOut(250);
-                    animes.push(anime);
-                    defaults.p(anime);
-                }
             }).addEventListener('blur', function () {
                 Util.each(animes, function (animation) {
                     animation.h();
@@ -1669,19 +1664,12 @@ var C2D;
                     animes.push(anime);
                     hover.p(anime);
                 }
-                if (defaults) {
-                    anime = new C2D.FadeIn(250);
-                    animes.push(anime);
-                    defaults.p(anime);
-                }
             }).addEventListener('click', function (event) {
                 Util.each(animes, function (animation) {
                     animation.h();
                 });
                 if (hover)
                     hover.o(1);
-                if (defaults)
-                    defaults.o(0);
                 if (_this._c)
                     return;
                 _this._c = true;
