@@ -147,6 +147,26 @@ namespace C2D {
         }
 
         /**
+         * 设置高度。
+         */
+        public sH(value: number): Element {
+            this._b.h = value;
+            if (!this.gO())
+                return this;
+            return this.f();
+        }
+
+        /**
+         * 设置宽度。
+         */
+        public sW(value: number): Element {
+            this._b.w = value;
+            if (!this.gO())
+                return this;
+            return this.f();
+        }
+
+        /**
          * 缩放。
          */
         public s(ratio: number): Element {
@@ -255,6 +275,13 @@ namespace C2D {
         public $p(parent: Sprite): Element {
             this._p = parent;
             return this;
+        }
+
+        /**
+         * 获取名称。
+         */
+        public gN(): string {
+            return '';
         }
     }
 }

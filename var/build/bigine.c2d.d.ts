@@ -61,6 +61,8 @@ declare namespace __Bigine_C2D {
         gB(): IBounds;
         x(value: number): Element;
         y(value: number): Element;
+        sH(value: number): Element;
+        sW(value: number): Element;
         s(ratio: number): Element;
         gS(): number;
         r(degrees: number): Element;
@@ -73,6 +75,7 @@ declare namespace __Bigine_C2D {
         gI(): string;
         f(): Element;
         $p(parent: Sprite): Element;
+        gN(): string;
     }
     class Sprite extends Element implements Util.IEmittable {
         protected _d: Element[];
@@ -88,8 +91,8 @@ declare namespace __Bigine_C2D {
         addEventListener(type: string, listener: Util.IEventListener<Sprite>): Sprite;
         removeEventListener(type: string, listener: Util.IEventListener<Sprite>): Sprite;
         dispatchEvent(event: Util.IEvent<Sprite>): Sprite;
-        a(element: Element, before?: string): Sprite;
-        a(element: Element, before?: Element): Sprite;
+        a(element: Element, before?: string, step?: number): Sprite;
+        a(element: Element, before?: Element, step?: number): Sprite;
         e(element: Element): Sprite;
         c(): Sprite;
         q(id: string): Element[];
@@ -155,13 +158,18 @@ declare namespace __Bigine_C2D {
         constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
         constructor(bounds: IBounds, color: string, absolute?: boolean);
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        gN(): string;
     }
     class Image extends Element {
         private _d;
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean);
+        private _l;
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: boolean);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: boolean);
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
         protected $r(): Promise<HTMLImageElement>[];
+        $d(): Promise<HTMLImageElement>;
+        gN(): string;
+        $p(parent?: Sprite): Sprite;
     }
     class TextPhrase {
         static FONT: string;
@@ -268,6 +276,30 @@ declare namespace __Bigine_C2D {
         constructor(callback?: Util.IEventListener<Sprite>);
         $p(element: Sprite, elapsed: number, done: () => void): void;
         $h(): void;
+    }
+    interface IShutterMetas extends Util.IHashTable<any> {
+        direction: string;
+    }
+    class Shutter extends Animation {
+        private _cs;
+        constructor(duration: number, metas: IShutterMetas);
+        protected $p(element: Element, elpased: number): void;
+    }
+    interface IZoomMetas extends Util.IHashTable<any> {
+        mx: number;
+        my: number;
+        scale: number;
+    }
+    class Zoom extends Animation {
+        private _b;
+        constructor(duration: number, metas: IZoomMetas);
+        protected $p(element: Element, elpased: number): void;
+    }
+    class Shake extends Animation {
+        private _x;
+        private _y;
+        constructor(duration: number);
+        protected $p(element: Element, elpased: number): void;
     }
     var version: string;
 }

@@ -1,4 +1,9 @@
 var __Bigine_Util = require("bigine.util");
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /**
  * 定义包异常。
  *
@@ -7,11 +12,6 @@ var __Bigine_Util = require("bigine.util");
  * @license   GPL-3.0
  * @file      E.ts
  */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var C2D;
 (function (C2D) {
     var E = (function (_super) {
@@ -20,15 +20,15 @@ var C2D;
          * 构造函数。
          */
         function E(message) {
+            _super.call(this);
             if ('captureStackTrace' in Error)
                 Error['captureStackTrace'](this, E);
-            _super.call(this);
             this.name = 'BigineC2DError';
             this.message = message;
         }
         E.ELEMENT_DEFERRED = '元素并未添加至舞台中';
         return E;
-    })(Error);
+    }(Error));
     C2D.E = E;
 })(C2D || (C2D = {}));
 /**
@@ -110,7 +110,7 @@ var C2D;
          */
         ACenter._ = [];
         return ACenter;
-    })();
+    }());
     C2D.ACenter = ACenter;
 })(C2D || (C2D = {}));
 /**
@@ -244,7 +244,7 @@ var C2D;
             return this._i;
         };
         return Animation;
-    })();
+    }());
     C2D.Animation = Animation;
     var Animation;
     (function (Animation) {
@@ -383,6 +383,24 @@ var C2D;
             return this.f();
         };
         /**
+         * 设置高度。
+         */
+        Element.prototype.sH = function (value) {
+            this._b.h = value;
+            if (!this.gO())
+                return this;
+            return this.f();
+        };
+        /**
+         * 设置宽度。
+         */
+        Element.prototype.sW = function (value) {
+            this._b.w = value;
+            if (!this.gO())
+                return this;
+            return this.f();
+        };
+        /**
          * 缩放。
          */
         Element.prototype.s = function (ratio) {
@@ -482,8 +500,14 @@ var C2D;
             this._p = parent;
             return this;
         };
+        /**
+         * 获取名称。
+         */
+        Element.prototype.gN = function () {
+            return '';
+        };
         return Element;
-    })();
+    }());
     C2D.Element = Element;
 })(C2D || (C2D = {}));
 /**
@@ -600,7 +624,7 @@ var C2D;
             });
             return this;
         };
-        Sprite.prototype.a = function (element, before) {
+        Sprite.prototype.a = function (element, before, step) {
             var index = -1;
             if ('string' == typeof before)
                 before = this.q(before)[0];
@@ -608,6 +632,8 @@ var C2D;
                 index = Util.indexOf(this._d, before);
             if (-1 == index)
                 index = this._d.length;
+            if (step)
+                index = index + step;
             this._d.splice(index, 0, element.$p(this));
             if (!this.gO())
                 return this;
@@ -677,7 +703,7 @@ var C2D;
             return resources;
         };
         return Sprite;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Sprite = Sprite;
 })(C2D || (C2D = {}));
 /**
@@ -721,7 +747,7 @@ var C2D;
             return '';
         };
         return SpriteMouseEvent;
-    })();
+    }());
     C2D.SpriteMouseEvent = SpriteMouseEvent;
 })(C2D || (C2D = {}));
 /**
@@ -747,7 +773,7 @@ var C2D;
             return 'focus';
         };
         return SpriteFocusEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteFocusEvent = SpriteFocusEvent;
 })(C2D || (C2D = {}));
 /**
@@ -773,7 +799,7 @@ var C2D;
             return 'blur';
         };
         return SpriteBlurEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteBlurEvent = SpriteBlurEvent;
 })(C2D || (C2D = {}));
 /**
@@ -799,7 +825,7 @@ var C2D;
             return 'mousemove';
         };
         return SpriteMouseMoveEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteMouseMoveEvent = SpriteMouseMoveEvent;
 })(C2D || (C2D = {}));
 /**
@@ -825,7 +851,7 @@ var C2D;
             return 'click';
         };
         return SpriteClickEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteClickEvent = SpriteClickEvent;
 })(C2D || (C2D = {}));
 /**
@@ -1066,7 +1092,7 @@ var C2D;
             });
         };
         return Stage;
-    })(C2D.Sprite);
+    }(C2D.Sprite));
     C2D.Stage = Stage;
 })(C2D || (C2D = {}));
 /**
@@ -1107,8 +1133,14 @@ var C2D;
             }
             return _super.prototype.d.call(this, context);
         };
+        /**
+         * 获取名称。
+         */
+        Color.prototype.gN = function () {
+            return 'Color';
+        };
         return Color;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Color = Color;
 })(C2D || (C2D = {}));
 /**
@@ -1124,10 +1156,16 @@ var C2D;
 (function (C2D) {
     var Image = (function (_super) {
         __extends(Image, _super);
-        function Image(image, x, y, w, h, absolute) {
+        function Image(image, x, y, w, h, absolute, tile) {
             var _this = this;
             _super.call(this, x, y, w, h, absolute);
             this._d = image;
+            if (!x || 'number' == typeof x) {
+                this._l = !!tile;
+            }
+            else {
+                this._l = !!w;
+            }
             if (!this._b.w || !this._b.h)
                 image.then(function (img) {
                     if (_this._b.w) {
@@ -1155,7 +1193,8 @@ var C2D;
                         context.globalAlpha = opacity;
                     }
                     var bounds = _this.gB();
-                    context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    _this._l ? context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                        context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
                     if (1 != opacity)
                         context.restore();
                     return context;
@@ -1169,8 +1208,28 @@ var C2D;
         Image.prototype.$r = function () {
             return [this._d];
         };
+        /**
+         * 获取需绘制地图片。
+         */
+        Image.prototype.$d = function () {
+            return this._d;
+        };
+        /**
+         * 获取名称。
+         */
+        Image.prototype.gN = function () {
+            return 'Image';
+        };
+        /**
+         * 设置父元素。
+         */
+        Image.prototype.$p = function (parent) {
+            if (!parent && this._p)
+                return this._p;
+            return _super.prototype.$p.call(this, parent);
+        };
         return Image;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Image = Image;
 })(C2D || (C2D = {}));
 /**
@@ -1295,7 +1354,7 @@ var C2D;
          */
         TextPhrase.FONT = '"Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, sans-serif';
         return TextPhrase;
-    })();
+    }());
     C2D.TextPhrase = TextPhrase;
 })(C2D || (C2D = {}));
 /**
@@ -1314,17 +1373,17 @@ var C2D;
     var Text = (function (_super) {
         __extends(Text, _super);
         function Text(x, y, w, h, size, lineHeight, align, absolute) {
-            this._t = [];
-            this._tf = [16, 24, '#000'];
-            this._ts = [0, 0, 0, '#000'];
             if ('object' == typeof x) {
                 _super.call(this, x, size);
+                this._tf = [16, 24, '#000'];
                 this._tf[0] = 0 | y;
                 this._tf[1] = 0 | Math.max(y, w);
+                this._tf[2] = x['c'] || '#000';
                 this._l = h;
             }
             else {
                 _super.call(this, x, y, w, h, absolute);
+                this._tf = [16, 24, '#000'];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
@@ -1339,6 +1398,7 @@ var C2D;
                     this._l = aligns.Left;
             }
             this._t = [];
+            this._ts = [0, 0, 0, '#000'];
         }
         /**
          * 缩放。
@@ -1467,7 +1527,7 @@ var C2D;
             return this.f();
         };
         return Text;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Text = Text;
     var Text;
     (function (Text) {
@@ -1531,7 +1591,7 @@ var C2D;
             element.o((this._m.opacity - this._o) * elpased / this._d + this._o);
         };
         return Fade;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Fade = Fade;
 })(C2D || (C2D = {}));
 /**
@@ -1556,7 +1616,7 @@ var C2D;
             });
         }
         return FadeIn;
-    })(C2D.Fade);
+    }(C2D.Fade));
     C2D.FadeIn = FadeIn;
 })(C2D || (C2D = {}));
 /**
@@ -1581,7 +1641,7 @@ var C2D;
             });
         }
         return FadeOut;
-    })(C2D.Fade);
+    }(C2D.Fade));
     C2D.FadeOut = FadeOut;
 })(C2D || (C2D = {}));
 /**
@@ -1601,7 +1661,7 @@ var C2D;
             _super.apply(this, arguments);
         }
         return Delay;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Delay = Delay;
 })(C2D || (C2D = {}));
 /**
@@ -1680,7 +1740,7 @@ var C2D;
             });
         };
         return Button;
-    })(C2D.Sprite);
+    }(C2D.Sprite));
     C2D.Button = Button;
 })(C2D || (C2D = {}));
 /**
@@ -1726,7 +1786,7 @@ var C2D;
             });
         };
         return Combo;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Combo = Combo;
 })(C2D || (C2D = {}));
 /**
@@ -1769,7 +1829,7 @@ var C2D;
             element.volume = this._v - this._v * elpased / this._d;
         };
         return AudioFadeOut;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.AudioFadeOut = AudioFadeOut;
 })(C2D || (C2D = {}));
 /**
@@ -1815,7 +1875,7 @@ var C2D;
                 .y((this._m.y - this._y) * elpased / this._d + this._y);
         };
         return Move;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Move = Move;
 })(C2D || (C2D = {}));
 /**
@@ -1879,7 +1939,7 @@ var C2D;
             });
         };
         return Type;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Type = Type;
 })(C2D || (C2D = {}));
 /**
@@ -1919,7 +1979,7 @@ var C2D;
             }
         };
         return TypeDelay;
-    })(C2D.Delay);
+    }(C2D.Delay));
     C2D.TypeDelay = TypeDelay;
 })(C2D || (C2D = {}));
 /**
@@ -1969,8 +2029,179 @@ var C2D;
                 this._r();
         };
         return WaitForClick;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.WaitForClick = WaitForClick;
+})(C2D || (C2D = {}));
+/**
+ * 声明百叶窗动画元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/IShutterMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/**
+ * 定义百叶窗渐变动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Shutter.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="IShutterMetas.ts" />
+/// <reference path="../_Element/Image.ts" />
+/// <reference path="../_Element/Stage.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var Shutter = (function (_super) {
+        __extends(Shutter, _super);
+        /**
+         * 构造函数。
+         */
+        function Shutter(duration, metas) {
+            _super.call(this, duration, metas);
+            this._cs = [];
+        }
+        /**
+         * 帧执行。
+         */
+        Shutter.prototype.$p = function (element, elpased) {
+            var _this = this;
+            var count = 10, maxH = Math.round(720 / count), maxW = Math.round(1280 / count), parent = element.$p(), metas = this._m;
+            switch (elpased) {
+                case 1:
+                    this._cs = [];
+                    for (var i = 0; i < count; i++) {
+                        var bound = metas.direction == 'H' ?
+                            { x: 0, y: maxH * i, w: 1280, h: Math.ceil(maxH / this._d) } :
+                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(element.$d(), bound, false, true);
+                        parent.a(image, element, 1);
+                        this._cs.push(image);
+                    }
+                    break;
+                case this._d:
+                    element.o(1);
+                    Util.each(this._cs, function (image) {
+                        parent.e(image);
+                    });
+                    this._cs = [];
+                    break;
+                default:
+                    Util.each(this._cs, function (image) {
+                        metas.direction == 'H' ?
+                            image.sH(Math.ceil(maxH / _this._d * elpased)) :
+                            image.sW(Math.ceil(maxW / _this._d * elpased));
+                    });
+                    break;
+            }
+        };
+        return Shutter;
+    }(C2D.Animation));
+    C2D.Shutter = Shutter;
+})(C2D || (C2D = {}));
+/**
+ * 声明放大缩小镜头动画元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/IZoomMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/**
+ * 定义放大缩小镜头动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Zoom.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="IZoomMetas.ts" />
+/// <reference path="../_Element/Element.ts" />
+var C2D;
+(function (C2D) {
+    var Zoom = (function (_super) {
+        __extends(Zoom, _super);
+        /**
+         * 构造函数。
+         */
+        function Zoom(duration, metas) {
+            _super.call(this, duration, metas);
+        }
+        /**
+         * 帧执行。
+         */
+        Zoom.prototype.$p = function (element, elpased) {
+            if (1 == elpased)
+                this._b = element.gB();
+            var metas = this._m, scale = metas.scale, px = scale * (5 / 3 - 1) * 1280 / this._d, py = scale * (5 / 3 - 1) * 720 / this._d;
+            element.x(Math.round(this._b.x - metas.mx * px * elpased))
+                .y(Math.round(this._b.y - metas.my * py * elpased))
+                .sW(Math.round(this._b.w + px * elpased))
+                .sH(Math.round(this._b.h + py * elpased));
+        };
+        return Zoom;
+    }(C2D.Animation));
+    C2D.Zoom = Zoom;
+})(C2D || (C2D = {}));
+/**
+ * 定义抖动镜头动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Shake.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="../_Element/Element.ts" />
+var C2D;
+(function (C2D) {
+    var Shake = (function (_super) {
+        __extends(Shake, _super);
+        /**
+         * 构造函数。
+         */
+        function Shake(duration) {
+            _super.call(this, duration || 500);
+        }
+        /**
+         * 帧执行。
+         */
+        Shake.prototype.$p = function (element, elpased) {
+            if (1 == elpased) {
+                var bounds = element.gB();
+                this._x = bounds.x;
+                this._y = bounds.y;
+            }
+            if (this._d == elpased) {
+                element.x(this._x)
+                    .y(this._y);
+            }
+            else {
+                var mod = elpased % 4, rector = 4;
+                switch (mod) {
+                    case 1:
+                        element.x(this._y + rector);
+                        break;
+                    case 2:
+                        element.y(this._x + rector);
+                        break;
+                    case 3:
+                        element.x(this._x);
+                        break;
+                    default:
+                        element.y(this._y);
+                        break;
+                }
+            }
+        };
+        return Shake;
+    }(C2D.Animation));
+    C2D.Shake = Shake;
 })(C2D || (C2D = {}));
 /**
  * 定义包主程序文件。
@@ -1993,6 +2224,9 @@ var C2D;
 /// <reference path="C2D/_Animation/Type.ts" />
 /// <reference path="C2D/_Animation/TypeDelay.ts" />
 /// <reference path="C2D/_Animation/WaitForClick.ts" />
+/// <reference path="C2D/_Animation/Shutter.ts" />
+/// <reference path="C2D/_Animation/Zoom.ts" />
+/// <reference path="C2D/_Animation/Shake.ts" />
 var C2D;
 (function (C2D) {
     C2D.version = '0.2.3';

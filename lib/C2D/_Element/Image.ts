@@ -17,13 +17,23 @@ namespace C2D {
         private _d: Promise<HTMLImageElement>;
 
         /**
+         * 平铺。
+         */
+        private _l: boolean;
+
+        /**
          * 构造函数。
          */
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean);
-        constructor(image: Promise<HTMLImageElement>, x?: any, y?: any, w?: any, h?: any, absolute?: any) {
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: boolean);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: boolean);
+        constructor(image: Promise<HTMLImageElement>, x?: any, y?: any, w?: any, h?: any, absolute?: any, tile?: boolean) {
             super(x, y, w, h, absolute);
             this._d = image;
+            if (!x || 'number' == typeof x) {
+                this._l = !!tile;
+            } else {
+                this._l = !!w;
+            }
             if (!this._b.w || !this._b.h)
                 image.then((img: HTMLImageElement) => {
                     if (this._b.w) {
@@ -49,7 +59,8 @@ namespace C2D {
                         context.globalAlpha = opacity;
                     }
                     var bounds: IBounds = this.gB();
-                    context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    this._l ? context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                        context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
                     if (1 != opacity)
                         context.restore();
                     return context;
@@ -63,6 +74,29 @@ namespace C2D {
          */
         protected $r(): Promise<HTMLImageElement>[] {
             return [this._d];
+        }
+
+        /**
+         * 获取需绘制地图片。
+         */
+        public $d(): Promise<HTMLImageElement> {
+            return this._d;
+        }
+
+        /**
+         * 获取名称。
+         */
+        public gN(): string {
+            return 'Image';
+        }
+
+        /**
+         * 设置父元素。
+         */
+        public $p(parent?: Sprite): Sprite {
+            if (!parent && this._p)
+                return <Sprite> this._p;
+            return <Sprite> super.$p(parent);
         }
     }
 }

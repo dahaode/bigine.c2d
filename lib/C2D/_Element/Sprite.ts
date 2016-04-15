@@ -142,9 +142,9 @@ namespace C2D {
         /**
          * 添加元素。
          */
-        public a(element: Element, before?: string): Sprite;
-        public a(element: Element, before?: Element): Sprite;
-        public a(element: Element, before?: any): Sprite {
+        public a(element: Element, before?: string, step?: number): Sprite;
+        public a(element: Element, before?: Element, step?: number): Sprite;
+        public a(element: Element, before?: any, step?: number): Sprite {
             var index: number = -1;
             if ('string' == typeof before)
                 before = this.q(before)[0];
@@ -152,6 +152,8 @@ namespace C2D {
                 index = Util.indexOf(this._d, before);
             if (-1 == index)
                 index = this._d.length;
+            if (step)
+                index = index + step;
             this._d.splice(index, 0, element.$p(this));
             if (!this.gO())
                 return this;

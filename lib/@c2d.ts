@@ -20,6 +20,9 @@
 /// <reference path="C2D/_Animation/Type.ts" />
 /// <reference path="C2D/_Animation/TypeDelay.ts" />
 /// <reference path="C2D/_Animation/WaitForClick.ts" />
+/// <reference path="C2D/_Animation/Shutter.ts" />
+/// <reference path="C2D/_Animation/Zoom.ts" />
+/// <reference path="C2D/_Animation/Shake.ts" />
 
 namespace C2D {
     export var version: string = '${BIGINE_MODULE_VERSION}';

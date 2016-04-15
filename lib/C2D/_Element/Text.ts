@@ -40,16 +40,16 @@ namespace C2D {
         constructor(x: number, y: number, w: number, h: number, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
         constructor(bounds: IBounds, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
         constructor(x: any, y?: any, w?: any, h?: any, size?: any, lineHeight?: any, align?: any, absolute?: boolean) {
-            this._t = [];
-            this._tf = [16, 24, '#000'];
-            this._ts = [0, 0, 0, '#000'];
             if ('object' == typeof x) {
                 super(x, size);
+                this._tf = [16, 24, '#000'];
                 this._tf[0] = 0 | y;
                 this._tf[1] = 0 | Math.max(y, w);
+                this._tf[2] = x['c'] || '#000';
                 this._l = h;
             } else {
                 super(x, y, w, h, absolute);
+                this._tf = [16, 24, '#000'];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
@@ -64,6 +64,7 @@ namespace C2D {
                     this._l = aligns.Left;
             }
             this._t = [];
+            this._ts = [0, 0, 0, '#000'];
         }
 
         /**

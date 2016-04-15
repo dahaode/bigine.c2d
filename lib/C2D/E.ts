@@ -15,9 +15,9 @@ namespace C2D {
          * 构造函数。
          */
         constructor(message: string) {
+            super();
             if ('captureStackTrace' in Error)
                 Error['captureStackTrace'](this, E);
-            super();
             this.name = 'BigineC2DError';
             this.message = message;
         }

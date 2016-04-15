@@ -46,5 +46,12 @@ namespace C2D {
             }
             return super.d(context);
         }
+
+        /**
+         * 获取名称。
+         */
+        public gN(): string {
+            return 'Color';
+        }
     }
 }
