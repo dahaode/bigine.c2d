@@ -58,10 +58,25 @@ namespace C2D {
         private _k: [number, ImageData];
 
         /**
+         * 绘制排期次数。
+         */
+        private _n: boolean[];
+
+        /**
+         * 真实绘制画板上下文。
+         */
+        private _w: CanvasRenderingContext2D;
+
+        /**
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
-            var canvas: HTMLCanvasElement = context.canvas;
+            let canvas: HTMLCanvasElement = context.canvas,
+                shadow: HTMLCanvasElement = document.createElement('canvas');
+            shadow.width = canvas.width;
+            shadow.height = canvas.height;
+            shadow.style.display = 'none';
+            canvas.parentNode.appendChild(shadow);
             super(0, 0, canvas.width, canvas.height, false, true);
             this._c = context;
             this.z();
@@ -77,7 +92,7 @@ namespace C2D {
             this._h = [
                 (event: MouseEvent) => {
                     event.stopPropagation();
-                    var sprites: Sprite[][] = this.$s(event.offsetX * this._z, event.offsetY * this._z),
+                    let sprites: Sprite[][] = this.$s(event.offsetX * this._z, event.offsetY * this._z),
                         ev: SpriteMouseEvent;
                     if (sprites[0].length) {
                         ev = new SpriteFocusEvent(this._m);
@@ -106,6 +121,8 @@ namespace C2D {
             this._e = [];
             this._u = -1;
             this._k = [0, undefined];
+            this._n = [];
+            this._w = shadow.getContext('2d');
             this.b(context.canvas);
         }
 
@@ -162,9 +179,7 @@ namespace C2D {
                 element.dispatchEvent(event);
             });
             if (fresh)
-                Animation.f(() => {
-                    this.d();
-                }, true);
+                this.$d(true);
             return this;
         }
 
@@ -189,14 +204,17 @@ namespace C2D {
                     return Util.Q.every(this._d, (element: Element, index: number) => {
                         if (this._k[0]) {
                             if (index < this._k[0])
-                                return this._c;
+                                return this._w;
                             if (index == this._k[0])
-                                this._c.putImageData(this._k[1], 0, 0);
+                                this._w.putImageData(this._k[1], 0, 0);
                         }
                         if (index && index == this._u && this._u != this._k[0])
-                            this._k = [index, this._c.getImageData(0, 0, 1280, 720)];
-                        return element.d(this._c);
+                            this._k = [index, this._w.getImageData(0, 0, 1280, 720)];
+                        return element.d(this._w);
                     });
+                }).then(() => {
+                    this._c.drawImage(this._w.canvas, 0, 0, 1280, 720);
+                    return this._c;
                 });
         }
 
@@ -287,6 +305,25 @@ namespace C2D {
             }
             Util.each(sprites, (element: Sprite) => {
                 element.dispatchEvent(ev);
+            });
+        }
+
+        /**
+         * 绘制调度。
+         *
+         * 确保每一帧只绘制一次。
+         */
+        private $d(triggered: boolean = false): void {
+            let q: boolean[] = this._n;
+            if (triggered && 2 > q.length)
+                q.push(false);
+            if (!q.length || q[0]) return;
+            q[0] = true;
+            Animation.f(() => {
+                this.d().then(() => {
+                    q.shift();
+                    this.$d();
+                });
             });
         }
     }

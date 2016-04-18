@@ -194,6 +194,12 @@ namespace C2D {
     export namespace Animation {
         let raf: typeof window.requestAnimationFrame,
             jobs: FrameRequestCallback[] = [],
+            proxy: FrameRequestCallback = (time: number) => {
+                Util.each(jobs.splice(0, jobs.length), (callback: FrameRequestCallback) => {
+                    callback(time);
+                });
+                raf(proxy);
+            },
             elapsed: number = 0,
             size: number;
 
@@ -203,11 +209,9 @@ namespace C2D {
                 window.webkitRequestAnimationFrame ||
                 window.mozRequestAnimationFrame ||
                 window.oRequestAnimationFrame;
-            if (!raf) {
-                raf = (callback: FrameRequestCallback) => {
-                    jobs.push(callback);
-                    return 0;
-                };
+            if (raf) {
+                raf(proxy);
+            } else
                 setInterval(() => {
                     elapsed += 5;
                     size = jobs.length;
@@ -216,15 +220,16 @@ namespace C2D {
                         callback(elapsed);
                     });
                 }, 5);
-            }
-        } else
-            raf = (callback: FrameRequestCallback) => 0;
+        }
 
         /**
          * 帧处理。
          */
         export function f(callback: FrameRequestCallback, draw?: boolean): void {
-            raf.call(window, callback);
+            if (draw) {
+                jobs.unshift(callback);
+            } else
+                jobs.push(callback);
         }
     }
 }

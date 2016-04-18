@@ -139,6 +139,8 @@ declare namespace __Bigine_C2D {
         private _e;
         private _u;
         private _k;
+        private _n;
+        private _w;
         constructor(context: CanvasRenderingContext2D);
         x(distance: number): Stage;
         y(distance: number): Stage;
@@ -152,6 +154,7 @@ declare namespace __Bigine_C2D {
         h(): void;
         protected $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]];
         protected $c(): void;
+        private $d(triggered?);
     }
     class Color extends Element {
         private _d;
