@@ -25,9 +25,9 @@ namespace C2D {
         private _l: Text.Align;
 
         /**
-         * 字体配置（字号，行高，颜色）。
+         * 字体配置（字号，行高，颜色，字间距）。
          */
-        private _tf: [number, number, string];
+        private _tf: [number, number, string, number];
 
         /**
          * 阴影配置（横向偏移，纵向偏移，大小，颜色）。
@@ -42,14 +42,14 @@ namespace C2D {
         constructor(x: any, y?: any, w?: any, h?: any, size?: any, lineHeight?: any, align?: any, absolute?: boolean) {
             if ('object' == typeof x) {
                 super(x, size);
-                this._tf = [16, 24, '#000'];
+                this._tf = [16, 24, '#000', 0];
                 this._tf[0] = 0 | y;
                 this._tf[1] = 0 | Math.max(y, w);
                 this._tf[2] = x['c'] || '#000';
                 this._l = h;
             } else {
                 super(x, y, w, h, absolute);
-                this._tf = [16, 24, '#000'];
+                this._tf = [16, 24, '#000', 0];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
@@ -94,6 +94,7 @@ namespace C2D {
                 m: [number, number], // length, width
                 offset: number;
             if (opacity && this._t.length) {
+                context.canvas.style.letterSpacing = this._tf[3] + 'px';  // 设置字间距
                 Util.each(this._t, (phrase: TextPhrase) => {
                     offset = 0;
                     while (offset != phrase.gL()) {
@@ -151,6 +152,14 @@ namespace C2D {
          */
         public gTf(): [number, number] {
             return <[number, number]> this._tf.slice(0, 2);
+        }
+
+        /**
+         * 设置字间距。
+         */
+        public tl(letterSpacing: number): Text {
+            this._tf[3] = 0 | letterSpacing;
+            return this;
         }
 
         /**

@@ -1,4 +1,9 @@
 var __Bigine_Util = require("bigine.util");
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /**
  * 定义包异常。
  *
@@ -7,11 +12,6 @@ var __Bigine_Util = require("bigine.util");
  * @license   GPL-3.0
  * @file      E.ts
  */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var C2D;
 (function (C2D) {
     var E = (function (_super) {
@@ -28,7 +28,7 @@ var C2D;
         }
         E.ELEMENT_DEFERRED = '元素并未添加至舞台中';
         return E;
-    })(Error);
+    }(Error));
     C2D.E = E;
 })(C2D || (C2D = {}));
 /**
@@ -110,7 +110,7 @@ var C2D;
          */
         ACenter._ = [];
         return ACenter;
-    })();
+    }());
     C2D.ACenter = ACenter;
 })(C2D || (C2D = {}));
 /**
@@ -244,7 +244,7 @@ var C2D;
             return this._i;
         };
         return Animation;
-    })();
+    }());
     C2D.Animation = Animation;
     var Animation;
     (function (Animation) {
@@ -512,7 +512,7 @@ var C2D;
             return '';
         };
         return Element;
-    })();
+    }());
     C2D.Element = Element;
 })(C2D || (C2D = {}));
 /**
@@ -708,7 +708,7 @@ var C2D;
             return resources;
         };
         return Sprite;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Sprite = Sprite;
 })(C2D || (C2D = {}));
 /**
@@ -752,7 +752,7 @@ var C2D;
             return '';
         };
         return SpriteMouseEvent;
-    })();
+    }());
     C2D.SpriteMouseEvent = SpriteMouseEvent;
 })(C2D || (C2D = {}));
 /**
@@ -778,7 +778,7 @@ var C2D;
             return 'focus';
         };
         return SpriteFocusEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteFocusEvent = SpriteFocusEvent;
 })(C2D || (C2D = {}));
 /**
@@ -804,7 +804,7 @@ var C2D;
             return 'blur';
         };
         return SpriteBlurEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteBlurEvent = SpriteBlurEvent;
 })(C2D || (C2D = {}));
 /**
@@ -830,7 +830,7 @@ var C2D;
             return 'mousemove';
         };
         return SpriteMouseMoveEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteMouseMoveEvent = SpriteMouseMoveEvent;
 })(C2D || (C2D = {}));
 /**
@@ -856,7 +856,7 @@ var C2D;
             return 'click';
         };
         return SpriteClickEvent;
-    })(C2D.SpriteMouseEvent);
+    }(C2D.SpriteMouseEvent));
     C2D.SpriteClickEvent = SpriteClickEvent;
 })(C2D || (C2D = {}));
 /**
@@ -1125,7 +1125,7 @@ var C2D;
             });
         };
         return Stage;
-    })(C2D.Sprite);
+    }(C2D.Sprite));
     C2D.Stage = Stage;
 })(C2D || (C2D = {}));
 /**
@@ -1173,7 +1173,7 @@ var C2D;
             return 'Color';
         };
         return Color;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Color = Color;
 })(C2D || (C2D = {}));
 /**
@@ -1262,7 +1262,7 @@ var C2D;
             return _super.prototype.$p.call(this, parent);
         };
         return Image;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Image = Image;
 })(C2D || (C2D = {}));
 /**
@@ -1387,7 +1387,7 @@ var C2D;
          */
         TextPhrase.FONT = '"Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, sans-serif';
         return TextPhrase;
-    })();
+    }());
     C2D.TextPhrase = TextPhrase;
 })(C2D || (C2D = {}));
 /**
@@ -1408,7 +1408,7 @@ var C2D;
         function Text(x, y, w, h, size, lineHeight, align, absolute) {
             if ('object' == typeof x) {
                 _super.call(this, x, size);
-                this._tf = [16, 24, '#000'];
+                this._tf = [16, 24, '#000', 0];
                 this._tf[0] = 0 | y;
                 this._tf[1] = 0 | Math.max(y, w);
                 this._tf[2] = x['c'] || '#000';
@@ -1416,7 +1416,7 @@ var C2D;
             }
             else {
                 _super.call(this, x, y, w, h, absolute);
-                this._tf = [16, 24, '#000'];
+                this._tf = [16, 24, '#000', 0];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
@@ -1455,6 +1455,7 @@ var C2D;
             line = schedules[0], aligns = Text.Align, bounds = this.gB(), width = bounds.w, m, // length, width
             offset;
             if (opacity && this._t.length) {
+                context.canvas.style.letterSpacing = this._tf[3] + 'px'; // 设置字间距
                 Util.each(this._t, function (phrase) {
                     offset = 0;
                     while (offset != phrase.gL()) {
@@ -1514,6 +1515,13 @@ var C2D;
             return this._tf.slice(0, 2);
         };
         /**
+         * 设置字间距。
+         */
+        Text.prototype.tl = function (letterSpacing) {
+            this._tf[3] = 0 | letterSpacing;
+            return this;
+        };
+        /**
          * 设置颜色。
          */
         Text.prototype.tc = function (color) {
@@ -1560,7 +1568,7 @@ var C2D;
             return this.f();
         };
         return Text;
-    })(C2D.Element);
+    }(C2D.Element));
     C2D.Text = Text;
     var Text;
     (function (Text) {
@@ -1624,7 +1632,7 @@ var C2D;
             element.o((this._m.opacity - this._o) * elpased / this._d + this._o);
         };
         return Fade;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Fade = Fade;
 })(C2D || (C2D = {}));
 /**
@@ -1649,7 +1657,7 @@ var C2D;
             });
         }
         return FadeIn;
-    })(C2D.Fade);
+    }(C2D.Fade));
     C2D.FadeIn = FadeIn;
 })(C2D || (C2D = {}));
 /**
@@ -1674,7 +1682,7 @@ var C2D;
             });
         }
         return FadeOut;
-    })(C2D.Fade);
+    }(C2D.Fade));
     C2D.FadeOut = FadeOut;
 })(C2D || (C2D = {}));
 /**
@@ -1694,7 +1702,7 @@ var C2D;
             _super.apply(this, arguments);
         }
         return Delay;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Delay = Delay;
 })(C2D || (C2D = {}));
 /**
@@ -1773,7 +1781,7 @@ var C2D;
             });
         };
         return Button;
-    })(C2D.Sprite);
+    }(C2D.Sprite));
     C2D.Button = Button;
 })(C2D || (C2D = {}));
 /**
@@ -1819,7 +1827,7 @@ var C2D;
             });
         };
         return Combo;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Combo = Combo;
 })(C2D || (C2D = {}));
 /**
@@ -1862,7 +1870,7 @@ var C2D;
             element.volume = this._v - this._v * elpased / this._d;
         };
         return AudioFadeOut;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.AudioFadeOut = AudioFadeOut;
 })(C2D || (C2D = {}));
 /**
@@ -1908,7 +1916,7 @@ var C2D;
                 .y((this._m.y - this._y) * elpased / this._d + this._y);
         };
         return Move;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Move = Move;
 })(C2D || (C2D = {}));
 /**
@@ -1972,7 +1980,7 @@ var C2D;
             });
         };
         return Type;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Type = Type;
 })(C2D || (C2D = {}));
 /**
@@ -2012,7 +2020,7 @@ var C2D;
             }
         };
         return TypeDelay;
-    })(C2D.Delay);
+    }(C2D.Delay));
     C2D.TypeDelay = TypeDelay;
 })(C2D || (C2D = {}));
 /**
@@ -2062,7 +2070,7 @@ var C2D;
                 this._r();
         };
         return WaitForClick;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.WaitForClick = WaitForClick;
 })(C2D || (C2D = {}));
 /**
@@ -2132,7 +2140,7 @@ var C2D;
             }
         };
         return Shutter;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Shutter = Shutter;
 })(C2D || (C2D = {}));
 /**
@@ -2178,7 +2186,7 @@ var C2D;
                 .sH(Math.round(this._b.h + py * elpased));
         };
         return Zoom;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Zoom = Zoom;
 })(C2D || (C2D = {}));
 /**
@@ -2233,7 +2241,7 @@ var C2D;
             }
         };
         return Shake;
-    })(C2D.Animation);
+    }(C2D.Animation));
     C2D.Shake = Shake;
 })(C2D || (C2D = {}));
 /**

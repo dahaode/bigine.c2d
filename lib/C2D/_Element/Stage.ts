@@ -259,7 +259,7 @@ namespace C2D {
         /**
          * 根据座标查找元素。
          */
-        protected $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]] {
+        public $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]] {
             x |= 0;
             y |= 0;
             var sprites: [Sprite[], Sprite[], Sprite[]] = [[], [], []],

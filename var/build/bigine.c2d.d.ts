@@ -152,7 +152,7 @@ declare namespace __Bigine_C2D {
         b(viewport: HTMLElement): Stage;
         t(x?: number, y?: number): Stage;
         h(): void;
-        protected $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]];
+        $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]];
         protected $c(): void;
         private $d(triggered?);
     }
@@ -199,6 +199,7 @@ declare namespace __Bigine_C2D {
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
         tf(size: number, lineHeight?: number): Text;
         gTf(): [number, number];
+        tl(letterSpacing: number): Text;
         tc(color: string): Text;
         gTc(): string;
         ts(size: number, offsetX?: number, offsetY?: number, color?: string): Text;
