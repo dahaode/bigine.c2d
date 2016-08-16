@@ -2270,7 +2270,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Shake.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.2.5';
+    C2D.version = '0.2.6';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map
