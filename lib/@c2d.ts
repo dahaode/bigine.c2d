@@ -23,6 +23,7 @@
 /// <reference path="C2D/_Animation/Shutter.ts" />
 /// <reference path="C2D/_Animation/Zoom.ts" />
 /// <reference path="C2D/_Animation/Shake.ts" />
+/// <reference path="C2D/_Animation/AudioFade.ts" />
 
 namespace C2D {
     export var version: string = '${BIGINE_MODULE_VERSION}';

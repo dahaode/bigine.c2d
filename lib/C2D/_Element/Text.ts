@@ -9,6 +9,7 @@
 
 /// <reference path="Element.ts" />
 /// <reference path="TextPhrase.ts" />
+/// <reference path="IPoint.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;
@@ -35,6 +36,21 @@ namespace C2D {
         private _ts: [number, number, number, string];
 
         /**
+         * 当前文本结束位置。
+         */
+        private _cp: IPoint;
+
+        /**
+         * 当前文本行数。
+         */
+        private _tl: number;
+
+        /**
+         * 当前文本首行偏移 offset。
+         */
+        private _to: number;
+
+        /**
          * 构造函数。
          */
         constructor(x: number, y: number, w: number, h: number, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
@@ -47,12 +63,14 @@ namespace C2D {
                 this._tf[1] = 0 | Math.max(y, w);
                 this._tf[2] = x['c'] || '#000';
                 this._l = h;
+                this._cp = { x: x['x'], y: x['y'] };
             } else {
                 super(x, y, w, h, absolute);
                 this._tf = [16, 24, '#000', 0];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
+                this._cp = { x: x, y: y };
             }
             let aligns: typeof Text.Align = Text.Align;
             switch (this._l) {
@@ -64,6 +82,7 @@ namespace C2D {
                     this._l = aligns.Left;
             }
             this._t = [];
+            this._to = 0;
             this._ts = [0, 0, 0, '#000'];
         }
 
@@ -90,7 +109,8 @@ namespace C2D {
                 line: [number, TextPhrase, number, number][] = schedules[0],
                 aligns: typeof Text.Align = Text.Align,
                 bounds: IBounds = this.gB(),
-                width: number = bounds.w,
+                //width: number = bounds.w,
+                width: number = bounds.w - this._to,
                 m: [number, number], // length, width
                 offset: number;
             if (opacity && this._t.length) {
@@ -124,7 +144,7 @@ namespace C2D {
                         if (this._l == aligns.Center)
                             offset = 0 | offset / 2;
                     } else
-                        offset = 0; // x
+                        offset = index == 0 ? this._to : 0; // x
                     offset += bounds.x;
                     width = bounds.y + this._tf[1] * (1 + index); // y
                     Util.each(line2, (section: [number, TextPhrase, number, number]) => {
@@ -135,6 +155,9 @@ namespace C2D {
                 if (1 != opacity)
                     context.restore();
             }
+            (<IPoint> this._cp).x = offset;
+            (<IPoint> this._cp).y = width;
+            this._tl = schedules.length;
             return super.d(context);
         }
 
@@ -167,6 +190,14 @@ namespace C2D {
          */
         public tc(color: string): Text {
             this._tf[2] = color || '#000';
+            return this;
+        }
+
+        /**
+         * 设置当前文本首行偏移 offset。
+         */
+        public to(offset: number): Text {
+            this._to = offset || 0;
             return this;
         }
 
@@ -212,7 +243,22 @@ namespace C2D {
          */
         public c(): Text {
             this._t = [];
+            this._tl = 0;
             return <Text> this.f();
+        }
+
+        /**
+         * 获取光标位置。
+         */
+        public gCp(): IBounds {
+            return <IBounds> this._cp;
+        }
+
+        /**
+         * 获取文本行数。
+         */
+        public gTl(): number {
+            return this._tl;
         }
     }
 

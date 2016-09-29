@@ -1391,6 +1391,14 @@ var C2D;
     C2D.TextPhrase = TextPhrase;
 })(C2D || (C2D = {}));
 /**
+ * 声明点元素区域接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/IPoint.ts
+ */
+/**
  * 定义文字画面元素组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1400,6 +1408,7 @@ var C2D;
  */
 /// <reference path="Element.ts" />
 /// <reference path="TextPhrase.ts" />
+/// <reference path="IPoint.ts" />
 var C2D;
 (function (C2D) {
     var Util = __Bigine_Util;
@@ -1413,6 +1422,7 @@ var C2D;
                 this._tf[1] = 0 | Math.max(y, w);
                 this._tf[2] = x['c'] || '#000';
                 this._l = h;
+                this._cp = { x: x['x'], y: x['y'] };
             }
             else {
                 _super.call(this, x, y, w, h, absolute);
@@ -1420,6 +1430,7 @@ var C2D;
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
                 this._l = align;
+                this._cp = { x: x, y: y };
             }
             var aligns = Text.Align;
             switch (this._l) {
@@ -1431,6 +1442,7 @@ var C2D;
                     this._l = aligns.Left;
             }
             this._t = [];
+            this._to = 0;
             this._ts = [0, 0, 0, '#000'];
         }
         /**
@@ -1452,7 +1464,9 @@ var C2D;
         Text.prototype.d = function (context) {
             var _this = this;
             var opacity = this.gO(), schedules = [[]], // width, TextPhrase, offset, length
-            line = schedules[0], aligns = Text.Align, bounds = this.gB(), width = bounds.w, m, // length, width
+            line = schedules[0], aligns = Text.Align, bounds = this.gB(), 
+            //width: number = bounds.w,
+            width = bounds.w - this._to, m, // length, width
             offset;
             if (opacity && this._t.length) {
                 context.canvas.style.letterSpacing = this._tf[3] + 'px'; // 设置字间距
@@ -1487,7 +1501,7 @@ var C2D;
                             offset = 0 | offset / 2;
                     }
                     else
-                        offset = 0; // x
+                        offset = index == 0 ? _this._to : 0; // x
                     offset += bounds.x;
                     width = bounds.y + _this._tf[1] * (1 + index); // y
                     Util.each(line2, function (section) {
@@ -1498,6 +1512,9 @@ var C2D;
                 if (1 != opacity)
                     context.restore();
             }
+            this._cp.x = offset;
+            this._cp.y = width;
+            this._tl = schedules.length;
             return _super.prototype.d.call(this, context);
         };
         /**
@@ -1526,6 +1543,10 @@ var C2D;
          */
         Text.prototype.tc = function (color) {
             this._tf[2] = color || '#000';
+            return this;
+        };
+        Text.prototype.to = function (offset) {
+            this._to = offset || 0;
             return this;
         };
         /**
@@ -1565,7 +1586,20 @@ var C2D;
          */
         Text.prototype.c = function () {
             this._t = [];
+            this._tl = 0;
             return this.f();
+        };
+        /**
+         * 获取光标位置。
+         */
+        Text.prototype.gCp = function () {
+            return this._cp;
+        };
+        /**
+         * 获取文本行数。
+         */
+        Text.prototype.gTl = function () {
+            return this._tl;
         };
         return Text;
     }(C2D.Element));
@@ -2245,6 +2279,43 @@ var C2D;
     C2D.Shake = Shake;
 })(C2D || (C2D = {}));
 /**
+ * 定义音量渐变动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/AudioFade.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="IAudioFadeMetas.ts" />
+var C2D;
+(function (C2D) {
+    var AudioFade = (function (_super) {
+        __extends(AudioFade, _super);
+        /**
+         * 构造函数。
+         */
+        function AudioFade(duration, volume) {
+            _super.call(this, duration, {
+                volume: volume
+            });
+            this._va = volume;
+        }
+        /**
+         * 帧执行。
+         */
+        AudioFade.prototype.$p = function (element, elpased) {
+            if (1 == elpased) {
+                this._vb = element.volume;
+                this._v = (this._va - this._vb) / this._d;
+            }
+            element.volume = this._vb + this._v * elpased;
+        };
+        return AudioFade;
+    }(C2D.Animation));
+    C2D.AudioFade = AudioFade;
+})(C2D || (C2D = {}));
+/**
  * 定义包主程序文件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2268,6 +2339,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Shutter.ts" />
 /// <reference path="C2D/_Animation/Zoom.ts" />
 /// <reference path="C2D/_Animation/Shake.ts" />
+/// <reference path="C2D/_Animation/AudioFade.ts" />
 var C2D;
 (function (C2D) {
     C2D.version = '0.2.6';

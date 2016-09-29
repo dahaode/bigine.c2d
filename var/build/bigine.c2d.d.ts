@@ -188,11 +188,18 @@ declare namespace __Bigine_C2D {
         gL(): number;
         a(length: number): TextPhrase;
     }
+    interface IPoint {
+        x: number;
+        y: number;
+    }
     class Text extends Element {
         private _t;
         private _l;
         private _tf;
         private _ts;
+        private _cp;
+        private _tl;
+        private _to;
         constructor(x: number, y: number, w: number, h: number, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
         constructor(bounds: IBounds, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
         s(ratio: number): Text;
@@ -201,12 +208,15 @@ declare namespace __Bigine_C2D {
         gTf(): [number, number];
         tl(letterSpacing: number): Text;
         tc(color: string): Text;
+        to(offset: number): Text;
         gTc(): string;
         ts(size: number, offsetX?: number, offsetY?: number, color?: string): Text;
         gTs(): [number, number, number, string];
         a(text: TextPhrase): Text;
         gT(): TextPhrase[];
         c(): Text;
+        gCp(): IBounds;
+        gTl(): number;
     }
     namespace Text {
         enum Align {
@@ -304,6 +314,13 @@ declare namespace __Bigine_C2D {
         private _y;
         constructor(duration: number);
         protected $p(element: Element, elpased: number): void;
+    }
+    class AudioFade extends Animation {
+        private _vb;
+        private _va;
+        private _v;
+        constructor(duration: number, volume: number);
+        protected $p(element: HTMLAudioElement, elpased: number): void;
     }
     var version: string;
 }
