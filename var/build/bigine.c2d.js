@@ -860,410 +860,35 @@ var C2D;
     C2D.SpriteClickEvent = SpriteClickEvent;
 })(C2D || (C2D = {}));
 /**
- * 定义全画面舞台组件。
+ * 定义计算 Canvas 元素。
  *
- * @author    郑煜宇 <yzheng@atfacg.com>
+ * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      C2D/_Element/Stage.ts
+ * @file      C2D/_Element/Context.ts
  */
-/// <reference path="Sprite.ts" />
-/// <reference path="../_Event/SpriteFocusEvent.ts" />
-/// <reference path="../_Event/SpriteBlurEvent.ts" />
-/// <reference path="../_Event/SpriteMouseMoveEvent.ts" />
-/// <reference path="../_Event/SpriteClickEvent.ts" />
 var C2D;
 (function (C2D) {
-    var Util = __Bigine_Util;
-    var Stage = (function (_super) {
-        __extends(Stage, _super);
-        /**
-         * 构造函数。
-         */
-        function Stage(context) {
-            var _this = this;
-            var canvas = context.canvas, shadow = document.createElement('canvas');
-            shadow.width = canvas.width;
-            shadow.height = canvas.height;
-            shadow.style.display = 'none';
-            canvas.parentNode.appendChild(shadow);
-            _super.call(this, 0, 0, canvas.width, canvas.height, false, true);
-            this._c = context;
-            this.z();
-            this._m = {
-                target: this,
-                x: 0,
-                y: 0,
-                from: this,
-                fromX: 0,
-                fromY: 0,
-                stage: this
-            };
-            this._h = [
-                function (event) {
-                    event.stopPropagation();
-                    var sprites = _this.$s(event.offsetX * _this._z, event.offsetY * _this._z), ev;
-                    if (sprites[0].length) {
-                        ev = new C2D.SpriteFocusEvent(_this._m);
-                        Util.each(sprites[0], function (element) {
-                            element.dispatchEvent(ev);
-                        });
-                    }
-                    if (sprites[2].length) {
-                        ev = new C2D.SpriteBlurEvent(_this._m);
-                        Util.each(sprites[2], function (element) {
-                            element.dispatchEvent(ev);
-                        });
-                    }
-                    if (sprites[1].length) {
-                        ev = new C2D.SpriteMouseMoveEvent(_this._m);
-                        Util.each(sprites[1], function (element) {
-                            element.dispatchEvent(ev);
-                        });
-                    }
-                    return false;
-                },
-                function (event) {
-                    _this.$c();
-                }
-            ];
-            this._e = [];
-            this._u = -1;
-            this._k = [0, undefined];
-            this._n = [];
-            this._w = shadow.getContext('2d');
-            this.b(context.canvas);
+    var Context = (function () {
+        function Context() {
         }
-        /**
-         * 移动 X 轴座标。
-         */
-        Stage.prototype.x = function (distance) {
-            return this;
-        };
-        /**
-         * 移动 Y 轴座标。
-         */
-        Stage.prototype.y = function (distance) {
-            return this;
-        };
-        /**
-         * 缩放。
-         */
-        Stage.prototype.s = function (ratio) {
-            return this;
-        };
-        /**
-         * 旋转。
-         */
-        Stage.prototype.r = function (degrees) {
-            return this;
-        };
-        /**
-         * 发生变更。
-         */
-        Stage.prototype.f = function (child) {
-            var _this = this;
-            var fresh = !this._f, event;
-            this._f = true;
-            if (child) {
-                Util.some(this._d, function (element, index) {
-                    if (child == element) {
-                        _this._u = index;
-                        return true;
-                    }
-                    return false;
-                });
+        Context.gC = function (create) {
+            if (create) {
+                var canvas = document.createElement('canvas');
+                canvas.width = 1280;
+                canvas.height = 720;
+                canvas.style.display = 'none';
+                Context._c = canvas.getContext('2d');
+                Context._f = Promise.resolve(Context._c);
             }
-            else
-                this._u = 0;
-            if (this._k[0] > this._u)
-                this._k = [0, undefined];
-            Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
-                if (!event)
-                    event = new C2D.SpriteFocusEvent(_this._m);
-                element.dispatchEvent(event);
-            });
-            if (fresh)
-                this.$d(true);
-            return this;
+            return Context._c;
         };
-        /**
-         * 计算缩放比例。
-         */
-        Stage.prototype.z = function () {
-            var canvas = this._c.canvas;
-            this._z = canvas.width / canvas.scrollWidth;
-            return this;
+        Context.pC = function (func) {
+            Context._f = Context._f.then(func);
         };
-        /**
-         * 绘制。
-         */
-        Stage.prototype.d = function () {
-            var _this = this;
-            if (!this._f)
-                return Promise.resolve(this._c);
-            return Promise.all(this.$r())
-                .then(function () {
-                _this._f = false;
-                return Util.Q.every(_this._d, function (element, index) {
-                    if (_this._k[0]) {
-                        if (index < _this._k[0])
-                            return _this._w;
-                        if (index == _this._k[0])
-                            _this._w.putImageData(_this._k[1], 0, 0);
-                    }
-                    if (index && index == _this._u && _this._u != _this._k[0])
-                        _this._k = [index, _this._w.getImageData(0, 0, 1280, 720)];
-                    return element.d(_this._w);
-                });
-            }).then(function () {
-                _this._c.drawImage(_this._w.canvas, 0, 0, 1280, 720);
-                return _this._c;
-            });
-        };
-        /**
-         * 绑定视图。
-         */
-        Stage.prototype.b = function (viewport) {
-            if (this._v) {
-                this._v.removeEventListener('mousemove', this._h[0]);
-                this._v.removeEventListener('click', this._h[1]);
-            }
-            this._v = viewport;
-            this._v.addEventListener('mousemove', this._h[0]);
-            this._v.addEventListener('click', this._h[1]);
-            return this;
-        };
-        /**
-         * 模拟点击。
-         */
-        Stage.prototype.t = function (x, y) {
-            x = x || this._m.x;
-            y = y || this._m.y;
-            var real = this._m;
-            if (x != this._m.x || y != this._m.y)
-                this.$s(x, y);
-            this.$c();
-            this._m = real;
-            return this;
-        };
-        /**
-         * 停止工作。
-         */
-        Stage.prototype.h = function () {
-            var _this = this;
-            this.f = function () { return _this; };
-            this._f = false;
-            this._v.removeEventListener('mousemove', this._h[0]);
-            this._v.removeEventListener('click', this._h[1]);
-        };
-        /**
-         * 根据座标查找元素。
-         */
-        Stage.prototype.$s = function (x, y) {
-            x |= 0;
-            y |= 0;
-            var sprites = [[], [], []], els = this.$m(x, y).slice(0, -1), // 查找新座标点新树
-            bounds, inside, out;
-            Util.each(this._e, function (element) {
-                bounds = element.gB();
-                inside = -1 != Util.indexOf(els, element);
-                out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
-                if (!inside && !out) {
-                    inside = true;
-                    els.push(element);
-                }
-                sprites[inside ? 1 : 2].push(element);
-            });
-            this._e = els;
-            this._m.fromX = this._m.x;
-            this._m.fromY = this._m.y;
-            this._m.x = x;
-            this._m.y = y;
-            Util.each(els, function (element) {
-                if (-1 == Util.indexOf(sprites[1], element))
-                    sprites[0].push(element);
-            });
-            this._m.target = sprites[0][0] || sprites[1][0];
-            this._m.from = sprites[2][0];
-            return sprites;
-        };
-        /**
-         * 模拟点击。
-         */
-        Stage.prototype.$c = function () {
-            if (!this._m.target)
-                return;
-            var sprites = [this._m.target], parent = sprites[0].$p(), ev = new C2D.SpriteClickEvent(this._m);
-            while (parent && parent != this) {
-                sprites.push(parent);
-                parent = parent.$p();
-            }
-            Util.each(sprites, function (element) {
-                element.dispatchEvent(ev);
-            });
-        };
-        /**
-         * 绘制调度。
-         *
-         * 确保每一帧只绘制一次。
-         */
-        Stage.prototype.$d = function (triggered) {
-            var _this = this;
-            if (triggered === void 0) { triggered = false; }
-            var q = this._n;
-            if (triggered && 2 > q.length)
-                q.push(false);
-            if (!q.length || q[0])
-                return;
-            q[0] = true;
-            C2D.Animation.f(function () {
-                _this.d().then(function () {
-                    q.shift();
-                    _this.$d();
-                });
-            });
-        };
-        return Stage;
-    }(C2D.Sprite));
-    C2D.Stage = Stage;
-})(C2D || (C2D = {}));
-/**
- * 定义色块画面元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      C2D/_Element/Color.ts
- */
-/// <reference path="Element.ts" />
-var C2D;
-(function (C2D) {
-    var Color = (function (_super) {
-        __extends(Color, _super);
-        function Color(x, y, w, h, color, absolute) {
-            if ('object' == typeof x) {
-                _super.call(this, x, w);
-                this._d = y;
-            }
-            else {
-                _super.call(this, x, y, w, h, absolute);
-                this._d = color;
-            }
-        }
-        /**
-         * 绘制。
-         */
-        Color.prototype.d = function (context) {
-            var opacity = this.gO();
-            if (opacity) {
-                context.save();
-                context.globalAlpha = opacity;
-                var bounds = this.gB();
-                context.fillStyle = this._d;
-                context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);
-                context.restore();
-            }
-            return _super.prototype.d.call(this, context);
-        };
-        /**
-         * 获取名称。
-         */
-        Color.prototype.gN = function () {
-            return 'Color';
-        };
-        return Color;
-    }(C2D.Element));
-    C2D.Color = Color;
-})(C2D || (C2D = {}));
-/**
- * 定义图像画面元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      C2D/_Element/Image.ts
- */
-/// <reference path="Element.ts" />
-var C2D;
-(function (C2D) {
-    var Image = (function (_super) {
-        __extends(Image, _super);
-        function Image(image, x, y, w, h, absolute, tile) {
-            var _this = this;
-            _super.call(this, x, y, w, h, absolute);
-            this._d = image;
-            if (!x || 'number' == typeof x) {
-                this._l = !!tile;
-            }
-            else {
-                this._l = !!w;
-            }
-            if (!this._b.w || !this._b.h)
-                image.then(function (img) {
-                    if (_this._b.w) {
-                        _this._b.h = 0 | _this._b.w * img.height / img.width;
-                    }
-                    else if (_this._b.h) {
-                        _this._b.w = 0 | _this._b.h * img.width / img.height;
-                    }
-                    else {
-                        _this._b.w = img.width;
-                        _this._b.h = img.height;
-                    }
-                });
-        }
-        /**
-         * 绘制。
-         */
-        Image.prototype.d = function (context) {
-            var _this = this;
-            var opacity = this.gO();
-            if (opacity) {
-                return this._d.then(function (img) {
-                    if (1 != opacity) {
-                        context.save();
-                        context.globalAlpha = opacity;
-                    }
-                    var bounds = _this.gB();
-                    _this._l ? context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h, bounds.x, bounds.y, bounds.w, bounds.h) :
-                        context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
-                    if (1 != opacity)
-                        context.restore();
-                    return context;
-                });
-            }
-            return _super.prototype.d.call(this, context);
-        };
-        /**
-         * 获取需绘制地图片集合。
-         */
-        Image.prototype.$r = function () {
-            return [this._d];
-        };
-        /**
-         * 获取需绘制地图片。
-         */
-        Image.prototype.$d = function () {
-            return this._d;
-        };
-        /**
-         * 获取名称。
-         */
-        Image.prototype.gN = function () {
-            return 'Image';
-        };
-        /**
-         * 设置父元素。
-         */
-        Image.prototype.$p = function (parent) {
-            if (!parent && this._p)
-                return this._p;
-            return _super.prototype.$p.call(this, parent);
-        };
-        return Image;
-    }(C2D.Element));
-    C2D.Image = Image;
+        return Context;
+    }());
+    C2D.Context = Context;
 })(C2D || (C2D = {}));
 /**
  * 定义画面文字组件。
@@ -1332,7 +957,7 @@ var C2D;
             font = this._p.gTf();
             shadow = this._p.gTs();
             context.save();
-            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.font = font[0] + 'px/' + font[1] + 'px "' + font[2] + '", ' + TextPhrase.FONT;
             context.textBaseline = 'middle';
             if (shadow[2]) {
                 context.shadowBlur = shadow[2];
@@ -1359,7 +984,7 @@ var C2D;
                 return;
             context.save();
             context.fillStyle = color;
-            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.font = font[0] + 'px/' + font[1] + 'px "' + font[2] + '", ' + TextPhrase.FONT;
             context.textBaseline = 'middle';
             if (shadow[2]) {
                 context.shadowBlur = shadow[2];
@@ -1414,21 +1039,23 @@ var C2D;
     var Util = __Bigine_Util;
     var Text = (function (_super) {
         __extends(Text, _super);
-        function Text(x, y, w, h, size, lineHeight, align, absolute) {
+        function Text(x, y, w, h, font, size, lineHeight, align, absolute) {
             if ('object' == typeof x) {
                 _super.call(this, x, size);
-                this._tf = [16, 24, '#000', 0];
-                this._tf[0] = 0 | y;
-                this._tf[1] = 0 | Math.max(y, w);
+                this._tf = [16, 24, '#000', 0, ''];
+                this._tf[0] = 0 | w;
+                this._tf[1] = 0 | Math.max(w, h);
                 this._tf[2] = x['c'] || '#000';
-                this._l = h;
-                this._cp = { x: x['x'], y: x['y'] };
+                this._tf[4] = y || '';
+                this._l = font;
+                this._cp = { x: x.x, y: x.y };
             }
             else {
                 _super.call(this, x, y, w, h, absolute);
-                this._tf = [16, 24, '#000', 0];
+                this._tf = [16, 24, '#000', 0, ''];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
+                this._tf[4] = font || '';
                 this._l = align;
                 this._cp = { x: x, y: y };
             }
@@ -1520,16 +1147,21 @@ var C2D;
         /**
          * 设置字号。
          */
-        Text.prototype.tf = function (size, lineHeight) {
+        Text.prototype.tf = function (size, font, lineHeight) {
             this._tf[0] = 0 | size;
             this._tf[1] = 0 | Math.max(size, lineHeight);
+            this._tf[4] = font || '';
             return this;
         };
         /**
          * 获取字号。
          */
         Text.prototype.gTf = function () {
-            return this._tf.slice(0, 2);
+            var result = [0, 0, ''];
+            result[0] = this._tf[0];
+            result[1] = this._tf[1];
+            result[2] = this._tf[4];
+            return result;
         };
         /**
          * 设置字间距。
@@ -1545,6 +1177,9 @@ var C2D;
             this._tf[2] = color || '#000';
             return this;
         };
+        /**
+         * 设置当前文本首行偏移 offset。
+         */
         Text.prototype.to = function (offset) {
             this._to = offset || 0;
             return this;
@@ -1718,6 +1353,550 @@ var C2D;
         return FadeOut;
     }(C2D.Fade));
     C2D.FadeOut = FadeOut;
+})(C2D || (C2D = {}));
+/**
+ * 定义组件组合元素。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Component.ts
+ */
+/// <reference path="Element.ts" />
+/// <reference path="Text.ts" />
+/// <reference path="TextPhrase.ts" />
+/// <reference path="Context.ts" />
+/// <reference path="../_Animation/FadeIn.ts" />
+/// <reference path="../_Animation/FadeOut.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var Component = (function (_super) {
+        __extends(Component, _super);
+        function Component(theme, transparent, bound) {
+            var w = bound ? bound.w : 1280, h = bound ? bound.h : 720, canvas = document.createElement('canvas');
+            _super.call(this, 0, 0, w, h, transparent);
+            canvas.width = w;
+            canvas.height = h;
+            this._cw = canvas.getContext('2d');
+            this._tm = theme;
+            this._pi = false;
+            this.o(0);
+        }
+        /**
+         * 第一次绘制 Lazy Draw。
+         */
+        Component.prototype.pI = function () {
+            this._pi = true;
+            return this;
+        };
+        /**
+         * 发生变更。
+         */
+        Component.prototype.f = function (child) {
+            var _this = this;
+            C2D.Context.pC(function () { return _this.cache(); });
+            return _super.prototype.f.call(this, child);
+        };
+        /**
+         * 计算 Canvas 绘制缓存。
+         */
+        Component.prototype.cache = function () {
+            var _this = this;
+            return new Promise(function (resolve) {
+                var opacity = _this.gO();
+                var context = C2D.Context.gC();
+                if (!opacity || !_this._d.length) {
+                    _this._cw.clearRect(0, 0, 1280, 720);
+                    _this._f = false;
+                    resolve(context);
+                }
+                else {
+                    context.clearRect(0, 0, 1280, 720);
+                    if (1 != opacity) {
+                        context.save();
+                        context.globalAlpha = opacity;
+                    }
+                    Util.Q.every(_this._d, function (el) { return el.d(context); })
+                        .then(function () {
+                        if (1 != opacity)
+                            context.restore();
+                        _this._cw.clearRect(0, 0, 1280, 720);
+                        _this._cw.drawImage(context.canvas, 0, 0, 1280, 720);
+                        _this._f = false;
+                        resolve(context);
+                    });
+                }
+            });
+        };
+        /**
+         * 获取 Component 缓存。
+         */
+        Component.prototype.gC = function () {
+            return this._cw.canvas;
+        };
+        return Component;
+    }(C2D.Sprite));
+    C2D.Component = Component;
+})(C2D || (C2D = {}));
+/**
+ * 定义全画面舞台组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Stage.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../_Event/SpriteFocusEvent.ts" />
+/// <reference path="../_Event/SpriteBlurEvent.ts" />
+/// <reference path="../_Event/SpriteMouseMoveEvent.ts" />
+/// <reference path="../_Event/SpriteClickEvent.ts" />
+/// <reference path="Context.ts" />
+/// <reference path="Component.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var Stage = (function (_super) {
+        __extends(Stage, _super);
+        /**
+         * 构造函数。
+         */
+        function Stage(context) {
+            var _this = this;
+            var canvas = context.canvas, shadow = document.createElement('canvas'), middle = document.createElement('canvas'), parent = canvas.parentNode;
+            shadow.width = middle.width = canvas.width;
+            shadow.height = middle.height = canvas.height;
+            shadow.style.display = middle.style.display = 'none';
+            parent.appendChild(shadow);
+            parent.appendChild(middle);
+            parent.appendChild(C2D.Context.gC(true).canvas);
+            _super.call(this, 0, 0, canvas.width, canvas.height, false, true);
+            this._c = context;
+            this.z();
+            this._m = {
+                target: this,
+                x: 0,
+                y: 0,
+                from: this,
+                fromX: 0,
+                fromY: 0,
+                stage: this
+            };
+            this._h = [
+                function (event) {
+                    event.stopPropagation();
+                    var sprites = _this.$s(event.offsetX * _this._z, event.offsetY * _this._z), ev;
+                    if (sprites[0].length) {
+                        ev = new C2D.SpriteFocusEvent(_this._m);
+                        Util.each(sprites[0], function (element) {
+                            element.dispatchEvent(ev);
+                        });
+                    }
+                    if (sprites[2].length) {
+                        ev = new C2D.SpriteBlurEvent(_this._m);
+                        Util.each(sprites[2], function (element) {
+                            element.dispatchEvent(ev);
+                        });
+                    }
+                    if (sprites[1].length) {
+                        ev = new C2D.SpriteMouseMoveEvent(_this._m);
+                        Util.each(sprites[1], function (element) {
+                            element.dispatchEvent(ev);
+                        });
+                    }
+                    return false;
+                },
+                function (event) {
+                    _this.$c();
+                }
+            ];
+            this._e = [];
+            // this._u = -1;
+            // this._k = [0, undefined];
+            this._n = [];
+            this._w = shadow.getContext('2d');
+            this._g = middle.getContext('2d');
+            this.b(context.canvas);
+            Stage.f(function () {
+                _this._c.clearRect(0, 0, 1280, 720);
+                _this._c.drawImage(_this._g.canvas, 0, 0, canvas.width, canvas.height);
+            });
+        }
+        /**
+         * 移动 X 轴座标。
+         */
+        Stage.prototype.x = function (distance) {
+            return this;
+        };
+        /**
+         * 移动 Y 轴座标。
+         */
+        Stage.prototype.y = function (distance) {
+            return this;
+        };
+        /**
+         * 缩放。
+         */
+        Stage.prototype.s = function (ratio) {
+            return this;
+        };
+        /**
+         * 旋转。
+         */
+        Stage.prototype.r = function (degrees) {
+            return this;
+        };
+        /**
+         * 发生变更。
+         */
+        Stage.prototype.f = function (child) {
+            var _this = this;
+            var fresh = !this._f, event;
+            this._f = true;
+            /*
+            if (child) {
+                Util.some(this._d, (element: Element, index: number) => {
+                    if (child == element) {
+                        this._u = index;
+                        return true;
+                    }
+                    return false;
+                });
+            } else
+                this._u = 0;
+            if (this._k[0] > this._u)
+                this._k = [0, undefined];
+            */
+            Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
+                if (!event)
+                    event = new C2D.SpriteFocusEvent(_this._m);
+                element.dispatchEvent(event);
+            });
+            if (fresh)
+                this.$d(true);
+            return this;
+        };
+        /**
+         * 计算缩放比例。
+         */
+        Stage.prototype.z = function () {
+            var canvas = this._c.canvas;
+            this._z = canvas.width / canvas.scrollWidth;
+            return this;
+        };
+        /**
+         * 绘制。
+         */
+        Stage.prototype.d = function () {
+            var _this = this;
+            if (!this._f)
+                return Promise.resolve(this._c);
+            return Promise.all(this.$r())
+                .then(function () {
+                _this._f = false;
+                _this._w.clearRect(0, 0, 1280, 720);
+                return Util.Q.every(_this._d, function (element, index) {
+                    /*
+                    if (this._k[0]) {
+                        if (index < this._k[0])
+                            return this._w;
+                        if (index == this._k[0]) {
+                            this._w.putImageData(this._k[1], 0, 0);
+                        }
+                    }
+                    if (index && index == this._u && this._u != this._k[0])
+                       this._k = [index, this._w.getImageData(0, 0, 1280, 720)];
+                    this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
+                    return element.d(this._w);
+                    */
+                    //if (!('gC' in element)) {
+                    //    return this._w;
+                    //}
+                    if (!element.gO())
+                        return _this._w;
+                    _this._w.drawImage(element.gC(), 0, 0, 1280, 720);
+                    return _this._w;
+                });
+            }).then(function () {
+                _this._g.clearRect(0, 0, 1280, 720);
+                _this._g.drawImage(_this._w.canvas, 0, 0, 1280, 720);
+                return _this._g;
+            });
+        };
+        /**
+         * 绑定视图。
+         */
+        Stage.prototype.b = function (viewport) {
+            if (this._v) {
+                this._v.removeEventListener('mousemove', this._h[0]);
+                this._v.removeEventListener('click', this._h[1]);
+            }
+            this._v = viewport;
+            this._v.addEventListener('mousemove', this._h[0]);
+            this._v.addEventListener('click', this._h[1]);
+            return this;
+        };
+        /**
+         * 模拟点击。
+         */
+        Stage.prototype.t = function (x, y) {
+            x = x || this._m.x;
+            y = y || this._m.y;
+            var real = this._m;
+            if (x != this._m.x || y != this._m.y)
+                this.$s(x, y);
+            this.$c();
+            this._m = real;
+            return this;
+        };
+        /**
+         * 停止工作。
+         */
+        Stage.prototype.h = function () {
+            var _this = this;
+            this.f = function () { return _this; };
+            this._f = false;
+            this._v.removeEventListener('mousemove', this._h[0]);
+            this._v.removeEventListener('click', this._h[1]);
+        };
+        /**
+         * 根据座标查找元素。
+         */
+        Stage.prototype.$s = function (x, y) {
+            x |= 0;
+            y |= 0;
+            var sprites = [[], [], []], els = this.$m(x, y).slice(0, -1), // 查找新座标点新树
+            bounds, inside, out;
+            Util.each(this._e, function (element) {
+                bounds = element.gB();
+                inside = -1 != Util.indexOf(els, element);
+                out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
+                if (!inside && !out) {
+                    inside = true;
+                    els.push(element);
+                }
+                sprites[inside ? 1 : 2].push(element);
+            });
+            this._e = els;
+            this._m.fromX = this._m.x;
+            this._m.fromY = this._m.y;
+            this._m.x = x;
+            this._m.y = y;
+            Util.each(els, function (element) {
+                if (-1 == Util.indexOf(sprites[1], element))
+                    sprites[0].push(element);
+            });
+            this._m.target = sprites[0][0] || sprites[1][0];
+            this._m.from = sprites[2][0];
+            return sprites;
+        };
+        /**
+         * 模拟点击。
+         */
+        Stage.prototype.$c = function () {
+            if (!this._m.target)
+                return;
+            var sprites = [this._m.target], parent = sprites[0].$p(), ev = new C2D.SpriteClickEvent(this._m);
+            while (parent && parent != this) {
+                sprites.push(parent);
+                parent = parent.$p();
+            }
+            if (!sprites[sprites.length - 1].gO())
+                return;
+            Util.each(sprites, function (element) {
+                element.dispatchEvent(ev);
+            });
+        };
+        /**
+         * 绘制调度。
+         *
+         * 确保每一帧只绘制一次。
+         */
+        Stage.prototype.$d = function (triggered) {
+            var _this = this;
+            if (triggered === void 0) { triggered = false; }
+            var q = this._n;
+            if (triggered && 2 > q.length)
+                q.push(false);
+            if (!q.length || q[0])
+                return;
+            q[0] = true;
+            C2D.Animation.f(function () {
+                _this.d().then(function () {
+                    q.shift();
+                    _this.$d();
+                });
+            });
+        };
+        return Stage;
+    }(C2D.Sprite));
+    C2D.Stage = Stage;
+    var Stage;
+    (function (Stage) {
+        var raf, job, proxy = function (time) {
+            if (job)
+                job(time);
+            raf(proxy);
+        }, elapsed = 0, size;
+        if (Util.ENV.Window) {
+            raf = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf) {
+                raf(proxy);
+            }
+            else
+                setInterval(function () {
+                    elapsed += 5;
+                    if ((1 + elapsed % 50) % 3 || !size)
+                        return;
+                    job(elapsed);
+                }, 5);
+        }
+        /**
+         * 帧处理。
+         */
+        function f(callback) {
+            job = callback;
+        }
+        Stage.f = f;
+    })(Stage = C2D.Stage || (C2D.Stage = {}));
+})(C2D || (C2D = {}));
+/**
+ * 定义色块画面元素组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Color.ts
+ */
+/// <reference path="Element.ts" />
+var C2D;
+(function (C2D) {
+    var Color = (function (_super) {
+        __extends(Color, _super);
+        function Color(x, y, w, h, color, absolute) {
+            if ('object' == typeof x) {
+                _super.call(this, x, w);
+                this._d = y;
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._d = color;
+            }
+        }
+        /**
+         * 绘制。
+         */
+        Color.prototype.d = function (context) {
+            var opacity = this.gO();
+            if (opacity) {
+                context.save();
+                context.globalAlpha = opacity;
+                var bounds = this.gB();
+                context.fillStyle = this._d;
+                context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);
+                context.restore();
+            }
+            return _super.prototype.d.call(this, context);
+        };
+        /**
+         * 获取名称。
+         */
+        Color.prototype.gN = function () {
+            return 'Color';
+        };
+        return Color;
+    }(C2D.Element));
+    C2D.Color = Color;
+})(C2D || (C2D = {}));
+/**
+ * 定义图像画面元素组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Image.ts
+ */
+/// <reference path="Element.ts" />
+var C2D;
+(function (C2D) {
+    var Image = (function (_super) {
+        __extends(Image, _super);
+        function Image(image, x, y, w, h, absolute, tile) {
+            var _this = this;
+            _super.call(this, x, y, w, h, absolute);
+            this._d = image;
+            if (!x || 'number' == typeof x) {
+                this._l = !!tile;
+            }
+            else {
+                this._l = !!w;
+            }
+            if (!this._b.w || !this._b.h)
+                image.then(function (img) {
+                    if (_this._b.w) {
+                        _this._b.h = 0 | _this._b.w * img.height / img.width;
+                    }
+                    else if (_this._b.h) {
+                        _this._b.w = 0 | _this._b.h * img.width / img.height;
+                    }
+                    else {
+                        _this._b.w = img.width;
+                        _this._b.h = img.height;
+                    }
+                });
+        }
+        /**
+         * 绘制。
+         */
+        Image.prototype.d = function (context) {
+            var _this = this;
+            var opacity = this.gO();
+            if (opacity) {
+                return this._d.then(function (img) {
+                    if (1 != opacity) {
+                        context.save();
+                        context.globalAlpha = opacity;
+                    }
+                    var bounds = _this.gB();
+                    _this._l ? context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                        context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    if (1 != opacity)
+                        context.restore();
+                    return context;
+                });
+            }
+            return _super.prototype.d.call(this, context);
+        };
+        /**
+         * 获取需绘制地图片集合。
+         */
+        Image.prototype.$r = function () {
+            return [this._d];
+        };
+        /**
+         * 获取需绘制地图片。
+         */
+        Image.prototype.$d = function () {
+            return this._d;
+        };
+        /**
+         * 获取名称。
+         */
+        Image.prototype.gN = function () {
+            return 'Image';
+        };
+        /**
+         * 设置父元素。
+         */
+        Image.prototype.$p = function (parent) {
+            if (!parent && this._p)
+                return this._p;
+            return _super.prototype.$p.call(this, parent);
+        };
+        return Image;
+    }(C2D.Element));
+    C2D.Image = Image;
 })(C2D || (C2D = {}));
 /**
  * 定义冻结（延时）动画组件。
@@ -2145,22 +2324,26 @@ var C2D;
          */
         Shutter.prototype.$p = function (element, elpased) {
             var _this = this;
-            var count = 10, maxH = Math.round(720 / count), maxW = Math.round(1280 / count), parent = element.$p(), metas = this._m;
+            var count = 10, maxH = Math.round(720 / count), maxW = Math.round(1280 / count), 
+            //parent: Stage = <Stage> (<Component> element).$p(),
+            room = element.q('n')[0], metas = this._m;
             switch (elpased) {
                 case 1:
                     this._cs = [];
+                    room.o(0);
+                    element.o(1);
                     for (var i = 0; i < count; i++) {
                         var bound = metas.direction == 'H' ?
                             { x: 0, y: maxH * i, w: 1280, h: Math.ceil(maxH / this._d) } :
-                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(element.$d(), bound, false, true);
-                        parent.a(image, element, 1);
+                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(room.$d(), bound, false, true);
+                        element.a(image, room, 1);
                         this._cs.push(image);
                     }
                     break;
                 case this._d:
-                    element.o(1);
+                    room.o(1);
                     Util.each(this._cs, function (image) {
-                        parent.e(image);
+                        element.e(image);
                     });
                     this._cs = [];
                     break;
@@ -2340,9 +2523,10 @@ var C2D;
 /// <reference path="C2D/_Animation/Zoom.ts" />
 /// <reference path="C2D/_Animation/Shake.ts" />
 /// <reference path="C2D/_Animation/AudioFade.ts" />
+/// <reference path="C2D/_Element/Component.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.2.6';
+    C2D.version = '0.2.8';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

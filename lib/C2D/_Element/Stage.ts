@@ -12,6 +12,8 @@
 /// <reference path="../_Event/SpriteBlurEvent.ts" />
 /// <reference path="../_Event/SpriteMouseMoveEvent.ts" />
 /// <reference path="../_Event/SpriteClickEvent.ts" />
+/// <reference path="Context.ts" />
+/// <reference path="Component.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;
@@ -50,12 +52,12 @@ namespace C2D {
         /**
          * 发生变化地组合元素序号。
          */
-        private _u: number;
+        //private _u: number;
 
         /**
          * 绘制缓存。
          */
-        private _k: [number, ImageData];
+        //private _k: [number, ImageData];
 
         /**
          * 绘制排期次数。
@@ -68,15 +70,24 @@ namespace C2D {
         private _w: CanvasRenderingContext2D;
 
         /**
+         * 绘制画板中间缓存。
+         */
+        private _g: CanvasRenderingContext2D;
+
+        /**
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
             let canvas: HTMLCanvasElement = context.canvas,
-                shadow: HTMLCanvasElement = document.createElement('canvas');
-            shadow.width = canvas.width;
-            shadow.height = canvas.height;
-            shadow.style.display = 'none';
-            canvas.parentNode.appendChild(shadow);
+                shadow: HTMLCanvasElement = document.createElement('canvas'),
+                middle: HTMLCanvasElement = document.createElement('canvas'),
+                parent: Node = canvas.parentNode;
+            shadow.width = middle.width = canvas.width;
+            shadow.height = middle.height = canvas.height;
+            shadow.style.display = middle.style.display = 'none';
+            parent.appendChild(shadow);
+            parent.appendChild(middle);
+            parent.appendChild(Context.gC(true).canvas);
             super(0, 0, canvas.width, canvas.height, false, true);
             this._c = context;
             this.z();
@@ -119,11 +130,16 @@ namespace C2D {
                 }
             ];
             this._e = [];
-            this._u = -1;
-            this._k = [0, undefined];
+            // this._u = -1;
+            // this._k = [0, undefined];
             this._n = [];
             this._w = shadow.getContext('2d');
+            this._g = middle.getContext('2d');
             this.b(context.canvas);
+            Stage.f(() => {
+                this._c.clearRect(0, 0, 1280, 720);
+                this._c.drawImage(this._g.canvas, 0, 0, canvas.width, canvas.height);
+            });
         }
 
         /**
@@ -161,6 +177,7 @@ namespace C2D {
             var fresh: boolean = !this._f,
                 event: SpriteFocusEvent;
             this._f = true;
+            /*
             if (child) {
                 Util.some(this._d, (element: Element, index: number) => {
                     if (child == element) {
@@ -173,6 +190,7 @@ namespace C2D {
                 this._u = 0;
             if (this._k[0] > this._u)
                 this._k = [0, undefined];
+            */
             Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
                 if (!event)
                     event = new SpriteFocusEvent(this._m);
@@ -201,20 +219,32 @@ namespace C2D {
             return Promise.all(this.$r())
                 .then(() => {
                     this._f = false;
+                    this._w.clearRect(0, 0, 1280, 720);
                     return Util.Q.every(this._d, (element: Element, index: number) => {
+                        /*
                         if (this._k[0]) {
                             if (index < this._k[0])
                                 return this._w;
-                            if (index == this._k[0])
+                            if (index == this._k[0]) {
                                 this._w.putImageData(this._k[1], 0, 0);
+                            }
                         }
                         if (index && index == this._u && this._u != this._k[0])
-                            this._k = [index, this._w.getImageData(0, 0, 1280, 720)];
+                           this._k = [index, this._w.getImageData(0, 0, 1280, 720)];
+                        this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
                         return element.d(this._w);
+                        */
+                        //if (!('gC' in element)) {
+                        //    return this._w;
+                        //}
+                        if (!element.gO()) return this._w;
+                        this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
+                        return this._w;
                     });
                 }).then(() => {
-                    this._c.drawImage(this._w.canvas, 0, 0, 1280, 720);
-                    return this._c;
+                    this._g.clearRect(0, 0, 1280, 720);
+                    this._g.drawImage(this._w.canvas, 0, 0, 1280, 720);
+                    return this._g;
                 });
         }
 
@@ -303,6 +333,7 @@ namespace C2D {
                 sprites.push(parent);
                 parent = parent.$p();
             }
+            if (!(<Element> sprites[sprites.length - 1]).gO()) return;
             Util.each(sprites, (element: Sprite) => {
                 element.dispatchEvent(ev);
             });
@@ -325,6 +356,36 @@ namespace C2D {
                     this.$d();
                 });
             });
+        }
+    }
+
+    export namespace Stage {
+        let raf: typeof window.requestAnimationFrame,
+            job: FrameRequestCallback,
+            proxy: FrameRequestCallback = (time: number) => {
+                if (job) job(time);
+                raf(proxy);
+            },
+            elapsed: number = 0,
+            size: number;
+
+        if (Util.ENV.Window) {
+            raf = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf) {
+                raf(proxy);
+            } else
+                setInterval(() => {
+                    elapsed += 5;
+                    if ((1 + elapsed % 50) % 3 || !size) return;
+                    job(elapsed);
+                }, 5);
+        }
+
+        /**
+         * 帧处理。
+         */
+        export function f(callback: FrameRequestCallback): void {
+            job = callback;
         }
     }
 }

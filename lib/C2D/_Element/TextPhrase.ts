@@ -87,7 +87,7 @@ namespace C2D {
                     result2[1] += result3[1];
                     return result2;
                 },
-                font: [number, number],
+                font: [number, number, string],
                 shadow: [number, number, number, string],
                 result: [number, number];
             offset = clob.length;
@@ -96,7 +96,7 @@ namespace C2D {
             font = this._p.gTf();
             shadow = this._p.gTs();
             context.save();
-            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.font = font[0] + 'px/' + font[1] + 'px "' + font[2] + '", ' + TextPhrase.FONT;
             context.textBaseline = 'middle';
             if (shadow[2]) {
                 context.shadowBlur = shadow[2];
@@ -119,12 +119,12 @@ namespace C2D {
             if (!this._p) return;
             let clob: string = this._t.substr(offset || 0, length || this._t.length),
                 color: string = this._c || this._p.gTc(),
-                font: [number, number] = this._p.gTf(),
+                font: [number, number, string] = this._p.gTf(),
                 shadow: [number, number, number, string] = this._p.gTs();
             if (!clob.length) return;
             context.save();
             context.fillStyle = color;
-            context.font = font[0] + 'px/' + font[1] + 'px ' + TextPhrase.FONT;
+            context.font = font[0] + 'px/' + font[1] + 'px "' + font[2] + '", ' + TextPhrase.FONT;
             context.textBaseline = 'middle';
             if (shadow[2]) {
                 context.shadowBlur = shadow[2];

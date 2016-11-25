@@ -26,9 +26,9 @@ namespace C2D {
         private _l: Text.Align;
 
         /**
-         * 字体配置（字号，行高，颜色，字间距）。
+         * 字体配置（字号，行高，颜色，字间距，字体）。
          */
-        private _tf: [number, number, string, number];
+        private _tf: [number, number, string, number, string];
 
         /**
          * 阴影配置（横向偏移，纵向偏移，大小，颜色）。
@@ -53,22 +53,24 @@ namespace C2D {
         /**
          * 构造函数。
          */
-        constructor(x: number, y: number, w: number, h: number, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
-        constructor(bounds: IBounds, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
-        constructor(x: any, y?: any, w?: any, h?: any, size?: any, lineHeight?: any, align?: any, absolute?: boolean) {
+        constructor(x: number, y: number, w: number, h: number, font?: string, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
+        constructor(bounds: IBounds, font?: string, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
+        constructor(x: any, y?: any, w?: any, h?: any, font?: any, size?: any, lineHeight?: any, align?: any, absolute?: boolean) {
             if ('object' == typeof x) {
                 super(x, size);
-                this._tf = [16, 24, '#000', 0];
-                this._tf[0] = 0 | y;
-                this._tf[1] = 0 | Math.max(y, w);
+                this._tf = [16, 24, '#000', 0, ''];
+                this._tf[0] = 0 | w;
+                this._tf[1] = 0 | Math.max(w, h);
                 this._tf[2] = x['c'] || '#000';
-                this._l = h;
-                this._cp = { x: x['x'], y: x['y'] };
+                this._tf[4] = y || '';
+                this._l = font;
+                this._cp = { x: x.x, y: x.y };
             } else {
                 super(x, y, w, h, absolute);
-                this._tf = [16, 24, '#000', 0];
+                this._tf = [16, 24, '#000', 0, ''];
                 this._tf[0] = 0 | size;
                 this._tf[1] = 0 | Math.max(size, lineHeight);
+                this._tf[4] = font || '';
                 this._l = align;
                 this._cp = { x: x, y: y };
             }
@@ -164,17 +166,22 @@ namespace C2D {
         /**
          * 设置字号。
          */
-        public tf(size: number, lineHeight?: number): Text {
+        public tf(size: number, font?: string, lineHeight?: number): Text {
             this._tf[0] = 0 | size;
             this._tf[1] = 0 | Math.max(size, lineHeight);
+            this._tf[4] = font || '';
             return this;
         }
 
         /**
          * 获取字号。
          */
-        public gTf(): [number, number] {
-            return <[number, number]> this._tf.slice(0, 2);
+        public gTf(): [number, number, string] {
+            let result: [number, number, string] = [0, 0, ''];
+            result[0] = this._tf[0];
+            result[1] = this._tf[1];
+            result[2] = this._tf[4];
+            return result;
         }
 
         /**

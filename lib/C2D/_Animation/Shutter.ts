@@ -36,25 +36,28 @@ namespace C2D {
             let count: number = 10,
                 maxH: number = Math.round(720 / count),
                 maxW: number = Math.round(1280 / count),
-                parent: Stage = <Stage> (<Image> element).$p(),
+                //parent: Stage = <Stage> (<Component> element).$p(),
+                room: Element = (<Sprite> element).q('n')[0],
                 metas: IShutterMetas = <IShutterMetas> this._m;
             switch (elpased) {
                 case 1:
                     this._cs = [];
+                    room.o(0);
+                    element.o(1);
                     for (var i: number = 0; i < count; i++) {
                         let bound: IBounds = metas.direction == 'H' ?
                             { x: 0, y: maxH * i, w: 1280, h: Math.ceil(maxH / this._d) } :
                             { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 },
-                            image: Image = new Image((<Image> element).$d(), bound, false, true);
-                        parent.a(image, element, 1);
+                            image: Image = new Image((<Image> room).$d(), bound, false, true);
+                        (<Component> element).a(image, room, 1);
                         this._cs.push(image);
                     }
                     break;
 
                 case this._d:
-                    element.o(1);
+                    room.o(1);
                     Util.each(this._cs, (image: Image) => {
-                        parent.e(image);
+                        (<Component> element).e(image);
                     });
                     this._cs = [];
                     break;

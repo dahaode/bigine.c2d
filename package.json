@@ -1,6 +1,6 @@
 {
   "name": "bigine.c2d",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Bigine 引擎 Canvas2D 包。",
   "main": "var/build/bigine.c2d.js",
   "scripts": {
