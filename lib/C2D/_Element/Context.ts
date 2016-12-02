@@ -19,6 +19,9 @@ namespace C2D {
          */
         private static _f: Promise<CanvasRenderingContext2D>;
 
+        /**
+         * create calc canvas。
+         */
         public static gC(create?: boolean): CanvasRenderingContext2D {
             if (create) {
                 let canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -31,6 +34,9 @@ namespace C2D {
             return Context._c;
         }
 
+        /**
+         * push into calc queue。
+         */
         public static pC(func: () => Promise<CanvasRenderingContext2D>): void {
             Context._f = Context._f.then(func);
         }

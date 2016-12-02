@@ -234,9 +234,6 @@ namespace C2D {
                         this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
                         return element.d(this._w);
                         */
-                        //if (!('gC' in element)) {
-                        //    return this._w;
-                        //}
                         if (!element.gO()) return this._w;
                         this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
                         return this._w;

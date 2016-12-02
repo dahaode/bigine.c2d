@@ -136,6 +136,62 @@ declare namespace __Bigine_C2D {
         static gC(create?: boolean): CanvasRenderingContext2D;
         static pC(func: () => Promise<CanvasRenderingContext2D>): void;
     }
+    class Component extends Sprite {
+        protected _tm: Util.IHashTable<any>;
+        protected _pi: boolean;
+        private _cw;
+        constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds);
+        protected pI(): Component;
+        f(child?: Element): Component;
+        gC(): HTMLCanvasElement;
+        private cache(child?);
+    }
+    class Stage extends Sprite {
+        private _c;
+        private _z;
+        private _v;
+        private _h;
+        private _m;
+        private _e;
+        private _n;
+        private _w;
+        private _g;
+        constructor(context: CanvasRenderingContext2D);
+        x(distance: number): Stage;
+        y(distance: number): Stage;
+        s(ratio: number): Stage;
+        r(degrees: number): Stage;
+        f(child?: Sprite): Stage;
+        z(): Stage;
+        d(): Promise<CanvasRenderingContext2D>;
+        b(viewport: HTMLElement): Stage;
+        t(x?: number, y?: number): Stage;
+        h(): void;
+        $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]];
+        protected $c(): void;
+        private $d(triggered?);
+    }
+    namespace Stage {
+        function f(callback: FrameRequestCallback): void;
+    }
+    class Color extends Element {
+        private _d;
+        constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
+        constructor(bounds: IBounds, color: string, absolute?: boolean);
+        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        gN(): string;
+    }
+    class Image extends Element {
+        private _d;
+        private _l;
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: boolean);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: boolean);
+        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        protected $r(): Promise<HTMLImageElement>[];
+        $d(): Promise<HTMLImageElement>;
+        gN(): string;
+        $p(parent?: Sprite): Sprite;
+    }
     class TextPhrase {
         static FONT: string;
         private _t;
@@ -200,62 +256,6 @@ declare namespace __Bigine_C2D {
     }
     class FadeOut extends Fade {
         constructor(duration: number);
-    }
-    class Component extends Sprite {
-        protected _tm: Util.IHashTable<any>;
-        protected _pi: boolean;
-        private _cw;
-        constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds);
-        protected pI(): Component;
-        f(child?: Element): Component;
-        cache(): Promise<CanvasRenderingContext2D>;
-        gC(): HTMLCanvasElement;
-    }
-    class Stage extends Sprite {
-        private _c;
-        private _z;
-        private _v;
-        private _h;
-        private _m;
-        private _e;
-        private _n;
-        private _w;
-        private _g;
-        constructor(context: CanvasRenderingContext2D);
-        x(distance: number): Stage;
-        y(distance: number): Stage;
-        s(ratio: number): Stage;
-        r(degrees: number): Stage;
-        f(child?: Sprite): Stage;
-        z(): Stage;
-        d(): Promise<CanvasRenderingContext2D>;
-        b(viewport: HTMLElement): Stage;
-        t(x?: number, y?: number): Stage;
-        h(): void;
-        $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]];
-        protected $c(): void;
-        private $d(triggered?);
-    }
-    namespace Stage {
-        function f(callback: FrameRequestCallback): void;
-    }
-    class Color extends Element {
-        private _d;
-        constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
-        constructor(bounds: IBounds, color: string, absolute?: boolean);
-        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
-        gN(): string;
-    }
-    class Image extends Element {
-        private _d;
-        private _l;
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: boolean);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: boolean);
-        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
-        protected $r(): Promise<HTMLImageElement>[];
-        $d(): Promise<HTMLImageElement>;
-        gN(): string;
-        $p(parent?: Sprite): Sprite;
     }
     class Delay extends Animation {
     }

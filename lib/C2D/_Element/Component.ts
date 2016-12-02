@@ -8,11 +8,7 @@
  */
 
 /// <reference path="Element.ts" />
-/// <reference path="Text.ts" />
-/// <reference path="TextPhrase.ts" />
 /// <reference path="Context.ts" />
-/// <reference path="../_Animation/FadeIn.ts" />
-/// <reference path="../_Animation/FadeOut.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;
@@ -26,7 +22,9 @@ namespace C2D {
          * 是否初始化。
          */
         protected _pi: boolean;
-
+        /**
+         * Component 中的 Canvas 缓存。
+         */
         private _cw: CanvasRenderingContext2D;
 
         constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds) {
@@ -54,38 +52,9 @@ namespace C2D {
          * 发生变更。
          */
         public f(child?: Element): Component {
-            Context.pC(() => this.cache());
-            return <Component> super.f(child);
-        }
-
-        /**
-         * 计算 Canvas 绘制缓存。
-         */
-        public cache(): Promise<CanvasRenderingContext2D> {
-            return new Promise<CanvasRenderingContext2D>((resolve: (canvas: CanvasRenderingContext2D) => CanvasRenderingContext2D) => {
-                var opacity: number = this.gO();
-                var context: CanvasRenderingContext2D = Context.gC();
-                if (!opacity || !this._d.length) {
-                    this._cw.clearRect(0, 0, 1280, 720);
-                    this._f = false;
-                    resolve(context);
-                } else {
-                    context.clearRect(0, 0, 1280, 720);
-                    if (1 != opacity) {
-                        context.save();
-                        context.globalAlpha = opacity;
-                    }
-                    Util.Q.every(this._d, (el: Element) => el.d(context))
-                        .then(() => {
-                            if (1 != opacity)
-                                context.restore();
-                            this._cw.clearRect(0, 0, 1280, 720);
-                            this._cw.drawImage(context.canvas, 0, 0, 1280, 720);
-                            this._f = false;
-                            resolve(context);
-                        });
-                }
-            });
+            Context.pC(() => this.cache(child));
+            return this;
+            //return <Component> super.f(child);
         }
 
         /**
@@ -93,6 +62,39 @@ namespace C2D {
          */
         public gC(): HTMLCanvasElement {
             return this._cw.canvas;
+        }
+
+        /**
+         * 计算 Canvas 绘制缓存。
+         */
+        private cache(child?: Element): Promise<CanvasRenderingContext2D> {
+            return new Promise<CanvasRenderingContext2D>((resolve: (canvas: CanvasRenderingContext2D) => CanvasRenderingContext2D) => {
+                var w: number = 1280,
+                    h: number = 720,
+                    opacity: number = this.gO(),
+                    context: CanvasRenderingContext2D = Context.gC();
+                if (!opacity || !this._d.length) {
+                    this._cw.clearRect(0, 0, w, h);
+                    this._f = false;
+                    resolve(context);
+                } else {
+                    if (1 != opacity) {
+                        context.save();
+                        context.globalAlpha = opacity;
+                    }
+                    context.clearRect(0, 0, w, h);
+                    Util.Q.every(this._d, (el: Element) => el.d(context))
+                        .then(() => {
+                            if (1 != opacity)
+                                context.restore();
+                            this._cw.clearRect(0, 0, w, h);
+                            this._cw.drawImage(context.canvas, 0, 0, w, h);
+                            super.f(child);
+                            this._f = false;
+                            resolve(context);
+                        });
+                }
+            });
         }
     }
 }
