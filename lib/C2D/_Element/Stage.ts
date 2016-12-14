@@ -62,7 +62,7 @@ namespace C2D {
         /**
          * 绘制排期次数。
          */
-        private _n: boolean[];
+        //private _n: boolean[];
 
         /**
          * 真实绘制画板上下文。
@@ -75,6 +75,11 @@ namespace C2D {
         private _g: CanvasRenderingContext2D;
 
         /**
+         * 缓存是否发生变更。
+         */
+        private _u: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
@@ -84,9 +89,9 @@ namespace C2D {
                 parent: Node = canvas.parentNode;
             shadow.width = middle.width = canvas.width;
             shadow.height = middle.height = canvas.height;
-            shadow.style.display = middle.style.display = 'none';
-            parent.appendChild(shadow);
-            parent.appendChild(middle);
+            // shadow.style.display = middle.style.display = 'none';
+            // parent.appendChild(shadow);
+            // parent.appendChild(middle);
             parent.appendChild(Context.gC(true).canvas);
             super(0, 0, canvas.width, canvas.height, false, true);
             this._c = context;
@@ -132,14 +137,19 @@ namespace C2D {
             this._e = [];
             // this._u = -1;
             // this._k = [0, undefined];
-            this._n = [];
+            // this._n = [];
+            this._u = false;
             this._w = shadow.getContext('2d');
             this._g = middle.getContext('2d');
             this.b(context.canvas);
+            Stage.f(this.$d.bind(this), false);
             Stage.f(() => {
-                this._c.clearRect(0, 0, 1280, 720);
-                this._c.drawImage(this._g.canvas, 0, 0, canvas.width, canvas.height);
-            });
+                if (this._u) {
+                    this._c.clearRect(0, 0, 1280, 720);
+                    this._c.drawImage(this._g.canvas, 0, 0);
+                    this._u = false;
+                }
+            }, true);
         }
 
         /**
@@ -173,33 +183,31 @@ namespace C2D {
         /**
          * 发生变更。
          */
-        public f(child?: Sprite): Stage {
-            var fresh: boolean = !this._f,
-                event: SpriteFocusEvent;
-            this._f = true;
-            /*
-            if (child) {
-                Util.some(this._d, (element: Element, index: number) => {
-                    if (child == element) {
-                        this._u = index;
-                        return true;
-                    }
-                    return false;
-                });
-            } else
-                this._u = 0;
-            if (this._k[0] > this._u)
-                this._k = [0, undefined];
-            */
-            Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
-                if (!event)
-                    event = new SpriteFocusEvent(this._m);
-                element.dispatchEvent(event);
-            });
-            if (fresh)
-                this.$d(true);
-            return this;
-        }
+        // public f(child?: Sprite): Stage {
+        //     var fresh: boolean = !this._f,
+        //         event: SpriteFocusEvent;
+        //     this._f = true;
+        //     if (child) {
+        //         Util.some(this._d, (element: Element, index: number) => {
+        //             if (child == element) {
+        //                 this._u = index;
+        //                 return true;
+        //             }
+        //             return false;
+        //         });
+        //     } else
+        //         this._u = 0;
+        //     if (this._k[0] > this._u)
+        //         this._k = [0, undefined];
+        //     Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
+        //         if (!event)
+        //             event = new SpriteFocusEvent(this._m);
+        //         element.dispatchEvent(event);
+        //     });
+        //     if (fresh)
+        //         this.$d(true);
+        //     return this;
+        // }
 
         /**
          * 计算缩放比例。
@@ -214,11 +222,11 @@ namespace C2D {
          * 绘制。
          */
         public d(): Promise<CanvasRenderingContext2D> {
-            if (!this._f)
-                return Promise.resolve(this._c);
+            // if (!this._f)
+            //     return Promise.resolve(this._c);
             return Promise.all(this.$r())
                 .then(() => {
-                    this._f = false;
+                    // this._f = false;
                     this._w.clearRect(0, 0, 1280, 720);
                     return Util.Q.every(this._d, (element: Element, index: number) => {
                         /*
@@ -235,12 +243,13 @@ namespace C2D {
                         return element.d(this._w);
                         */
                         if (!element.gO()) return this._w;
-                        this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
+                        this._w.drawImage((<Component> element).gC(), 0, 0);
                         return this._w;
                     });
                 }).then(() => {
                     this._g.clearRect(0, 0, 1280, 720);
-                    this._g.drawImage(this._w.canvas, 0, 0, 1280, 720);
+                    this._g.drawImage(this._w.canvas, 0, 0);
+                    this._u = true;
                     return this._g;
                 });
         }
@@ -279,6 +288,7 @@ namespace C2D {
         public h(): void {
             this.f = () => this;
             this._f = false;
+            this._u = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
         }
@@ -330,7 +340,6 @@ namespace C2D {
                 sprites.push(parent);
                 parent = parent.$p();
             }
-            if (!(<Element> sprites[sprites.length - 1]).gO()) return;
             Util.each(sprites, (element: Sprite) => {
                 element.dispatchEvent(ev);
             });
@@ -338,51 +347,90 @@ namespace C2D {
 
         /**
          * 绘制调度。
+         */
+        private $d(): void {
+            var event: SpriteFocusEvent,
+                flag: boolean = false;
+            Util.each(this._d, (element: Element) => {
+                if ((<Component> element).uc()) {
+                    flag = true;
+                    (<Component> element).uc(false);
+                }
+            });
+            if (flag) {
+                Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
+                    if (!event)
+                        event = new SpriteFocusEvent(this._m);
+                    element.dispatchEvent(event);
+                });
+                this.d();
+            }
+        }
+
+        /**
+         * 绘制调度。
          *
          * 确保每一帧只绘制一次。
          */
-        private $d(triggered: boolean = false): void {
-            let q: boolean[] = this._n;
-            if (triggered && 2 > q.length)
-                q.push(false);
-            if (!q.length || q[0]) return;
-            q[0] = true;
-            Animation.f(() => {
-                this.d().then(() => {
-                    q.shift();
-                    this.$d();
-                });
-            });
-        }
+        // private $d(triggered: boolean = false): void {
+        //     let q: boolean[] = this._n;
+        //     if (triggered && 2 > q.length)
+        //         q.push(false);
+        //     if (!q.length || q[0]) return;
+        //     q[0] = true;
+        //     Animation.f(() => {
+        //         this.d().then(() => {
+        //             q.shift();
+        //             this.$d();
+        //         });
+        //     });
+        // }
     }
 
     export namespace Stage {
-        let raf: typeof window.requestAnimationFrame,
-            job: FrameRequestCallback,
-            proxy: FrameRequestCallback = (time: number) => {
-                if (job) job(time);
-                raf(proxy);
+        let raf1: typeof window.requestAnimationFrame,
+            raf2: typeof window.requestAnimationFrame,
+            job1: FrameRequestCallback,
+            job2: FrameRequestCallback,
+            proxy1: FrameRequestCallback = (time: number) => {
+                if (job1) job1(time);
+                raf1(proxy1);
             },
-            elapsed: number = 0,
-            size: number;
+            proxy2: FrameRequestCallback = (time: number) => {
+                if (job2) job2(time);
+                raf2(proxy2);
+            },
+            elapsed1: number = 0,
+            elapsed2: number = 0,
+            size1: number,
+            size2: number;
 
         if (Util.ENV.Window) {
-            raf = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
-            if (raf) {
-                raf(proxy);
+            raf1 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf1) {
+                raf1(proxy1);
             } else
                 setInterval(() => {
-                    elapsed += 5;
-                    if ((1 + elapsed % 50) % 3 || !size) return;
-                    job(elapsed);
+                    elapsed1 += 5;
+                    if ((1 + elapsed1 % 50) % 3 || !size1) return;
+                    job1(elapsed1);
+                }, 5);
+            raf2 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf2) {
+                raf2(proxy2);
+            } else
+                setInterval(() => {
+                    elapsed2 += 5;
+                    if ((1 + elapsed2 % 50) % 3 || !size2) return;
+                    job2(elapsed2);
                 }, 5);
         }
 
         /**
          * 帧处理。
          */
-        export function f(callback: FrameRequestCallback): void {
-            job = callback;
+        export function f(callback: FrameRequestCallback, first: boolean): void {
+            first ? job1 = callback : job2 = callback;
         }
     }
 }

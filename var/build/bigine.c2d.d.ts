@@ -140,11 +140,13 @@ declare namespace __Bigine_C2D {
         protected _tm: Util.IHashTable<any>;
         protected _pi: boolean;
         private _cw;
+        private _uc;
         constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds);
         protected pI(): Component;
         f(child?: Element): Component;
         gC(): HTMLCanvasElement;
-        private cache(child?);
+        uc(uc?: boolean): boolean;
+        private cache();
     }
     class Stage extends Sprite {
         private _c;
@@ -153,15 +155,14 @@ declare namespace __Bigine_C2D {
         private _h;
         private _m;
         private _e;
-        private _n;
         private _w;
         private _g;
+        private _u;
         constructor(context: CanvasRenderingContext2D);
         x(distance: number): Stage;
         y(distance: number): Stage;
         s(ratio: number): Stage;
         r(degrees: number): Stage;
-        f(child?: Sprite): Stage;
         z(): Stage;
         d(): Promise<CanvasRenderingContext2D>;
         b(viewport: HTMLElement): Stage;
@@ -169,10 +170,10 @@ declare namespace __Bigine_C2D {
         h(): void;
         $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]];
         protected $c(): void;
-        private $d(triggered?);
+        private $d();
     }
     namespace Stage {
-        function f(callback: FrameRequestCallback): void;
+        function f(callback: FrameRequestCallback, first: boolean): void;
     }
     class Color extends Element {
         private _d;
@@ -218,10 +219,13 @@ declare namespace __Bigine_C2D {
         private _cp;
         private _tl;
         private _to;
+        private _th;
         constructor(x: number, y: number, w: number, h: number, font?: string, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
         constructor(bounds: IBounds, font?: string, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
         s(ratio: number): Text;
+        cl(context: CanvasRenderingContext2D, bounds: IBounds): [number, TextPhrase, number, number][][];
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        th(schedules: [number, TextPhrase, number, number][][]): Text;
         tf(size: number, font?: string, lineHeight?: number): Text;
         gTf(): [number, number, string];
         tl(letterSpacing: number): Text;

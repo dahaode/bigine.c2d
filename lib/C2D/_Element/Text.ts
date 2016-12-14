@@ -51,6 +51,11 @@ namespace C2D {
         private _to: number;
 
         /**
+         * 行数据。
+         */
+        private _th: [number, TextPhrase, number, number][][];
+
+        /**
          * 构造函数。
          */
         constructor(x: number, y: number, w: number, h: number, font?: string, size?: number, lineHeight?: number, align?: Text.Align, absolute?: boolean);
@@ -86,6 +91,7 @@ namespace C2D {
             this._t = [];
             this._to = 0;
             this._ts = [0, 0, 0, '#000'];
+            this._th = [];
         }
 
         /**
@@ -103,35 +109,64 @@ namespace C2D {
         }
 
         /**
+         * 计算行数。
+         */
+        public cl(context: CanvasRenderingContext2D, bounds: IBounds): [number, TextPhrase, number, number][][] {
+            if (this._th.length) return this._th;
+            var schedules: [number, TextPhrase, number, number][][] = [[]], // width, TextPhrase, offset, length
+                line: [number, TextPhrase, number, number][] = schedules[0],
+                width: number = bounds.w - this._to,
+                m: [number, number], // length, width
+                offset: number;
+            Util.each(this._t, (phrase: TextPhrase) => {
+                offset = 0;
+                while (offset != phrase.gL()) {
+                    m = phrase.m(context, width, offset);
+                    if (m[0]) {
+                        line.push([m[1], phrase, offset, m[0]]);
+                        width -= m[1];
+                        offset += m[0];
+                    } else {
+                        line = [];
+                        schedules.push(line);
+                        width = bounds.w;
+                    }
+                }
+            });
+            return schedules;
+        }
+
+        /**
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
             var opacity: number = this.gO(),
                 schedules: [number, TextPhrase, number, number][][] = [[]], // width, TextPhrase, offset, length
-                line: [number, TextPhrase, number, number][] = schedules[0],
+                //line: [number, TextPhrase, number, number][] = schedules[0],
                 aligns: typeof Text.Align = Text.Align,
                 bounds: IBounds = this.gB(),
                 //width: number = bounds.w,
                 width: number = bounds.w - this._to,
-                m: [number, number], // length, width
+                //m: [number, number], // length, width
                 offset: number;
-            if (opacity && this._t.length) {
+            if (opacity && (this._t.length || this._th.length)) {
                 context.canvas.style.letterSpacing = this._tf[3] + 'px';  // 设置字间距
-                Util.each(this._t, (phrase: TextPhrase) => {
-                    offset = 0;
-                    while (offset != phrase.gL()) {
-                        m = phrase.m(context, width, offset);
-                        if (m[0]) {
-                            line.push([m[1], phrase, offset, m[0]]);
-                            width -= m[1];
-                            offset += m[0];
-                        } else {
-                            line = [];
-                            schedules.push(line);
-                            width = bounds.w;
-                        }
-                    }
-                });
+                schedules = this.cl(context, bounds);
+                // Util.each(this._t, (phrase: TextPhrase) => {
+                //     offset = 0;
+                //     while (offset != phrase.gL()) {
+                //         m = phrase.m(context, width, offset);
+                //         if (m[0]) {
+                //             line.push([m[1], phrase, offset, m[0]]);
+                //             width -= m[1];
+                //             offset += m[0];
+                //         } else {
+                //             line = [];
+                //             schedules.push(line);
+                //             width = bounds.w;
+                //         }
+                //     }
+                // });
                 if (1 != opacity) {
                     context.save();
                     context.globalAlpha = opacity;
@@ -157,10 +192,18 @@ namespace C2D {
                 if (1 != opacity)
                     context.restore();
             }
-            (<IPoint> this._cp).x = offset;
-            (<IPoint> this._cp).y = width;
+            this._cp.x = offset;
+            this._cp.y = width;
             this._tl = schedules.length;
             return super.d(context);
+        }
+
+        /**
+         * 设置文字行数据。
+         */
+        public th(schedules: [number, TextPhrase, number, number][][]): Text {
+            this._th = schedules;
+            return this;
         }
 
         /**

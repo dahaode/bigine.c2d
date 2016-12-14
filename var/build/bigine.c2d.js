@@ -918,7 +918,8 @@ var C2D;
             canvas.height = h;
             this._cw = canvas.getContext('2d');
             this._tm = theme;
-            this._pi = false;
+            this._pi =
+                this._uc = false;
             this.o(0);
         }
         /**
@@ -933,7 +934,7 @@ var C2D;
          */
         Component.prototype.f = function (child) {
             var _this = this;
-            C2D.Context.pC(function () { return _this.cache(child); });
+            C2D.Context.pC(function () { return _this.cache(); });
             return this;
             //return <Component> super.f(child);
         };
@@ -944,15 +945,25 @@ var C2D;
             return this._cw.canvas;
         };
         /**
+         * 缓存是否发生变更。
+         */
+        Component.prototype.uc = function (uc) {
+            if (uc != undefined)
+                this._uc = uc;
+            return this._uc;
+        };
+        /**
          * 计算 Canvas 绘制缓存。
          */
-        Component.prototype.cache = function (child) {
+        Component.prototype.cache = function () {
             var _this = this;
             return new Promise(function (resolve) {
                 var w = 1280, h = 720, opacity = _this.gO(), context = C2D.Context.gC();
                 if (!opacity || !_this._d.length) {
                     _this._cw.clearRect(0, 0, w, h);
-                    _this._f = false;
+                    // super.f(child);
+                    // this._f = false;
+                    _this._uc = true;
                     resolve(context);
                 }
                 else {
@@ -967,8 +978,9 @@ var C2D;
                             context.restore();
                         _this._cw.clearRect(0, 0, w, h);
                         _this._cw.drawImage(context.canvas, 0, 0, w, h);
-                        _super.prototype.f.call(_this, child);
-                        _this._f = false;
+                        // super.f(child);
+                        // this._f = false;
+                        _this._uc = true;
                         resolve(context);
                     });
                 }
@@ -1006,9 +1018,9 @@ var C2D;
             var canvas = context.canvas, shadow = document.createElement('canvas'), middle = document.createElement('canvas'), parent = canvas.parentNode;
             shadow.width = middle.width = canvas.width;
             shadow.height = middle.height = canvas.height;
-            shadow.style.display = middle.style.display = 'none';
-            parent.appendChild(shadow);
-            parent.appendChild(middle);
+            // shadow.style.display = middle.style.display = 'none';
+            // parent.appendChild(shadow);
+            // parent.appendChild(middle);
             parent.appendChild(C2D.Context.gC(true).canvas);
             _super.call(this, 0, 0, canvas.width, canvas.height, false, true);
             this._c = context;
@@ -1053,14 +1065,19 @@ var C2D;
             this._e = [];
             // this._u = -1;
             // this._k = [0, undefined];
-            this._n = [];
+            // this._n = [];
+            this._u = false;
             this._w = shadow.getContext('2d');
             this._g = middle.getContext('2d');
             this.b(context.canvas);
+            Stage.f(this.$d.bind(this), false);
             Stage.f(function () {
-                _this._c.clearRect(0, 0, 1280, 720);
-                _this._c.drawImage(_this._g.canvas, 0, 0, canvas.width, canvas.height);
-            });
+                if (_this._u) {
+                    _this._c.clearRect(0, 0, 1280, 720);
+                    _this._c.drawImage(_this._g.canvas, 0, 0);
+                    _this._u = false;
+                }
+            }, true);
         }
         /**
          * 移动 X 轴座标。
@@ -1089,33 +1106,31 @@ var C2D;
         /**
          * 发生变更。
          */
-        Stage.prototype.f = function (child) {
-            var _this = this;
-            var fresh = !this._f, event;
-            this._f = true;
-            /*
-            if (child) {
-                Util.some(this._d, (element: Element, index: number) => {
-                    if (child == element) {
-                        this._u = index;
-                        return true;
-                    }
-                    return false;
-                });
-            } else
-                this._u = 0;
-            if (this._k[0] > this._u)
-                this._k = [0, undefined];
-            */
-            Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
-                if (!event)
-                    event = new C2D.SpriteFocusEvent(_this._m);
-                element.dispatchEvent(event);
-            });
-            if (fresh)
-                this.$d(true);
-            return this;
-        };
+        // public f(child?: Sprite): Stage {
+        //     var fresh: boolean = !this._f,
+        //         event: SpriteFocusEvent;
+        //     this._f = true;
+        //     if (child) {
+        //         Util.some(this._d, (element: Element, index: number) => {
+        //             if (child == element) {
+        //                 this._u = index;
+        //                 return true;
+        //             }
+        //             return false;
+        //         });
+        //     } else
+        //         this._u = 0;
+        //     if (this._k[0] > this._u)
+        //         this._k = [0, undefined];
+        //     Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
+        //         if (!event)
+        //             event = new SpriteFocusEvent(this._m);
+        //         element.dispatchEvent(event);
+        //     });
+        //     if (fresh)
+        //         this.$d(true);
+        //     return this;
+        // }
         /**
          * 计算缩放比例。
          */
@@ -1129,11 +1144,11 @@ var C2D;
          */
         Stage.prototype.d = function () {
             var _this = this;
-            if (!this._f)
-                return Promise.resolve(this._c);
+            // if (!this._f)
+            //     return Promise.resolve(this._c);
             return Promise.all(this.$r())
                 .then(function () {
-                _this._f = false;
+                // this._f = false;
                 _this._w.clearRect(0, 0, 1280, 720);
                 return Util.Q.every(_this._d, function (element, index) {
                     /*
@@ -1151,12 +1166,13 @@ var C2D;
                     */
                     if (!element.gO())
                         return _this._w;
-                    _this._w.drawImage(element.gC(), 0, 0, 1280, 720);
+                    _this._w.drawImage(element.gC(), 0, 0);
                     return _this._w;
                 });
             }).then(function () {
                 _this._g.clearRect(0, 0, 1280, 720);
-                _this._g.drawImage(_this._w.canvas, 0, 0, 1280, 720);
+                _this._g.drawImage(_this._w.canvas, 0, 0);
+                _this._u = true;
                 return _this._g;
             });
         };
@@ -1193,6 +1209,7 @@ var C2D;
             var _this = this;
             this.f = function () { return _this; };
             this._f = false;
+            this._u = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
         };
@@ -1238,61 +1255,74 @@ var C2D;
                 sprites.push(parent);
                 parent = parent.$p();
             }
-            if (!sprites[sprites.length - 1].gO())
-                return;
             Util.each(sprites, function (element) {
                 element.dispatchEvent(ev);
             });
         };
         /**
          * 绘制调度。
-         *
-         * 确保每一帧只绘制一次。
          */
-        Stage.prototype.$d = function (triggered) {
+        Stage.prototype.$d = function () {
             var _this = this;
-            if (triggered === void 0) { triggered = false; }
-            var q = this._n;
-            if (triggered && 2 > q.length)
-                q.push(false);
-            if (!q.length || q[0])
-                return;
-            q[0] = true;
-            C2D.Animation.f(function () {
-                _this.d().then(function () {
-                    q.shift();
-                    _this.$d();
-                });
+            var event, flag = false;
+            Util.each(this._d, function (element) {
+                if (element.uc()) {
+                    flag = true;
+                    element.uc(false);
+                }
             });
+            if (flag) {
+                Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
+                    if (!event)
+                        event = new C2D.SpriteFocusEvent(_this._m);
+                    element.dispatchEvent(event);
+                });
+                this.d();
+            }
         };
         return Stage;
     }(C2D.Sprite));
     C2D.Stage = Stage;
     var Stage;
     (function (Stage) {
-        var raf, job, proxy = function (time) {
-            if (job)
-                job(time);
-            raf(proxy);
-        }, elapsed = 0, size;
+        var raf1, raf2, job1, job2, proxy1 = function (time) {
+            if (job1)
+                job1(time);
+            raf1(proxy1);
+        }, proxy2 = function (time) {
+            if (job2)
+                job2(time);
+            raf2(proxy2);
+        }, elapsed1 = 0, elapsed2 = 0, size1, size2;
         if (Util.ENV.Window) {
-            raf = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
-            if (raf) {
-                raf(proxy);
+            raf1 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf1) {
+                raf1(proxy1);
             }
             else
                 setInterval(function () {
-                    elapsed += 5;
-                    if ((1 + elapsed % 50) % 3 || !size)
+                    elapsed1 += 5;
+                    if ((1 + elapsed1 % 50) % 3 || !size1)
                         return;
-                    job(elapsed);
+                    job1(elapsed1);
+                }, 5);
+            raf2 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf2) {
+                raf2(proxy2);
+            }
+            else
+                setInterval(function () {
+                    elapsed2 += 5;
+                    if ((1 + elapsed2 % 50) % 3 || !size2)
+                        return;
+                    job2(elapsed2);
                 }, 5);
         }
         /**
          * 帧处理。
          */
-        function f(callback) {
-            job = callback;
+        function f(callback, first) {
+            first ? job1 = callback : job2 = callback;
         }
         Stage.f = f;
     })(Stage = C2D.Stage || (C2D.Stage = {}));
@@ -1615,6 +1645,7 @@ var C2D;
             this._t = [];
             this._to = 0;
             this._ts = [0, 0, 0, '#000'];
+            this._th = [];
         }
         /**
          * 缩放。
@@ -1630,33 +1661,62 @@ var C2D;
             return _super.prototype.s.call(this, ratio);
         };
         /**
+         * 计算行数。
+         */
+        Text.prototype.cl = function (context, bounds) {
+            if (this._th.length)
+                return this._th;
+            var schedules = [[]], // width, TextPhrase, offset, length
+            line = schedules[0], width = bounds.w - this._to, m, // length, width
+            offset;
+            Util.each(this._t, function (phrase) {
+                offset = 0;
+                while (offset != phrase.gL()) {
+                    m = phrase.m(context, width, offset);
+                    if (m[0]) {
+                        line.push([m[1], phrase, offset, m[0]]);
+                        width -= m[1];
+                        offset += m[0];
+                    }
+                    else {
+                        line = [];
+                        schedules.push(line);
+                        width = bounds.w;
+                    }
+                }
+            });
+            return schedules;
+        };
+        /**
          * 绘制。
          */
         Text.prototype.d = function (context) {
             var _this = this;
             var opacity = this.gO(), schedules = [[]], // width, TextPhrase, offset, length
-            line = schedules[0], aligns = Text.Align, bounds = this.gB(), 
+            //line: [number, TextPhrase, number, number][] = schedules[0],
+            aligns = Text.Align, bounds = this.gB(), 
             //width: number = bounds.w,
-            width = bounds.w - this._to, m, // length, width
+            width = bounds.w - this._to, 
+            //m: [number, number], // length, width
             offset;
-            if (opacity && this._t.length) {
+            if (opacity && (this._t.length || this._th.length)) {
                 context.canvas.style.letterSpacing = this._tf[3] + 'px'; // 设置字间距
-                Util.each(this._t, function (phrase) {
-                    offset = 0;
-                    while (offset != phrase.gL()) {
-                        m = phrase.m(context, width, offset);
-                        if (m[0]) {
-                            line.push([m[1], phrase, offset, m[0]]);
-                            width -= m[1];
-                            offset += m[0];
-                        }
-                        else {
-                            line = [];
-                            schedules.push(line);
-                            width = bounds.w;
-                        }
-                    }
-                });
+                schedules = this.cl(context, bounds);
+                // Util.each(this._t, (phrase: TextPhrase) => {
+                //     offset = 0;
+                //     while (offset != phrase.gL()) {
+                //         m = phrase.m(context, width, offset);
+                //         if (m[0]) {
+                //             line.push([m[1], phrase, offset, m[0]]);
+                //             width -= m[1];
+                //             offset += m[0];
+                //         } else {
+                //             line = [];
+                //             schedules.push(line);
+                //             width = bounds.w;
+                //         }
+                //     }
+                // });
                 if (1 != opacity) {
                     context.save();
                     context.globalAlpha = opacity;
@@ -1687,6 +1747,13 @@ var C2D;
             this._cp.y = width;
             this._tl = schedules.length;
             return _super.prototype.d.call(this, context);
+        };
+        /**
+         * 设置文字行数据。
+         */
+        Text.prototype.th = function (schedules) {
+            this._th = schedules;
+            return this;
         };
         /**
          * 设置字号。
@@ -2526,7 +2593,7 @@ var C2D;
 /// <reference path="C2D/_Element/Component.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.2.9';
+    C2D.version = '0.3.0';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

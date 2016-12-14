@@ -18,14 +18,21 @@ namespace C2D {
          * 设置主题配置集合。
          */
         protected _tm: Util.IHashTable<any>;
+
         /**
          * 是否初始化。
          */
         protected _pi: boolean;
+
         /**
          * Component 中的 Canvas 缓存。
          */
         private _cw: CanvasRenderingContext2D;
+
+        /**
+         * 缓存是否发生变更。
+         */
+        private _uc: boolean;
 
         constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds) {
             let w: number = bound ? bound.w : 1280,
@@ -36,7 +43,8 @@ namespace C2D {
             canvas.height = h;
             this._cw = canvas.getContext('2d');
             this._tm = theme;
-            this._pi = false;
+            this._pi =
+            this._uc = false;
             this.o(0);
         }
 
@@ -52,7 +60,7 @@ namespace C2D {
          * 发生变更。
          */
         public f(child?: Element): Component {
-            Context.pC(() => this.cache(child));
+            Context.pC(() => this.cache());
             return this;
             //return <Component> super.f(child);
         }
@@ -65,9 +73,17 @@ namespace C2D {
         }
 
         /**
+         * 缓存是否发生变更。
+         */
+        public uc(uc?: boolean): boolean {
+            if (uc != undefined) this._uc = uc;
+            return this._uc;
+        }
+
+        /**
          * 计算 Canvas 绘制缓存。
          */
-        private cache(child?: Element): Promise<CanvasRenderingContext2D> {
+        private cache(/*child?: Element*/): Promise<CanvasRenderingContext2D> {
             return new Promise<CanvasRenderingContext2D>((resolve: (canvas: CanvasRenderingContext2D) => CanvasRenderingContext2D) => {
                 var w: number = 1280,
                     h: number = 720,
@@ -75,7 +91,9 @@ namespace C2D {
                     context: CanvasRenderingContext2D = Context.gC();
                 if (!opacity || !this._d.length) {
                     this._cw.clearRect(0, 0, w, h);
-                    this._f = false;
+                    // super.f(child);
+                    // this._f = false;
+                    this._uc = true;
                     resolve(context);
                 } else {
                     if (1 != opacity) {
@@ -89,8 +107,9 @@ namespace C2D {
                                 context.restore();
                             this._cw.clearRect(0, 0, w, h);
                             this._cw.drawImage(context.canvas, 0, 0, w, h);
-                            super.f(child);
-                            this._f = false;
+                            // super.f(child);
+                            // this._f = false;
+                            this._uc = true;
                             resolve(context);
                         });
                 }
