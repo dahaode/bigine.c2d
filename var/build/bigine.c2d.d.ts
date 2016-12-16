@@ -344,6 +344,56 @@ declare namespace __Bigine_C2D {
         constructor(duration: number, volume: number);
         protected $p(element: HTMLAudioElement, elpased: number): void;
     }
+    interface IDroppingMetas extends Util.IHashTable<any> {
+        maxNum: number;
+        numLevel: number;
+        gravity: number;
+        type: string;
+        speed: [number, number];
+        size_range: [number, number];
+        hasBounce: boolean;
+        wind_direction: number;
+        hasGravity: boolean;
+    }
+    class Vector {
+        private _x;
+        private _y;
+        constructor(x?: number, y?: number);
+        a(v: any): Vector;
+        c(): Vector;
+        x(x?: number): number;
+        y(y?: number): number;
+    }
+    class Drop {
+        private _v;
+        private _d;
+        private _p;
+        private _r;
+        private _a;
+        private _m;
+        constructor(metas: Util.IHashTable<any>);
+        u(): Drop;
+        d(context: CanvasRenderingContext2D): void;
+        gV(t: string): number;
+    }
+    class Bounce {
+        private _d;
+        private _u;
+        private _v;
+        constructor(x: number, y: number);
+        u(gravity: number): Bounce;
+        d(context: CanvasRenderingContext2D): void;
+        gV(t: string): number;
+    }
+    class Dropping extends Animation {
+        private _g;
+        private _f;
+        private _r;
+        private _n;
+        constructor(duration: number, metas: IDroppingMetas);
+        protected $p(element: Element, elpased: number): void;
+        $h(): void;
+    }
     var version: string;
 }
 

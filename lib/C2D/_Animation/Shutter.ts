@@ -10,7 +10,6 @@
 /// <reference path="Animation.ts" />
 /// <reference path="IShutterMetas.ts" />
 /// <reference path="../_Element/Image.ts" />
-/// <reference path="../_Element/Stage.ts" />
 
 namespace C2D {
     import Util = __Bigine_Util;

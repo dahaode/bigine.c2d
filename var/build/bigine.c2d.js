@@ -167,7 +167,7 @@ var C2D;
                     var index = 0, done = function () {
                         resolve(element);
                     }, task = function (time) {
-                        if (_this._h || index >= _this._d)
+                        if (_this._h || _this._d ? index >= _this._d : false)
                             return done();
                         if (!_this._w)
                             _this.$p(element, ++index, done);
@@ -2373,7 +2373,6 @@ var C2D;
 /// <reference path="Animation.ts" />
 /// <reference path="IShutterMetas.ts" />
 /// <reference path="../_Element/Image.ts" />
-/// <reference path="../_Element/Stage.ts" />
 var C2D;
 (function (C2D) {
     var Util = __Bigine_Util;
@@ -2566,6 +2565,287 @@ var C2D;
     C2D.AudioFade = AudioFade;
 })(C2D || (C2D = {}));
 /**
+ * 声明雨雪动画元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/IDroppingMetas.ts
+ */
+/**
+ * 定义速度对象。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Vector.ts
+ */
+var C2D;
+(function (C2D) {
+    var Vector = (function () {
+        /**
+         * 构造函数。
+         */
+        function Vector(x, y) {
+            this._x = x || 0;
+            this._y = y || 0;
+        }
+        /**
+         * 速度改变函数,根据参数对速度进行增加
+         * @param  {any}    v object || number
+         * @return {Vector}   [description]
+         */
+        Vector.prototype.a = function (v) {
+            if (typeof v == 'number') {
+                this._x += v;
+                this._y += v;
+            }
+            else {
+                this._x += v._x;
+                this._y += v._y;
+            }
+            return this;
+        };
+        /*
+         * 复制一个vector，来用作保存之前速度节点的记录
+         */
+        Vector.prototype.c = function () {
+            return new Vector(this._x, this._y);
+        };
+        /*
+         * 获取、设置横向速度
+         */
+        Vector.prototype.x = function (x) {
+            if (x != undefined)
+                this._x = x;
+            return this._x;
+        };
+        /*
+         * 获取、设置纵向速度
+         */
+        Vector.prototype.y = function (y) {
+            if (y != undefined)
+                this._y = y;
+            return this._y;
+        };
+        return Vector;
+    }());
+    C2D.Vector = Vector;
+})(C2D || (C2D = {}));
+/**
+ * 定义下落粒子对象。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Drop.ts
+ */
+/// <reference path="Vector.ts" />
+var C2D;
+(function (C2D) {
+    var Drop = (function () {
+        /**
+         * 构造函数。
+         */
+        function Drop(metas) {
+            var eachAnger = 0.017453293, // 将角度乘以 0.017453293 （2PI/360）即可转换为弧度。
+            sx, // 获得横向加速度 
+            sy, // 获得纵向加速度
+            speed; // 获得drop初始速度
+            this._v = new C2D.Vector(Math.random() * 1280, 0); // 随机设置drop的初始坐标
+            this._r = (metas['size_range'][0] + Math.random() * metas['size_range'][1]); //设置下落元素的大小
+            this._p = this._v;
+            this._a = metas['wind_direction'] * eachAnger; //获得风向的角度
+            speed = (metas['speed'][0] + Math.random() * metas['speed'][1]);
+            sx = speed * Math.cos(this._a);
+            sy = -speed * Math.sin(this._a);
+            this._d = new C2D.Vector(sx, sy); //绑定一个速度实例
+            this._m = metas;
+        }
+        /**
+         * 更新
+         */
+        Drop.prototype.u = function () {
+            this._p = this._v.c();
+            if (this._m['hasGravity'])
+                this._d['_y'] += this._m['gravity'];
+            this._v.a(this._d);
+            return this;
+        };
+        /*
+         * 绘制
+         */
+        Drop.prototype.d = function (context) {
+            context.beginPath();
+            if (this._m['type'] == "rain") {
+                context.moveTo(this._p.x(), this._p.y());
+                var ax = Math.abs(this._r * Math.cos(this._a));
+                var ay = Math.abs(this._r * Math.sin(this._a));
+                context.bezierCurveTo(this._v.x() + ax, this._v.y() + ay, this._p.x() + ax, this._p.y() + ay, this._v.x(), this._v.y());
+                context.stroke();
+            }
+            else {
+                context.moveTo(this._v.x(), this._v.y());
+                context.arc(this._v.x(), this._v.y(), this._r, 0, Math.PI * 2);
+                context.fill();
+            }
+        };
+        /*
+         * 获取当前 横向速度 / 纵向速度
+         */
+        Drop.prototype.gV = function (t) {
+            return this._v[t]();
+        };
+        return Drop;
+    }());
+    C2D.Drop = Drop;
+})(C2D || (C2D = {}));
+/**
+ * 定义回弹对象。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Bounce.ts
+ */
+/// <reference path="Vector.ts" />
+var C2D;
+(function (C2D) {
+    var Bounce = (function () {
+        /**
+         * 构造函数。
+         */
+        function Bounce(x, y) {
+            var dist = Math.random() * 7;
+            var angle = Math.PI + Math.random() * Math.PI;
+            this._d = new C2D.Vector(x, y);
+            this._u = 0.2 + Math.random() * 0.8;
+            this._v = new C2D.Vector(Math.cos(angle) * dist, Math.sin(angle) * dist);
+        }
+        /**
+         * 更新
+         */
+        Bounce.prototype.u = function (gravity) {
+            this._v.y((this._v.y() + gravity) * 0.95);
+            this._v.x(this._v.x() * 0.95);
+            this._d.a(this._v);
+            return this;
+        };
+        /*
+         * 绘制
+         */
+        Bounce.prototype.d = function (context) {
+            context.beginPath();
+            context.arc(this._d.x(), this._d.y(), this._u, 0, Math.PI * 2);
+            context.fill();
+        };
+        /*
+         * 获取当前 横向速度 / 纵向速度
+         */
+        Bounce.prototype.gV = function (t) {
+            return this._d[t]();
+        };
+        return Bounce;
+    }());
+    C2D.Bounce = Bounce;
+})(C2D || (C2D = {}));
+/**
+ * 定义雨雪动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Dropping.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="IDroppingMetas.ts" />
+/// <reference path="../_Element/Drop.ts" />
+/// <reference path="../_Element/Bounce.ts" />
+var C2D;
+(function (C2D) {
+    var DROP_CHANCE = 0.4; // 创建drop的几率
+    var Dropping = (function (_super) {
+        __extends(Dropping, _super);
+        /**
+         * 构造函数。
+         */
+        function Dropping(duration, metas) {
+            _super.call(this, duration, metas);
+            this._r = [];
+            this._n = [];
+            this._g = null;
+            this._f = null;
+        }
+        /**
+         * 帧执行。
+         */
+        Dropping.prototype.$p = function (element, elpased) {
+            var h = 720, i = this._r.length, metas = this._m;
+            if (elpased == 1) {
+                this._g = new C2D.Component({}, true);
+                this._f = this._g.gC().getContext('2d');
+                this._g.o(1);
+                element.a(this._g, 'F');
+                if (metas.type == "rain") {
+                    this._f.lineWidth = 1;
+                    this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
+                    this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
+                }
+                else {
+                    this._f.lineWidth = 2;
+                    this._f.strokeStyle = 'rgba(254, 254, 254, 0.8)';
+                    this._f.fillStyle = 'rgba(254, 254, 254, 0.8)';
+                }
+            }
+            this._f.clearRect(0, 0, 1280, h);
+            while (i--) {
+                var drop = this._r[i];
+                drop.u();
+                if (drop.gV('y') >= h) {
+                    if (metas.hasBounce) {
+                        var n = Math.round(4 + Math.random() * 4);
+                        while (n--)
+                            this._n.push(new C2D.Bounce(drop.gV('x'), h));
+                    }
+                    this._r.splice(i, 1);
+                }
+                drop.d(this._f);
+            }
+            if (metas.hasBounce) {
+                i = this._n.length;
+                while (i--) {
+                    var bounce = this._n[i];
+                    bounce.u(metas.gravity);
+                    bounce.d(this._f);
+                    if (bounce.gV('y') > h)
+                        this._n.splice(i, 1);
+                }
+            }
+            if (this._r.length < metas.maxNum) {
+                if (Math.random() < DROP_CHANCE) {
+                    i = 0;
+                    var len = metas.numLevel;
+                    for (; i < len; i++) {
+                        this._r.push(new C2D.Drop(this._m));
+                    }
+                }
+            }
+            this._g.uc(true);
+        };
+        /**
+         * 立即中止。
+         */
+        Dropping.prototype.$h = function () {
+            this._r = [];
+            this._n = [];
+            this._f = null;
+            this._g.$p().e(this._g);
+        };
+        return Dropping;
+    }(C2D.Animation));
+    C2D.Dropping = Dropping;
+})(C2D || (C2D = {}));
+/**
  * 定义包主程序文件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2578,6 +2858,7 @@ var C2D;
 /// <reference path="C2D/_Element/Image.ts" />
 /// <reference path="C2D/_Element/Text.ts" />
 /// <reference path="C2D/_Element/Button.ts" />
+/// <reference path="C2D/_Element/Component.ts" />
 /// <reference path="C2D/_Animation/Combo.ts" />
 /// <reference path="C2D/_Animation/AudioFadeOut.ts" />
 /// <reference path="C2D/_Animation/FadeIn.ts" />
@@ -2590,7 +2871,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Zoom.ts" />
 /// <reference path="C2D/_Animation/Shake.ts" />
 /// <reference path="C2D/_Animation/AudioFade.ts" />
-/// <reference path="C2D/_Element/Component.ts" />
+/// <reference path="C2D/_Animation/Dropping.ts" />
 var C2D;
 (function (C2D) {
     C2D.version = '0.3.0';
