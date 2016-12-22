@@ -294,6 +294,7 @@ declare namespace __Bigine_C2D {
         private _y;
         constructor(duration: number, metas: IMoveMetas);
         protected $p(element: Element, elpased: number): void;
+        $h(): void;
     }
     class Type extends Animation {
         private _r;
@@ -331,6 +332,7 @@ declare namespace __Bigine_C2D {
         private _b;
         constructor(duration: number, metas: IZoomMetas);
         protected $p(element: Element, elpased: number): void;
+        $h(): void;
     }
     class Shake extends Animation {
         private _x;
@@ -399,7 +401,6 @@ declare namespace __Bigine_C2D {
         width: number;
     }
     class Progress extends Animation {
-        private _e;
         constructor(duration: number, metas: IProgressMetas);
         protected $p(element: Element, elpased: number): void;
         $h(): void;

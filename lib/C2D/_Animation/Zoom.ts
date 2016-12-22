@@ -40,5 +40,18 @@ namespace C2D {
                 .sW(Math.round(this._b.w + px * elpased))
                 .sH(Math.round(this._b.h + py * elpased));
         }
+
+        /**
+         * 中止。
+         */
+        public $h(): void {
+            let metas: IZoomMetas = <IZoomMetas> this._m,
+                px: number = metas.scale * (5 / 3 - 1) * 1280,
+                py: number = metas.scale * (5 / 3 - 1) * 720;
+            this._t.x(Math.round(this._b.x - metas.mx * px))
+                .y(Math.round(this._b.y - metas.my * py))
+                .sW(Math.round(this._b.w + px))
+                .sH(Math.round(this._b.h + py));
+        }
     }
 }

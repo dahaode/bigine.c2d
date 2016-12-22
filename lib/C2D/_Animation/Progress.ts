@@ -14,11 +14,6 @@
 namespace C2D {
     export class Progress extends Animation {
         /**
-         * 进度条。
-         */
-        private _e: Element;
-
-        /**
          * 构造函数。
          */
         constructor(duration: number, metas: IProgressMetas) {
@@ -29,16 +24,14 @@ namespace C2D {
          * 帧执行。
          */
         protected $p(element: Element, elpased: number): void {
-            if (elpased == 1)
-                this._e = (<Sprite> element).q('b')[0];
-            this._e.x((elpased / this._d - 1) * this._m['width']);
+            element.x((elpased / this._d - 1) * this._m['width']);
         }
 
         /**
          * 中止。
          */
         public $h(): void {
-            this._e.x(0);
+            this._t.x(0);
         }
     }
 }

@@ -42,5 +42,13 @@ namespace C2D {
             element.x(((<IMoveMetas> this._m).x - this._x) * elpased / this._d + this._x)
                 .y(((<IMoveMetas> this._m).y - this._y) * elpased / this._d + this._y);
         }
+
+        /**
+         * 中止。
+         */
+        public $h(): void {
+            this._t.x(this._m['x'])
+                .y(this._m['y']);
+        }
     }
 }

@@ -2134,6 +2134,13 @@ var C2D;
             element.x((this._m.x - this._x) * elpased / this._d + this._x)
                 .y((this._m.y - this._y) * elpased / this._d + this._y);
         };
+        /**
+         * 中止。
+         */
+        Move.prototype.$h = function () {
+            this._t.x(this._m['x'])
+                .y(this._m['y']);
+        };
         return Move;
     }(C2D.Animation));
     C2D.Move = Move;
@@ -2406,6 +2413,16 @@ var C2D;
                 .y(Math.round(this._b.y - metas.my * py * elpased))
                 .sW(Math.round(this._b.w + px * elpased))
                 .sH(Math.round(this._b.h + py * elpased));
+        };
+        /**
+         * 中止。
+         */
+        Zoom.prototype.$h = function () {
+            var metas = this._m, px = metas.scale * (5 / 3 - 1) * 1280, py = metas.scale * (5 / 3 - 1) * 720;
+            this._t.x(Math.round(this._b.x - metas.mx * px))
+                .y(Math.round(this._b.y - metas.my * py))
+                .sW(Math.round(this._b.w + px))
+                .sH(Math.round(this._b.h + py));
         };
         return Zoom;
     }(C2D.Animation));
@@ -2819,15 +2836,13 @@ var C2D;
          * 帧执行。
          */
         Progress.prototype.$p = function (element, elpased) {
-            if (elpased == 1)
-                this._e = element.q('b')[0];
-            this._e.x((elpased / this._d - 1) * this._m['width']);
+            element.x((elpased / this._d - 1) * this._m['width']);
         };
         /**
          * 中止。
          */
         Progress.prototype.$h = function () {
-            this._e.x(0);
+            this._t.x(0);
         };
         return Progress;
     }(C2D.Animation));
