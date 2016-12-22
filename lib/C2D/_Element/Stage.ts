@@ -50,19 +50,9 @@ namespace C2D {
         private _e: Sprite[];
 
         /**
-         * 发生变化地组合元素序号。
+         * 是否正在绘制中。
          */
-        //private _u: number;
-
-        /**
-         * 绘制缓存。
-         */
-        //private _k: [number, ImageData];
-
-        /**
-         * 绘制排期次数。
-         */
-        //private _n: boolean[];
+        private _n: boolean;
 
         /**
          * 真实绘制画板上下文。
@@ -86,14 +76,13 @@ namespace C2D {
             let canvas: HTMLCanvasElement = context.canvas,
                 shadow: HTMLCanvasElement = document.createElement('canvas'),
                 middle: HTMLCanvasElement = document.createElement('canvas'),
-                parent: Node = canvas.parentNode;
-            shadow.width = middle.width = canvas.width;
-            shadow.height = middle.height = canvas.height;
-            // shadow.style.display = middle.style.display = 'none';
-            // parent.appendChild(shadow);
-            // parent.appendChild(middle);
+                parent: Node = canvas.parentNode,
+                w: number = canvas.width,
+                h: number = canvas.height;
+            shadow.width = middle.width = w;
+            shadow.height = middle.height = h;
             parent.appendChild(Context.gC(true).canvas);
-            super(0, 0, canvas.width, canvas.height, false, true);
+            super(0, 0, w, h, false, true);
             this._c = context;
             this.z();
             this._m = {
@@ -135,21 +124,19 @@ namespace C2D {
                 }
             ];
             this._e = [];
-            // this._u = -1;
-            // this._k = [0, undefined];
-            // this._n = [];
             this._u = false;
+            this._n = false;
             this._w = shadow.getContext('2d');
             this._g = middle.getContext('2d');
             this.b(context.canvas);
-            Stage.f(this.$d.bind(this), false);
+            Stage.f(this.$d.bind(this));
             Stage.f(() => {
                 if (this._u) {
-                    this._c.clearRect(0, 0, 1280, 720);
-                    this._c.drawImage(this._g.canvas, 0, 0);
+                    this._c.clearRect(0, 0, w, h);
+                    this._c.drawImage(this._g.canvas, 0, 0, w, h);
                     this._u = false;
                 }
-            }, true);
+            });
         }
 
         /**
@@ -181,35 +168,6 @@ namespace C2D {
         }
 
         /**
-         * 发生变更。
-         */
-        // public f(child?: Sprite): Stage {
-        //     var fresh: boolean = !this._f,
-        //         event: SpriteFocusEvent;
-        //     this._f = true;
-        //     if (child) {
-        //         Util.some(this._d, (element: Element, index: number) => {
-        //             if (child == element) {
-        //                 this._u = index;
-        //                 return true;
-        //             }
-        //             return false;
-        //         });
-        //     } else
-        //         this._u = 0;
-        //     if (this._k[0] > this._u)
-        //         this._k = [0, undefined];
-        //     Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
-        //         if (!event)
-        //             event = new SpriteFocusEvent(this._m);
-        //         element.dispatchEvent(event);
-        //     });
-        //     if (fresh)
-        //         this.$d(true);
-        //     return this;
-        // }
-
-        /**
          * 计算缩放比例。
          */
         public z(): Stage {
@@ -222,34 +180,24 @@ namespace C2D {
          * 绘制。
          */
         public d(): Promise<CanvasRenderingContext2D> {
-            // if (!this._f)
-            //     return Promise.resolve(this._c);
+            if (this._n)
+                return Promise.resolve(this._c);
+            let w: number = 1280,
+                h: number = 720;
             return Promise.all(this.$r())
                 .then(() => {
-                    // this._f = false;
-                    this._w.clearRect(0, 0, 1280, 720);
+                    this._n = true;
+                    this._w.clearRect(0, 0, w, h);
                     return Util.Q.every(this._d, (element: Element, index: number) => {
-                        /*
-                        if (this._k[0]) {
-                            if (index < this._k[0])
-                                return this._w;
-                            if (index == this._k[0]) {
-                                this._w.putImageData(this._k[1], 0, 0);
-                            }
-                        }
-                        if (index && index == this._u && this._u != this._k[0])
-                           this._k = [index, this._w.getImageData(0, 0, 1280, 720)];
-                        this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
-                        return element.d(this._w);
-                        */
-                        if (!element.gO()) return this._w;
-                        this._w.drawImage((<Component> element).gC(), 0, 0);
+                        if (element.gO())
+                            this._w.drawImage((<Component> element).gC(), 0, 0, w, h);
                         return this._w;
                     });
                 }).then(() => {
-                    this._g.clearRect(0, 0, 1280, 720);
-                    this._g.drawImage(this._w.canvas, 0, 0);
+                    this._g.clearRect(0, 0, w, h);
+                    this._g.drawImage(this._w.canvas, 0, 0, w, h);
                     this._u = true;
+                    this._n = false;
                     return this._g;
                 });
         }
@@ -289,6 +237,7 @@ namespace C2D {
             this.f = () => this;
             this._f = false;
             this._u = false;
+            this._n = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
         }
@@ -366,71 +315,40 @@ namespace C2D {
                 this.d();
             }
         }
-
-        /**
-         * 绘制调度。
-         *
-         * 确保每一帧只绘制一次。
-         */
-        // private $d(triggered: boolean = false): void {
-        //     let q: boolean[] = this._n;
-        //     if (triggered && 2 > q.length)
-        //         q.push(false);
-        //     if (!q.length || q[0]) return;
-        //     q[0] = true;
-        //     Animation.f(() => {
-        //         this.d().then(() => {
-        //             q.shift();
-        //             this.$d();
-        //         });
-        //     });
-        // }
     }
 
     export namespace Stage {
-        let raf1: typeof window.requestAnimationFrame,
-            raf2: typeof window.requestAnimationFrame,
-            job1: FrameRequestCallback,
-            job2: FrameRequestCallback,
-            proxy1: FrameRequestCallback = (time: number) => {
-                if (job1) job1(time);
-                raf1(proxy1);
+        let raf: typeof window.requestAnimationFrame,
+            jobs: FrameRequestCallback[] = [],
+            proxy: FrameRequestCallback = (time: number) => {
+                Util.each(jobs, (callback: FrameRequestCallback) => {
+                    callback(time);
+                });
+                raf(proxy);
             },
-            proxy2: FrameRequestCallback = (time: number) => {
-                if (job2) job2(time);
-                raf2(proxy2);
-            },
-            elapsed1: number = 0,
-            elapsed2: number = 0,
-            size1: number,
-            size2: number;
+            elapsed: number = 0,
+            size: number;
 
         if (Util.ENV.Window) {
-            raf1 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
-            if (raf1) {
-                raf1(proxy1);
+            raf = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf) {
+                raf(proxy);
             } else
                 setInterval(() => {
-                    elapsed1 += 5;
-                    if ((1 + elapsed1 % 50) % 3 || !size1) return;
-                    job1(elapsed1);
-                }, 5);
-            raf2 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
-            if (raf2) {
-                raf2(proxy2);
-            } else
-                setInterval(() => {
-                    elapsed2 += 5;
-                    if ((1 + elapsed2 % 50) % 3 || !size2) return;
-                    job2(elapsed2);
+                    elapsed += 5;
+                    size = jobs.length;
+                    if ((1 + elapsed % 50) % 3 || !size) return;
+                    Util.each(jobs, (callback: FrameRequestCallback) => {
+                        callback(elapsed);
+                    });
                 }, 5);
         }
 
         /**
          * 帧处理。
          */
-        export function f(callback: FrameRequestCallback, first: boolean): void {
-            first ? job1 = callback : job2 = callback;
+        export function f(callback: FrameRequestCallback): void {
+            jobs.push(callback);
         }
     }
 }

@@ -26,6 +26,7 @@
 /// <reference path="C2D/_Animation/Shake.ts" />
 /// <reference path="C2D/_Animation/AudioFade.ts" />
 /// <reference path="C2D/_Animation/Dropping.ts" />
+/// <reference path="C2D/_Animation/Progress.ts" />
 
 namespace C2D {
     export var version: string = '${BIGINE_MODULE_VERSION}';

@@ -167,7 +167,7 @@ var C2D;
                     var index = 0, done = function () {
                         resolve(element);
                     }, task = function (time) {
-                        if (_this._h || _this._d ? index >= _this._d : false)
+                        if (_this._h || index >= _this._d)
                             return done();
                         if (!_this._w)
                             _this.$p(element, ++index, done);
@@ -936,7 +936,6 @@ var C2D;
             var _this = this;
             C2D.Context.pC(function () { return _this.cache(); });
             return this;
-            //return <Component> super.f(child);
         };
         /**
          * 获取 Component 缓存。
@@ -961,9 +960,6 @@ var C2D;
                 var w = 1280, h = 720, opacity = _this.gO(), context = C2D.Context.gC();
                 if (!opacity || !_this._d.length) {
                     _this._cw.clearRect(0, 0, w, h);
-                    // super.f(child);
-                    // this._f = false;
-                    _this._uc = true;
                     resolve(context);
                 }
                 else {
@@ -978,8 +974,6 @@ var C2D;
                             context.restore();
                         _this._cw.clearRect(0, 0, w, h);
                         _this._cw.drawImage(context.canvas, 0, 0, w, h);
-                        // super.f(child);
-                        // this._f = false;
                         _this._uc = true;
                         resolve(context);
                     });
@@ -1015,14 +1009,11 @@ var C2D;
          */
         function Stage(context) {
             var _this = this;
-            var canvas = context.canvas, shadow = document.createElement('canvas'), middle = document.createElement('canvas'), parent = canvas.parentNode;
-            shadow.width = middle.width = canvas.width;
-            shadow.height = middle.height = canvas.height;
-            // shadow.style.display = middle.style.display = 'none';
-            // parent.appendChild(shadow);
-            // parent.appendChild(middle);
+            var canvas = context.canvas, shadow = document.createElement('canvas'), middle = document.createElement('canvas'), parent = canvas.parentNode, w = canvas.width, h = canvas.height;
+            shadow.width = middle.width = w;
+            shadow.height = middle.height = h;
             parent.appendChild(C2D.Context.gC(true).canvas);
-            _super.call(this, 0, 0, canvas.width, canvas.height, false, true);
+            _super.call(this, 0, 0, w, h, false, true);
             this._c = context;
             this.z();
             this._m = {
@@ -1063,21 +1054,19 @@ var C2D;
                 }
             ];
             this._e = [];
-            // this._u = -1;
-            // this._k = [0, undefined];
-            // this._n = [];
             this._u = false;
+            this._n = false;
             this._w = shadow.getContext('2d');
             this._g = middle.getContext('2d');
             this.b(context.canvas);
-            Stage.f(this.$d.bind(this), false);
+            Stage.f(this.$d.bind(this));
             Stage.f(function () {
                 if (_this._u) {
-                    _this._c.clearRect(0, 0, 1280, 720);
-                    _this._c.drawImage(_this._g.canvas, 0, 0);
+                    _this._c.clearRect(0, 0, w, h);
+                    _this._c.drawImage(_this._g.canvas, 0, 0, w, h);
                     _this._u = false;
                 }
-            }, true);
+            });
         }
         /**
          * 移动 X 轴座标。
@@ -1104,34 +1093,6 @@ var C2D;
             return this;
         };
         /**
-         * 发生变更。
-         */
-        // public f(child?: Sprite): Stage {
-        //     var fresh: boolean = !this._f,
-        //         event: SpriteFocusEvent;
-        //     this._f = true;
-        //     if (child) {
-        //         Util.some(this._d, (element: Element, index: number) => {
-        //             if (child == element) {
-        //                 this._u = index;
-        //                 return true;
-        //             }
-        //             return false;
-        //         });
-        //     } else
-        //         this._u = 0;
-        //     if (this._k[0] > this._u)
-        //         this._k = [0, undefined];
-        //     Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
-        //         if (!event)
-        //             event = new SpriteFocusEvent(this._m);
-        //         element.dispatchEvent(event);
-        //     });
-        //     if (fresh)
-        //         this.$d(true);
-        //     return this;
-        // }
-        /**
          * 计算缩放比例。
          */
         Stage.prototype.z = function () {
@@ -1144,35 +1105,23 @@ var C2D;
          */
         Stage.prototype.d = function () {
             var _this = this;
-            // if (!this._f)
-            //     return Promise.resolve(this._c);
+            if (this._n)
+                return Promise.resolve(this._c);
+            var w = 1280, h = 720;
             return Promise.all(this.$r())
                 .then(function () {
-                // this._f = false;
-                _this._w.clearRect(0, 0, 1280, 720);
+                _this._n = true;
+                _this._w.clearRect(0, 0, w, h);
                 return Util.Q.every(_this._d, function (element, index) {
-                    /*
-                    if (this._k[0]) {
-                        if (index < this._k[0])
-                            return this._w;
-                        if (index == this._k[0]) {
-                            this._w.putImageData(this._k[1], 0, 0);
-                        }
-                    }
-                    if (index && index == this._u && this._u != this._k[0])
-                       this._k = [index, this._w.getImageData(0, 0, 1280, 720)];
-                    this._w.drawImage((<Component> element).gC(), 0, 0, 1280, 720);
-                    return element.d(this._w);
-                    */
-                    if (!element.gO())
-                        return _this._w;
-                    _this._w.drawImage(element.gC(), 0, 0);
+                    if (element.gO())
+                        _this._w.drawImage(element.gC(), 0, 0, w, h);
                     return _this._w;
                 });
             }).then(function () {
-                _this._g.clearRect(0, 0, 1280, 720);
-                _this._g.drawImage(_this._w.canvas, 0, 0);
+                _this._g.clearRect(0, 0, w, h);
+                _this._g.drawImage(_this._w.canvas, 0, 0, w, h);
                 _this._u = true;
+                _this._n = false;
                 return _this._g;
             });
         };
@@ -1210,6 +1159,7 @@ var C2D;
             this.f = function () { return _this; };
             this._f = false;
             this._u = false;
+            this._n = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
         };
@@ -1285,44 +1235,33 @@ var C2D;
     C2D.Stage = Stage;
     var Stage;
     (function (Stage) {
-        var raf1, raf2, job1, job2, proxy1 = function (time) {
-            if (job1)
-                job1(time);
-            raf1(proxy1);
-        }, proxy2 = function (time) {
-            if (job2)
-                job2(time);
-            raf2(proxy2);
-        }, elapsed1 = 0, elapsed2 = 0, size1, size2;
+        var raf, jobs = [], proxy = function (time) {
+            Util.each(jobs, function (callback) {
+                callback(time);
+            });
+            raf(proxy);
+        }, elapsed = 0, size;
         if (Util.ENV.Window) {
-            raf1 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
-            if (raf1) {
-                raf1(proxy1);
+            raf = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
+            if (raf) {
+                raf(proxy);
             }
             else
                 setInterval(function () {
-                    elapsed1 += 5;
-                    if ((1 + elapsed1 % 50) % 3 || !size1)
+                    elapsed += 5;
+                    size = jobs.length;
+                    if ((1 + elapsed % 50) % 3 || !size)
                         return;
-                    job1(elapsed1);
-                }, 5);
-            raf2 = window.requestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame;
-            if (raf2) {
-                raf2(proxy2);
-            }
-            else
-                setInterval(function () {
-                    elapsed2 += 5;
-                    if ((1 + elapsed2 % 50) % 3 || !size2)
-                        return;
-                    job2(elapsed2);
+                    Util.each(jobs, function (callback) {
+                        callback(elapsed);
+                    });
                 }, 5);
         }
         /**
          * 帧处理。
          */
-        function f(callback, first) {
-            first ? job1 = callback : job2 = callback;
+        function f(callback) {
+            jobs.push(callback);
         }
         Stage.f = f;
     })(Stage = C2D.Stage || (C2D.Stage = {}));
@@ -2770,7 +2709,7 @@ var C2D;
          * 构造函数。
          */
         function Dropping(duration, metas) {
-            _super.call(this, duration, metas);
+            _super.call(this, Infinity, metas);
             this._r = [];
             this._n = [];
             this._g = null;
@@ -2785,9 +2724,9 @@ var C2D;
                 this._g = new C2D.Component({}, true);
                 this._f = this._g.gC().getContext('2d');
                 this._g.o(1);
-                element.a(this._g, 'F');
+                element.a(this._g, 'W');
                 if (metas.type == "rain") {
-                    this._f.lineWidth = 1;
+                    this._f.lineWidth = 2;
                     this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
                     this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
                 }
@@ -2839,11 +2778,60 @@ var C2D;
             this._r = [];
             this._n = [];
             this._f = null;
-            this._g.$p().e(this._g);
+            if (this._g)
+                this._g.$p().e(this._g);
         };
         return Dropping;
     }(C2D.Animation));
     C2D.Dropping = Dropping;
+})(C2D || (C2D = {}));
+/**
+ * 声明进度条动画元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/IProgressMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/**
+ * 定义位移动画组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Progress.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="IProgressMetas.ts" />
+/// <reference path="../_Element/Element.ts" />
+var C2D;
+(function (C2D) {
+    var Progress = (function (_super) {
+        __extends(Progress, _super);
+        /**
+         * 构造函数。
+         */
+        function Progress(duration, metas) {
+            _super.call(this, duration, metas);
+        }
+        /**
+         * 帧执行。
+         */
+        Progress.prototype.$p = function (element, elpased) {
+            if (elpased == 1)
+                this._e = element.q('b')[0];
+            this._e.x((elpased / this._d - 1) * this._m['width']);
+        };
+        /**
+         * 中止。
+         */
+        Progress.prototype.$h = function () {
+            this._e.x(0);
+        };
+        return Progress;
+    }(C2D.Animation));
+    C2D.Progress = Progress;
 })(C2D || (C2D = {}));
 /**
  * 定义包主程序文件。
@@ -2872,9 +2860,10 @@ var C2D;
 /// <reference path="C2D/_Animation/Shake.ts" />
 /// <reference path="C2D/_Animation/AudioFade.ts" />
 /// <reference path="C2D/_Animation/Dropping.ts" />
+/// <reference path="C2D/_Animation/Progress.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.0';
+    C2D.version = '0.3.1';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

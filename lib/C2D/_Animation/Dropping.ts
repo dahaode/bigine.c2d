@@ -40,7 +40,7 @@ namespace C2D {
          * 构造函数。
          */
         constructor(duration: number, metas: IDroppingMetas) {
-            super(duration, metas);
+            super(Infinity, metas);
             this._r = [];
             this._n = [];
             this._g = null;
@@ -58,9 +58,9 @@ namespace C2D {
                 this._g = new Component({}, true);
                 this._f = this._g.gC().getContext('2d');
                 (<Sprite> this._g).o(1);
-                (<Sprite> element).a(this._g, 'F');
+                (<Sprite> element).a(this._g, 'W');
                 if (metas.type == "rain") {
-                    this._f.lineWidth = 1;
+                    this._f.lineWidth = 2;
                     this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
                     this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
                 } else {
@@ -112,7 +112,7 @@ namespace C2D {
             this._r = [];
             this._n = [];
             this._f = null;
-            this._g.$p().e(this._g);
+            if (this._g) this._g.$p().e(this._g);
         }
     }
 }

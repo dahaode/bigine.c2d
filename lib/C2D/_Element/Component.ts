@@ -18,12 +18,10 @@ namespace C2D {
          * 设置主题配置集合。
          */
         protected _tm: Util.IHashTable<any>;
-
         /**
          * 是否初始化。
          */
         protected _pi: boolean;
-
         /**
          * Component 中的 Canvas 缓存。
          */
@@ -62,7 +60,6 @@ namespace C2D {
         public f(child?: Element): Component {
             Context.pC(() => this.cache());
             return this;
-            //return <Component> super.f(child);
         }
 
         /**
@@ -83,7 +80,7 @@ namespace C2D {
         /**
          * 计算 Canvas 绘制缓存。
          */
-        private cache(/*child?: Element*/): Promise<CanvasRenderingContext2D> {
+        private cache(): Promise<CanvasRenderingContext2D> {
             return new Promise<CanvasRenderingContext2D>((resolve: (canvas: CanvasRenderingContext2D) => CanvasRenderingContext2D) => {
                 var w: number = 1280,
                     h: number = 720,
@@ -91,9 +88,6 @@ namespace C2D {
                     context: CanvasRenderingContext2D = Context.gC();
                 if (!opacity || !this._d.length) {
                     this._cw.clearRect(0, 0, w, h);
-                    // super.f(child);
-                    // this._f = false;
-                    this._uc = true;
                     resolve(context);
                 } else {
                     if (1 != opacity) {
@@ -107,8 +101,6 @@ namespace C2D {
                                 context.restore();
                             this._cw.clearRect(0, 0, w, h);
                             this._cw.drawImage(context.canvas, 0, 0, w, h);
-                            // super.f(child);
-                            // this._f = false;
                             this._uc = true;
                             resolve(context);
                         });

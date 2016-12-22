@@ -155,6 +155,7 @@ declare namespace __Bigine_C2D {
         private _h;
         private _m;
         private _e;
+        private _n;
         private _w;
         private _g;
         private _u;
@@ -173,7 +174,7 @@ declare namespace __Bigine_C2D {
         private $d();
     }
     namespace Stage {
-        function f(callback: FrameRequestCallback, first: boolean): void;
+        function f(callback: FrameRequestCallback): void;
     }
     class Color extends Element {
         private _d;
@@ -391,6 +392,15 @@ declare namespace __Bigine_C2D {
         private _r;
         private _n;
         constructor(duration: number, metas: IDroppingMetas);
+        protected $p(element: Element, elpased: number): void;
+        $h(): void;
+    }
+    interface IProgressMetas extends Util.IHashTable<any> {
+        width: number;
+    }
+    class Progress extends Animation {
+        private _e;
+        constructor(duration: number, metas: IProgressMetas);
         protected $p(element: Element, elpased: number): void;
         $h(): void;
     }

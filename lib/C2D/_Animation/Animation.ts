@@ -105,7 +105,7 @@ namespace C2D {
                                 resolve(element);
                             },
                             task: FrameRequestCallback = (time: number) => {
-                                if (this._h || this._d ? index >= this._d : false)
+                                if (this._h || index >= this._d)
                                     return done();
                                 if (!this._w)
                                     this.$p(element, ++index, done);
