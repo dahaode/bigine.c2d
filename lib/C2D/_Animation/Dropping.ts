@@ -51,58 +51,60 @@ namespace C2D {
          * 帧执行。
          */
         protected $p(element: Element, elpased: number): void {
-            var h: number = 720,
-                i: number = this._r.length,
-                metas: IDroppingMetas = <IDroppingMetas> this._m;
-            if (elpased == 1) {
-                this._g = new Component({}, true);
-                this._f = this._g.gC().getContext('2d');
-                (<Sprite> this._g).o(1);
-                (<Sprite> element).a(this._g, 'W');
-                if (metas.type == "rain") {
-                    this._f.lineWidth = 2;
-                    this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
-                    this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
-                } else {
-                    this._f.lineWidth = 2;
-                    this._f.strokeStyle = 'rgba(254, 254, 254, 0.8)';
-                    this._f.fillStyle = 'rgba(254, 254, 254, 0.8)';
-                }
-            }
-            this._f.clearRect(0, 0, 1280, h);
-            while (i--) {
-                var drop: Drop = this._r[i];
-                drop.u();
-                if (drop.gV('y') >= h) {
-                    if (metas.hasBounce) {
-                        var n: number = Math.round(4 + Math.random() * 4);
-                        while (n--)
-                            this._n.push(new Bounce(drop.gV('x'), h));
+            if (elpased % 2) {
+                var h: number = 720,
+                    i: number = this._r.length,
+                    metas: IDroppingMetas = <IDroppingMetas> this._m;
+                if (elpased == 1) {
+                    this._g = new Component({}, true);
+                    this._f = this._g.gC().getContext('2d');
+                    (<Sprite> this._g).o(1);
+                    (<Sprite> element).a(this._g, 'W');
+                    if (metas.type == "rain") {
+                        this._f.lineWidth = 2;
+                        this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
+                        this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
+                    } else {
+                        this._f.lineWidth = 2;
+                        this._f.strokeStyle = 'rgba(254, 254, 254, 0.8)';
+                        this._f.fillStyle = 'rgba(254, 254, 254, 0.8)';
                     }
-                    this._r.splice(i, 1);
                 }
-                drop.d(this._f);
-            }
-            if (metas.hasBounce) {
-                i = this._n.length;
+                this._f.clearRect(0, 0, 1280, h);
                 while (i--) {
-                    var bounce: Bounce = this._n[i];
-                    bounce.u(metas.gravity);
-                    bounce.d(this._f);
-                    if (bounce.gV('y') > h)
-                        this._n.splice(i, 1);
+                    var drop: Drop = this._r[i];
+                    drop.u();
+                    if (drop.gV('y') >= h) {
+                        if (metas.hasBounce) {
+                            var n: number = Math.round(4 + Math.random() * 4);
+                            while (n--)
+                                this._n.push(new Bounce(drop.gV('x'), h));
+                        }
+                        this._r.splice(i, 1);
+                    }
+                    drop.d(this._f);
                 }
-            }
-            if (this._r.length < metas.maxNum) {
-                if (Math.random() < DROP_CHANCE) {
-                    i = 0;
-                    var len: number = metas.numLevel;
-                    for (; i < len; i++) {
-                        this._r.push(new Drop(this._m));
+                if (metas.hasBounce) {
+                    i = this._n.length;
+                    while (i--) {
+                        var bounce: Bounce = this._n[i];
+                        bounce.u(metas.gravity);
+                        bounce.d(this._f);
+                        if (bounce.gV('y') > h)
+                            this._n.splice(i, 1);
                     }
                 }
+                if (this._r.length < metas.maxNum) {
+                    if (Math.random() < DROP_CHANCE) {
+                        i = 0;
+                        var len: number = metas.numLevel;
+                        for (; i < len; i++) {
+                            this._r.push(new Drop(this._m));
+                        }
+                    }
+                }
+                this._g.uc(true);
             }
-            this._g.uc(true);
         }
 
         /**

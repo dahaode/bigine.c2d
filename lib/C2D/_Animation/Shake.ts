@@ -43,21 +43,23 @@ namespace C2D {
                 element.x(this._x)
                     .y(this._y);
             } else {
-                var mod: number = elpased % 4,
-                    rector: number = 4;
-                switch (mod) {
-                    case 1:
-                        element.x(this._y + rector);
-                        break;
-                    case 2:
-                        element.y(this._x + rector);
-                        break;
-                    case 3:
-                        element.x(this._x);
-                        break;
-                    default:
-                        element.y(this._y);
-                        break;
+                if (!(elpased % 2)) {
+                    var mod: number = (elpased / 2) % 4,
+                        rector: number = 4;
+                    switch (mod) {
+                        case 1:
+                            element.x(this._y + rector);
+                            break;
+                        case 2:
+                            element.y(this._x + rector);
+                            break;
+                        case 3:
+                            element.x(this._x);
+                            break;
+                        default:
+                            element.y(this._y);
+                            break;
+                    }
                 }
             }
         }

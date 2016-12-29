@@ -32,7 +32,8 @@ namespace C2D {
         protected $p(element: HTMLAudioElement, elpased: number): void {
             if (1 == elpased)
                 this._v = element.volume;
-            element.volume = this._v - this._v * elpased / this._d;
+            if (elpased % 2)
+                element.volume = this._v - this._v * elpased / this._d;
         }
     }
 }

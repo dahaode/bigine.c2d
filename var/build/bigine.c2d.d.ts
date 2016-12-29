@@ -271,6 +271,15 @@ declare namespace __Bigine_C2D {
         constructor(bounds: IBounds, delay?: number, absolute?: boolean);
         b(callback: Util.IEventListener<Button>, hover?: Element, defaults?: Element): Button;
     }
+    class ColorLinear extends Element {
+        private _d;
+        private _ra;
+        constructor(x: number, y: number, w: number, h: number, color: [string, number][], radius?: number, absolute?: boolean);
+        constructor(bounds: IBounds, color: [string, number][], radius?: number, absolute?: boolean);
+        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        sD(color: [string, number][]): ColorLinear;
+        gN(): string;
+    }
     class Combo extends Animation {
         private _a;
         constructor(animations: Animation[]);
@@ -404,6 +413,16 @@ declare namespace __Bigine_C2D {
         constructor(duration: number, metas: IProgressMetas);
         protected $p(element: Element, elpased: number): void;
         $h(): void;
+    }
+    class Gif extends Animation {
+        private _x;
+        private _f;
+        constructor(rr: any[], bound: IBounds);
+        protected $p(element: Element, elpased: number): void;
+    }
+    class Bar extends Animation {
+        constructor(color: Util.IHashTable<any>);
+        protected $p(element: Element, elpased: number): void;
     }
     var version: string;
 }

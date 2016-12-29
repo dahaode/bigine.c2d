@@ -1848,7 +1848,8 @@ var C2D;
         Fade.prototype.$p = function (element, elpased) {
             if (1 == elpased)
                 this._o = element.gO();
-            element.o((this._m.opacity - this._o) * elpased / this._d + this._o);
+            if (elpased % 2)
+                element.o((this._m.opacity - this._o) * elpased / this._d + this._o);
         };
         return Fade;
     }(C2D.Animation));
@@ -2004,6 +2005,82 @@ var C2D;
     C2D.Button = Button;
 })(C2D || (C2D = {}));
 /**
+ * 定义线性圆角色块画面元素组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/ColorLinear.ts
+ */
+/// <reference path="Element.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var ColorLinear = (function (_super) {
+        __extends(ColorLinear, _super);
+        function ColorLinear(x, y, w, h, color, radius, absolute) {
+            if ('object' == typeof x) {
+                _super.call(this, x, w);
+                this._d = y;
+                this._ra = color || 0;
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._d = color;
+                this._ra = radius || 0;
+            }
+        }
+        /**
+         * 绘制。
+         */
+        ColorLinear.prototype.d = function (context) {
+            var opacity = this.gO();
+            if (opacity) {
+                context.save();
+                context.globalAlpha = opacity;
+                var bounds = this.gB();
+                var gradient = context.createLinearGradient(bounds.x, bounds.y, bounds.x + bounds.w, bounds.y);
+                Util.each(this._d, function (color) {
+                    gradient.addColorStop(color[1], color[0]);
+                });
+                context.fillStyle = gradient;
+                if (this._ra) {
+                    context.beginPath();
+                    context.moveTo(bounds.x + this._ra, bounds.y);
+                    context.arcTo(bounds.x + bounds.w, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h, this._ra);
+                    context.arcTo(bounds.x + bounds.w, bounds.y + bounds.h, bounds.x, bounds.y + bounds.h, this._ra);
+                    context.arcTo(bounds.x, bounds.y + bounds.h, bounds.x, bounds.y, this._ra);
+                    context.arcTo(bounds.x, bounds.y, bounds.x + this._ra, bounds.y, this._ra);
+                    context.stroke();
+                    context.fill();
+                }
+                else {
+                    context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);
+                }
+                context.restore();
+            }
+            return _super.prototype.d.call(this, context);
+        };
+        /**
+         * 设置线性颜色。
+         */
+        ColorLinear.prototype.sD = function (color) {
+            this._d = color;
+            if (!this.gO())
+                return this;
+            return this.f();
+        };
+        /**
+         * 获取名称。
+         */
+        ColorLinear.prototype.gN = function () {
+            return 'ColorLinear';
+        };
+        return ColorLinear;
+    }(C2D.Element));
+    C2D.ColorLinear = ColorLinear;
+})(C2D || (C2D = {}));
+/**
  * 定义画面组合动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2086,7 +2163,8 @@ var C2D;
         AudioFadeOut.prototype.$p = function (element, elpased) {
             if (1 == elpased)
                 this._v = element.volume;
-            element.volume = this._v - this._v * elpased / this._d;
+            if (elpased % 2)
+                element.volume = this._v - this._v * elpased / this._d;
         };
         return AudioFadeOut;
     }(C2D.Animation));
@@ -2126,13 +2204,15 @@ var C2D;
          * 帧执行。
          */
         Move.prototype.$p = function (element, elpased) {
-            if (1 == elpased) {
-                var bounds = element.gB();
-                this._x = bounds.x;
-                this._y = bounds.y;
+            if (elpased % 2) {
+                if (1 == elpased) {
+                    var bounds = element.gB();
+                    this._x = bounds.x;
+                    this._y = bounds.y;
+                }
+                element.x((this._m.x - this._x) * elpased / this._d + this._x)
+                    .y((this._m.y - this._y) * elpased / this._d + this._y);
             }
-            element.x((this._m.x - this._x) * elpased / this._d + this._x)
-                .y((this._m.y - this._y) * elpased / this._d + this._y);
         };
         /**
          * 中止。
@@ -2336,9 +2416,7 @@ var C2D;
          */
         Shutter.prototype.$p = function (element, elpased) {
             var _this = this;
-            var count = 10, maxH = Math.round(720 / count), maxW = Math.round(1280 / count), 
-            //parent: Stage = <Stage> (<Component> element).$p(),
-            room = element.q('n')[0], metas = this._m;
+            var count = 10, maxH = Math.round(720 / count), maxW = Math.round(1280 / count), room = element.q('n')[0], metas = this._m;
             switch (elpased) {
                 case 1:
                     this._cs = [];
@@ -2360,11 +2438,13 @@ var C2D;
                     this._cs = [];
                     break;
                 default:
-                    Util.each(this._cs, function (image) {
-                        metas.direction == 'H' ?
-                            image.sH(Math.ceil(maxH / _this._d * elpased)) :
-                            image.sW(Math.ceil(maxW / _this._d * elpased));
-                    });
+                    if (elpased % 2) {
+                        Util.each(this._cs, function (image) {
+                            metas.direction == 'H' ?
+                                image.sH(Math.ceil(maxH / _this._d * elpased)) :
+                                image.sW(Math.ceil(maxW / _this._d * elpased));
+                        });
+                    }
                     break;
             }
         };
@@ -2406,13 +2486,15 @@ var C2D;
          * 帧执行。
          */
         Zoom.prototype.$p = function (element, elpased) {
-            if (1 == elpased)
-                this._b = element.gB();
-            var metas = this._m, scale = metas.scale, px = scale * (5 / 3 - 1) * 1280 / this._d, py = scale * (5 / 3 - 1) * 720 / this._d;
-            element.x(Math.round(this._b.x - metas.mx * px * elpased))
-                .y(Math.round(this._b.y - metas.my * py * elpased))
-                .sW(Math.round(this._b.w + px * elpased))
-                .sH(Math.round(this._b.h + py * elpased));
+            if (elpased % 2) {
+                if (1 == elpased)
+                    this._b = element.gB();
+                var metas = this._m, scale = metas.scale, px = scale * (5 / 3 - 1) * 1280 / this._d, py = scale * (5 / 3 - 1) * 720 / this._d;
+                element.x(Math.round(this._b.x - metas.mx * px * elpased))
+                    .y(Math.round(this._b.y - metas.my * py * elpased))
+                    .sW(Math.round(this._b.w + px * elpased))
+                    .sH(Math.round(this._b.h + py * elpased));
+            }
         };
         /**
          * 中止。
@@ -2462,20 +2544,22 @@ var C2D;
                     .y(this._y);
             }
             else {
-                var mod = elpased % 4, rector = 4;
-                switch (mod) {
-                    case 1:
-                        element.x(this._y + rector);
-                        break;
-                    case 2:
-                        element.y(this._x + rector);
-                        break;
-                    case 3:
-                        element.x(this._x);
-                        break;
-                    default:
-                        element.y(this._y);
-                        break;
+                if (!(elpased % 2)) {
+                    var mod = (elpased / 2) % 4, rector = 4;
+                    switch (mod) {
+                        case 1:
+                            element.x(this._y + rector);
+                            break;
+                        case 2:
+                            element.y(this._x + rector);
+                            break;
+                        case 3:
+                            element.x(this._x);
+                            break;
+                        default:
+                            element.y(this._y);
+                            break;
+                    }
                 }
             }
         };
@@ -2514,7 +2598,8 @@ var C2D;
                 this._vb = element.volume;
                 this._v = (this._va - this._vb) / this._d;
             }
-            element.volume = this._vb + this._v * elpased;
+            if (elpased % 2)
+                element.volume = this._vb + this._v * elpased;
         };
         return AudioFade;
     }(C2D.Animation));
@@ -2736,57 +2821,59 @@ var C2D;
          * 帧执行。
          */
         Dropping.prototype.$p = function (element, elpased) {
-            var h = 720, i = this._r.length, metas = this._m;
-            if (elpased == 1) {
-                this._g = new C2D.Component({}, true);
-                this._f = this._g.gC().getContext('2d');
-                this._g.o(1);
-                element.a(this._g, 'W');
-                if (metas.type == "rain") {
-                    this._f.lineWidth = 2;
-                    this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
-                    this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
-                }
-                else {
-                    this._f.lineWidth = 2;
-                    this._f.strokeStyle = 'rgba(254, 254, 254, 0.8)';
-                    this._f.fillStyle = 'rgba(254, 254, 254, 0.8)';
-                }
-            }
-            this._f.clearRect(0, 0, 1280, h);
-            while (i--) {
-                var drop = this._r[i];
-                drop.u();
-                if (drop.gV('y') >= h) {
-                    if (metas.hasBounce) {
-                        var n = Math.round(4 + Math.random() * 4);
-                        while (n--)
-                            this._n.push(new C2D.Bounce(drop.gV('x'), h));
+            if (elpased % 2) {
+                var h = 720, i = this._r.length, metas = this._m;
+                if (elpased == 1) {
+                    this._g = new C2D.Component({}, true);
+                    this._f = this._g.gC().getContext('2d');
+                    this._g.o(1);
+                    element.a(this._g, 'W');
+                    if (metas.type == "rain") {
+                        this._f.lineWidth = 2;
+                        this._f.strokeStyle = 'rgba(223, 223, 223, 0.6)';
+                        this._f.fillStyle = 'rgba(223, 223, 223, 0.6)';
                     }
-                    this._r.splice(i, 1);
+                    else {
+                        this._f.lineWidth = 2;
+                        this._f.strokeStyle = 'rgba(254, 254, 254, 0.8)';
+                        this._f.fillStyle = 'rgba(254, 254, 254, 0.8)';
+                    }
                 }
-                drop.d(this._f);
-            }
-            if (metas.hasBounce) {
-                i = this._n.length;
+                this._f.clearRect(0, 0, 1280, h);
                 while (i--) {
-                    var bounce = this._n[i];
-                    bounce.u(metas.gravity);
-                    bounce.d(this._f);
-                    if (bounce.gV('y') > h)
-                        this._n.splice(i, 1);
+                    var drop = this._r[i];
+                    drop.u();
+                    if (drop.gV('y') >= h) {
+                        if (metas.hasBounce) {
+                            var n = Math.round(4 + Math.random() * 4);
+                            while (n--)
+                                this._n.push(new C2D.Bounce(drop.gV('x'), h));
+                        }
+                        this._r.splice(i, 1);
+                    }
+                    drop.d(this._f);
                 }
-            }
-            if (this._r.length < metas.maxNum) {
-                if (Math.random() < DROP_CHANCE) {
-                    i = 0;
-                    var len = metas.numLevel;
-                    for (; i < len; i++) {
-                        this._r.push(new C2D.Drop(this._m));
+                if (metas.hasBounce) {
+                    i = this._n.length;
+                    while (i--) {
+                        var bounce = this._n[i];
+                        bounce.u(metas.gravity);
+                        bounce.d(this._f);
+                        if (bounce.gV('y') > h)
+                            this._n.splice(i, 1);
                     }
                 }
+                if (this._r.length < metas.maxNum) {
+                    if (Math.random() < DROP_CHANCE) {
+                        i = 0;
+                        var len = metas.numLevel;
+                        for (; i < len; i++) {
+                            this._r.push(new C2D.Drop(this._m));
+                        }
+                    }
+                }
+                this._g.uc(true);
             }
-            this._g.uc(true);
         };
         /**
          * 立即中止。
@@ -2836,7 +2923,8 @@ var C2D;
          * 帧执行。
          */
         Progress.prototype.$p = function (element, elpased) {
-            element.x((elpased / this._d - 1) * this._m['width']);
+            if (elpased % 2)
+                element.x((elpased / this._d - 1) * this._m['width']);
         };
         /**
          * 中止。
@@ -2847,6 +2935,77 @@ var C2D;
         return Progress;
     }(C2D.Animation));
     C2D.Progress = Progress;
+})(C2D || (C2D = {}));
+/**
+ * 定义 Gif 动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Gif.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="../_Element/Sprite.ts" />
+/// <reference path="../_Element/Image.ts" />
+var C2D;
+(function (C2D) {
+    var Gif = (function (_super) {
+        __extends(Gif, _super);
+        /**
+         * 构造函数。
+         */
+        function Gif(rr, bound) {
+            _super.call(this, Infinity, bound);
+            this._x = rr;
+        }
+        /**
+         * 帧执行。
+         */
+        Gif.prototype.$p = function (element, elpased) {
+            if (!(elpased % 3)) {
+                var index = (elpased / 3) % this._x.length;
+                if (elpased / 3 != 1)
+                    element.e(this._f);
+                this._f = new C2D.Image(this._x[index].o(), this._m);
+                element.a(this._f);
+            }
+        };
+        return Gif;
+    }(C2D.Animation));
+    C2D.Gif = Gif;
+})(C2D || (C2D = {}));
+/**
+ * 定义进度条动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Bar.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="../_Element/ColorLinear.ts" />
+var C2D;
+(function (C2D) {
+    var Bar = (function (_super) {
+        __extends(Bar, _super);
+        /**
+         * 构造函数。
+         */
+        function Bar(color) {
+            _super.call(this, Infinity, color);
+        }
+        /**
+         * 帧执行。
+         */
+        Bar.prototype.$p = function (element, elpased) {
+            if (!(elpased % 8)) {
+                this._m[1][1] = ((elpased / 8) % 11) / 10;
+                element.sD(this._m);
+            }
+        };
+        return Bar;
+    }(C2D.Animation));
+    C2D.Bar = Bar;
 })(C2D || (C2D = {}));
 /**
  * 定义包主程序文件。
@@ -2862,6 +3021,7 @@ var C2D;
 /// <reference path="C2D/_Element/Text.ts" />
 /// <reference path="C2D/_Element/Button.ts" />
 /// <reference path="C2D/_Element/Component.ts" />
+/// <reference path="C2D/_Element/ColorLinear.ts" />
 /// <reference path="C2D/_Animation/Combo.ts" />
 /// <reference path="C2D/_Animation/AudioFadeOut.ts" />
 /// <reference path="C2D/_Animation/FadeIn.ts" />
@@ -2876,9 +3036,11 @@ var C2D;
 /// <reference path="C2D/_Animation/AudioFade.ts" />
 /// <reference path="C2D/_Animation/Dropping.ts" />
 /// <reference path="C2D/_Animation/Progress.ts" />
+/// <reference path="C2D/_Animation/Gif.ts" />
+/// <reference path="C2D/_Animation/Bar.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.1';
+    C2D.version = '0.3.2';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

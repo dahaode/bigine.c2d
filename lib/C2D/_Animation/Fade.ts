@@ -31,7 +31,8 @@ namespace C2D {
         protected $p(element: Element, elpased: number): void {
             if (1 == elpased)
                 this._o = element.gO();
-            element.o(((<IFadeMetas> this._m).opacity - this._o) * elpased / this._d + this._o);
+            if (elpased % 2)
+                element.o(((<IFadeMetas> this._m).opacity - this._o) * elpased / this._d + this._o);
         }
     }
 }

@@ -34,13 +34,15 @@ namespace C2D {
          * 帧执行。
          */
         protected $p(element: Element, elpased: number): void {
-            if (1 == elpased) {
-                var bounds: IBounds = element.gB();
-                this._x = bounds.x;
-                this._y = bounds.y;
+            if (elpased % 2) {
+                if (1 == elpased) {
+                    var bounds: IBounds = element.gB();
+                    this._x = bounds.x;
+                    this._y = bounds.y;
+                }
+                element.x(((<IMoveMetas> this._m).x - this._x) * elpased / this._d + this._x)
+                    .y(((<IMoveMetas> this._m).y - this._y) * elpased / this._d + this._y);
             }
-            element.x(((<IMoveMetas> this._m).x - this._x) * elpased / this._d + this._x)
-                .y(((<IMoveMetas> this._m).y - this._y) * elpased / this._d + this._y);
         }
 
         /**

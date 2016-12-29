@@ -24,7 +24,8 @@ namespace C2D {
          * 帧执行。
          */
         protected $p(element: Element, elpased: number): void {
-            element.x((elpased / this._d - 1) * this._m['width']);
+            if (elpased % 2)
+                element.x((elpased / this._d - 1) * this._m['width']);
         }
 
         /**

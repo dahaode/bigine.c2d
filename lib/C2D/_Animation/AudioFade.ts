@@ -45,7 +45,8 @@ namespace C2D {
                 this._vb = element.volume;
                 this._v = (this._va - this._vb) / this._d;
             }
-            element.volume = this._vb + this._v * elpased;
+            if (elpased % 2)
+                element.volume = this._vb + this._v * elpased;
         }
     }
 }

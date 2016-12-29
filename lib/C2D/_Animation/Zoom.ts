@@ -29,16 +29,18 @@ namespace C2D {
          * 帧执行。
          */
         protected $p(element: Element, elpased: number): void {
-            if (1 == elpased)
-                this._b = element.gB();
-            let metas: IZoomMetas = <IZoomMetas> this._m,
-                scale: number = metas.scale,
-                px: number = scale * (5 / 3 - 1) * 1280 / this._d,
-                py: number = scale * (5 / 3 - 1) * 720 / this._d;
-            element.x(Math.round(this._b.x - metas.mx * px * elpased))
-                .y(Math.round(this._b.y - metas.my * py * elpased))
-                .sW(Math.round(this._b.w + px * elpased))
-                .sH(Math.round(this._b.h + py * elpased));
+            if (elpased % 2) {
+                if (1 == elpased)
+                    this._b = element.gB();
+                let metas: IZoomMetas = <IZoomMetas> this._m,
+                    scale: number = metas.scale,
+                    px: number = scale * (5 / 3 - 1) * 1280 / this._d,
+                    py: number = scale * (5 / 3 - 1) * 720 / this._d;
+                element.x(Math.round(this._b.x - metas.mx * px * elpased))
+                    .y(Math.round(this._b.y - metas.my * py * elpased))
+                    .sW(Math.round(this._b.w + px * elpased))
+                    .sH(Math.round(this._b.h + py * elpased));
+            }
         }
 
         /**

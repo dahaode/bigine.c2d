@@ -35,7 +35,6 @@ namespace C2D {
             let count: number = 10,
                 maxH: number = Math.round(720 / count),
                 maxW: number = Math.round(1280 / count),
-                //parent: Stage = <Stage> (<Component> element).$p(),
                 room: Element = (<Sprite> element).q('n')[0],
                 metas: IShutterMetas = <IShutterMetas> this._m;
             switch (elpased) {
@@ -62,11 +61,13 @@ namespace C2D {
                     break;
 
                 default:
-                    Util.each(this._cs, (image: Image) => {
-                        metas.direction == 'H' ?
-                            image.sH(Math.ceil(maxH / this._d * elpased)) :
-                            image.sW(Math.ceil(maxW / this._d * elpased));
-                    });
+                    if (elpased % 2) {
+                        Util.each(this._cs, (image: Image) => {
+                            metas.direction == 'H' ?
+                                image.sH(Math.ceil(maxH / this._d * elpased)) :
+                                image.sW(Math.ceil(maxW / this._d * elpased));
+                        });
+                    }
                     break;
             }
         }
