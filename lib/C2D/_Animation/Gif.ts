@@ -8,6 +8,7 @@
  */
 
 /// <reference path="Animation.ts" />
+/// <reference path="IGifMetas.ts" />
 /// <reference path="../_Element/Sprite.ts" />
 /// <reference path="../_Element/Image.ts" />
 
@@ -26,8 +27,8 @@ namespace C2D {
 		/**
 		 * 构造函数。
 		 */
-        constructor(rr: any[], bound: IBounds) {
-            super(Infinity, bound);
+        constructor(rr: any[], metas: IGifMetas) {
+            super(Infinity, metas);
             this._x = rr;
         }
 
@@ -35,10 +36,11 @@ namespace C2D {
          * 帧执行。
          */
         protected $p(element: Element, elpased: number): void {
-        	if (!(elpased % 3)) {
-	        	let index: number = (elpased / 3) % this._x.length;
-	        	if (elpased / 3 != 1) (<Sprite> element).e(this._f);
-	        	this._f = new Image(this._x[index].o(), <IBounds> this._m);
+            let interval: number = this._m['interval'];
+        	if (!(elpased % interval)) {
+	        	let index: number = (elpased / interval) % this._x.length;
+	        	if (elpased / interval != 1) (<Sprite> element).e(this._f);
+	        	this._f = new Image(this._x[index].o(), <IBounds> this._m['bound']);
 	        	(<Sprite> element).a(this._f);
 	        }
         }

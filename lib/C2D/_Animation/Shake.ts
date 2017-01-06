@@ -45,7 +45,7 @@ namespace C2D {
             } else {
                 if (!(elpased % 2)) {
                     var mod: number = (elpased / 2) % 4,
-                        rector: number = 4;
+                        rector: number = 3;
                     switch (mod) {
                         case 1:
                             element.x(this._y + rector);

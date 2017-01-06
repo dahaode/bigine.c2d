@@ -88,6 +88,7 @@ namespace C2D {
                     context: CanvasRenderingContext2D = Context.gC();
                 if (!opacity || !this._d.length) {
                     this._cw.clearRect(0, 0, w, h);
+                    this._uc = true;
                     resolve(context);
                 } else {
                     if (1 != opacity) {

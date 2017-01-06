@@ -17,5 +17,9 @@ namespace C2D {
          * 水平或垂直。
          */
         direction: string;
+        /**
+         * 是否取大尺寸图片。
+         */
+        bsize: boolean;
     }
 }

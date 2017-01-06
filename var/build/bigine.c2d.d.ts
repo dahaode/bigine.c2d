@@ -186,8 +186,8 @@ declare namespace __Bigine_C2D {
     class Image extends Element {
         private _d;
         private _l;
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: boolean);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: boolean);
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: number);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: number);
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
         protected $r(): Promise<HTMLImageElement>[];
         $d(): Promise<HTMLImageElement>;
@@ -326,6 +326,7 @@ declare namespace __Bigine_C2D {
     }
     interface IShutterMetas extends Util.IHashTable<any> {
         direction: string;
+        bsize: boolean;
     }
     class Shutter extends Animation {
         private _cs;
@@ -414,10 +415,14 @@ declare namespace __Bigine_C2D {
         protected $p(element: Element, elpased: number): void;
         $h(): void;
     }
+    interface IGifMetas extends Util.IHashTable<any> {
+        bound: IBounds;
+        interval: number;
+    }
     class Gif extends Animation {
         private _x;
         private _f;
-        constructor(rr: any[], bound: IBounds);
+        constructor(rr: any[], metas: IGifMetas);
         protected $p(element: Element, elpased: number): void;
     }
     class Bar extends Animation {

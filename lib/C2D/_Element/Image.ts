@@ -19,20 +19,20 @@ namespace C2D {
         /**
          * 平铺。
          */
-        private _l: boolean;
+        private _l: number;
 
         /**
          * 构造函数。
          */
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: boolean);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: boolean);
-        constructor(image: Promise<HTMLImageElement>, x?: any, y?: any, w?: any, h?: any, absolute?: any, tile?: boolean) {
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: number);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: number);
+        constructor(image: Promise<HTMLImageElement>, x?: any, y?: any, w?: any, h?: any, absolute?: any, tile?: any) {
             super(x, y, w, h, absolute);
             this._d = image;
             if (!x || 'number' == typeof x) {
-                this._l = !!tile;
+                this._l = tile || 0;
             } else {
-                this._l = !!w;
+                this._l = w || 0;
             }
             if (!this._b.w || !this._b.h)
                 image.then((img: HTMLImageElement) => {
@@ -59,7 +59,7 @@ namespace C2D {
                         context.globalAlpha = opacity;
                     }
                     var bounds: IBounds = this.gB();
-                    this._l ? context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                    this._l ? context.drawImage(img, bounds.x / this._l, bounds.y / this._l, bounds.w / this._l, bounds.h / this._l, bounds.x, bounds.y, bounds.w, bounds.h) :
                         context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
                     if (1 != opacity)
                         context.restore();

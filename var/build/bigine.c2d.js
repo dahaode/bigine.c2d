@@ -960,6 +960,7 @@ var C2D;
                 var w = 1280, h = 720, opacity = _this.gO(), context = C2D.Context.gC();
                 if (!opacity || !_this._d.length) {
                     _this._cw.clearRect(0, 0, w, h);
+                    _this._uc = true;
                     resolve(context);
                 }
                 else {
@@ -1332,10 +1333,10 @@ var C2D;
             _super.call(this, x, y, w, h, absolute);
             this._d = image;
             if (!x || 'number' == typeof x) {
-                this._l = !!tile;
+                this._l = tile || 0;
             }
             else {
-                this._l = !!w;
+                this._l = w || 0;
             }
             if (!this._b.w || !this._b.h)
                 image.then(function (img) {
@@ -1364,7 +1365,7 @@ var C2D;
                         context.globalAlpha = opacity;
                     }
                     var bounds = _this.gB();
-                    _this._l ? context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                    _this._l ? context.drawImage(img, bounds.x / _this._l, bounds.y / _this._l, bounds.w / _this._l, bounds.h / _this._l, bounds.x, bounds.y, bounds.w, bounds.h) :
                         context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
                     if (1 != opacity)
                         context.restore();
@@ -2425,7 +2426,7 @@ var C2D;
                     for (var i = 0; i < count; i++) {
                         var bound = metas.direction == 'H' ?
                             { x: 0, y: maxH * i, w: 1280, h: Math.ceil(maxH / this._d) } :
-                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(room.$d(), bound, false, true);
+                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(room.$d(), bound, false, metas['bsize'] ? 1 : 2);
                         element.a(image, room, 1);
                         this._cs.push(image);
                     }
@@ -2545,7 +2546,7 @@ var C2D;
             }
             else {
                 if (!(elpased % 2)) {
-                    var mod = (elpased / 2) % 4, rector = 4;
+                    var mod = (elpased / 2) % 4, rector = 3;
                     switch (mod) {
                         case 1:
                             element.x(this._y + rector);
@@ -2937,6 +2938,15 @@ var C2D;
     C2D.Progress = Progress;
 })(C2D || (C2D = {}));
 /**
+ * 声明 Gif 动画元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/IGifMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/**
  * 定义 Gif 动画组件。
  *
  * @author    李倩 <qli@atfacg.com>
@@ -2945,6 +2955,7 @@ var C2D;
  * @file      C2D/_Animation/Gif.ts
  */
 /// <reference path="Animation.ts" />
+/// <reference path="IGifMetas.ts" />
 /// <reference path="../_Element/Sprite.ts" />
 /// <reference path="../_Element/Image.ts" />
 var C2D;
@@ -2954,19 +2965,20 @@ var C2D;
         /**
          * 构造函数。
          */
-        function Gif(rr, bound) {
-            _super.call(this, Infinity, bound);
+        function Gif(rr, metas) {
+            _super.call(this, Infinity, metas);
             this._x = rr;
         }
         /**
          * 帧执行。
          */
         Gif.prototype.$p = function (element, elpased) {
-            if (!(elpased % 3)) {
-                var index = (elpased / 3) % this._x.length;
-                if (elpased / 3 != 1)
+            var interval = this._m['interval'];
+            if (!(elpased % interval)) {
+                var index = (elpased / interval) % this._x.length;
+                if (elpased / interval != 1)
                     element.e(this._f);
-                this._f = new C2D.Image(this._x[index].o(), this._m);
+                this._f = new C2D.Image(this._x[index].o(), this._m['bound']);
                 element.a(this._f);
             }
         };
@@ -3040,7 +3052,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Bar.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.2';
+    C2D.version = '0.3.3';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

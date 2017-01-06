@@ -46,7 +46,7 @@ namespace C2D {
                         let bound: IBounds = metas.direction == 'H' ?
                             { x: 0, y: maxH * i, w: 1280, h: Math.ceil(maxH / this._d) } :
                             { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 },
-                            image: Image = new Image((<Image> room).$d(), bound, false, true);
+                            image: Image = new Image((<Image> room).$d(), bound, false, metas['bsize'] ? 1 : 2);
                         (<Component> element).a(image, room, 1);
                         this._cs.push(image);
                     }
