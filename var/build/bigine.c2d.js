@@ -165,6 +165,11 @@ var C2D;
                     return r;
                 return new Promise(function (resolve) {
                     var index = 0, done = function () {
+                        if (!_this._h) {
+                            if ('k' in element)
+                                element.k(null);
+                            _this._h = true;
+                        }
                         resolve(element);
                     }, task = function (time) {
                         if (_this._h || index >= _this._d)
@@ -205,6 +210,8 @@ var C2D;
             if (this._h)
                 return this;
             this._h = true;
+            if ('k' in this._t)
+                this._t.k(null);
             this.$h();
             Util.each(this._c, function (anime) {
                 anime.h();
@@ -474,6 +481,9 @@ var C2D;
          * 执行动画。
          */
         Element.prototype.p = function (animation) {
+            if (this._k)
+                this._k.h();
+            this._k = animation;
             return animation.p(this);
         };
         /**
@@ -510,6 +520,14 @@ var C2D;
          */
         Element.prototype.gN = function () {
             return '';
+        };
+        /**
+         * 设置 / 获取当前动画。
+         */
+        Element.prototype.k = function (anim) {
+            if (anim || anim == null)
+                this._k = anim;
+            return this._k;
         };
         return Element;
     }());
@@ -923,13 +941,6 @@ var C2D;
             this.o(0);
         }
         /**
-         * 第一次绘制 Lazy Draw。
-         */
-        Component.prototype.pI = function () {
-            this._pi = true;
-            return this;
-        };
-        /**
          * 发生变更。
          */
         Component.prototype.f = function (child) {
@@ -950,6 +961,13 @@ var C2D;
             if (uc != undefined)
                 this._uc = uc;
             return this._uc;
+        };
+        /**
+         * 第一次绘制 Lazy Draw。
+         */
+        Component.prototype.pI = function () {
+            this._pi = true;
+            return this;
         };
         /**
          * 计算 Canvas 绘制缓存。
@@ -2545,22 +2563,20 @@ var C2D;
                     .y(this._y);
             }
             else {
-                if (!(elpased % 2)) {
-                    var mod = (elpased / 2) % 4, rector = 3;
-                    switch (mod) {
-                        case 1:
-                            element.x(this._y + rector);
-                            break;
-                        case 2:
-                            element.y(this._x + rector);
-                            break;
-                        case 3:
-                            element.x(this._x);
-                            break;
-                        default:
-                            element.y(this._y);
-                            break;
-                    }
+                var mod = elpased % 4, rector = 3;
+                switch (mod) {
+                    case 1:
+                        element.x(this._y + rector);
+                        break;
+                    case 2:
+                        element.y(this._x + rector);
+                        break;
+                    case 3:
+                        element.x(this._x);
+                        break;
+                    default:
+                        element.y(this._y);
+                        break;
                 }
             }
         };
@@ -3052,7 +3068,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Bar.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.3';
+    C2D.version = '0.3.4';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

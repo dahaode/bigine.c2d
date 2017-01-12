@@ -102,6 +102,10 @@ namespace C2D {
                     return new Promise((resolve: (value: any) => void) => {
                         let index: number = 0,
                             done: () => void = () => {
+                                if (!this._h) {
+                                    if ('k' in element) element.k(null);
+                                    this._h = true;
+                                }
                                 resolve(element);
                             },
                             task: FrameRequestCallback = (time: number) => {
@@ -146,6 +150,8 @@ namespace C2D {
             if (this._h)
                 return this;
             this._h = true;
+            if ('k' in this._t)
+                this._t.k(null);
             this.$h();
             Util.each(this._c, (anime: Animation) => {
                 anime.h();

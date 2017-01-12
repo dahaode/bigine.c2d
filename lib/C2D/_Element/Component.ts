@@ -26,7 +26,6 @@ namespace C2D {
          * Component 中的 Canvas 缓存。
          */
         private _cw: CanvasRenderingContext2D;
-
         /**
          * 缓存是否发生变更。
          */
@@ -44,14 +43,6 @@ namespace C2D {
             this._pi =
             this._uc = false;
             this.o(0);
-        }
-
-        /**
-         * 第一次绘制 Lazy Draw。
-         */
-        protected pI(): Component {
-            this._pi = true;
-            return this;
         }
 
         /**
@@ -75,6 +66,14 @@ namespace C2D {
         public uc(uc?: boolean): boolean {
             if (uc != undefined) this._uc = uc;
             return this._uc;
+        }
+
+        /**
+         * 第一次绘制 Lazy Draw。
+         */
+        protected pI(): Component {
+            this._pi = true;
+            return this;
         }
 
         /**

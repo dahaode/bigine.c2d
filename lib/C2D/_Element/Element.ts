@@ -57,6 +57,11 @@ namespace C2D {
         protected _i: string;
 
         /**
+         * 动画。
+         */
+        protected _k: Animation;
+
+        /**
          * 构造函数。
          */
         constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
@@ -241,6 +246,8 @@ namespace C2D {
          * 执行动画。
          */
         public p(animation: Animation): Promise<Element> {
+            if (this._k) this._k.h();
+            this._k = animation;
             return animation.p(this);
         }
 
@@ -282,6 +289,14 @@ namespace C2D {
          */
         public gN(): string {
             return '';
+        }
+
+        /**
+         * 设置 / 获取当前动画。
+         */
+        public k(anim?: Animation): Animation {
+            if (anim || anim == null) this._k = anim;
+            return this._k;
         }
     }
 }

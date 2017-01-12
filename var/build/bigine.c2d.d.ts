@@ -56,6 +56,7 @@ declare namespace __Bigine_C2D {
         protected _f: boolean;
         protected _p: Sprite;
         protected _i: string;
+        protected _k: Animation;
         constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
         constructor(bounds: IBounds, absolute?: boolean);
         gB(): IBounds;
@@ -76,6 +77,7 @@ declare namespace __Bigine_C2D {
         f(): Element;
         $p(parent: Sprite): Element;
         gN(): string;
+        k(anim?: Animation): Animation;
     }
     class Sprite extends Element implements Util.IEmittable {
         protected _d: Element[];
@@ -142,10 +144,10 @@ declare namespace __Bigine_C2D {
         private _cw;
         private _uc;
         constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds);
-        protected pI(): Component;
         f(child?: Element): Component;
         gC(): HTMLCanvasElement;
         uc(uc?: boolean): boolean;
+        protected pI(): Component;
         private cache();
     }
     class Stage extends Sprite {
