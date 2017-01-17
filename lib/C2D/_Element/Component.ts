@@ -32,10 +32,12 @@ namespace C2D {
         private _uc: boolean;
 
         constructor(theme?: Util.IHashTable<any>, transparent?: boolean, bound?: IBounds) {
-            let w: number = bound ? bound.w : 1280,
+            let x: number = bound ? bound.x : 0,
+                y: number = bound ? bound.y : 0,
+                w: number = bound ? bound.w : 1280,
                 h: number = bound ? bound.h : 720,
                 canvas: HTMLCanvasElement = document.createElement('canvas');
-            super(0, 0, w, h, transparent);
+            super(x, y, w, h, transparent);
             canvas.width = w;
             canvas.height = h;
             this._cw = canvas.getContext('2d');

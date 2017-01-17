@@ -930,8 +930,8 @@ var C2D;
     var Component = (function (_super) {
         __extends(Component, _super);
         function Component(theme, transparent, bound) {
-            var w = bound ? bound.w : 1280, h = bound ? bound.h : 720, canvas = document.createElement('canvas');
-            _super.call(this, 0, 0, w, h, transparent);
+            var x = bound ? bound.x : 0, y = bound ? bound.y : 0, w = bound ? bound.w : 1280, h = bound ? bound.h : 720, canvas = document.createElement('canvas');
+            _super.call(this, x, y, w, h, transparent);
             canvas.width = w;
             canvas.height = h;
             this._cw = canvas.getContext('2d');
