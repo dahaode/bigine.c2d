@@ -282,6 +282,51 @@ declare namespace __Bigine_C2D {
         sD(color: [string, number][]): ColorLinear;
         gN(): string;
     }
+    class FontBank {
+        private _x;
+        private _y;
+        private _o;
+        private _h;
+        private _n;
+        private _s;
+        private _c;
+        static a(clobs?: string, font?: [number, string, string], shadow?: [number, number, number, string]): void;
+        static c(n: number): HTMLCanvasElement;
+        static s(clob: string): Util.IHashTable<any>;
+        constructor();
+        c(): void;
+        gC(n: number): HTMLCanvasElement;
+        gS(clob: string): Util.IHashTable<any>;
+        private d(clob, font?, shadow?);
+        private w(clob, font?, shadow?);
+    }
+    class Phrase {
+        private _t;
+        private _c;
+        private _p;
+        constructor(clob?: string, color?: string);
+        p(text: Paragraph): Phrase;
+        d(context: CanvasRenderingContext2D, x: number, y: number): IPoint;
+        gL(): number;
+        a(length: number): Phrase;
+    }
+    class Paragraph extends Element {
+        private _tf;
+        private _t;
+        private _ts;
+        private _to;
+        constructor(x: number, y: number, w: number, h: number, font?: string, size?: number, lineHeight?: number, absolute?: boolean);
+        constructor(bounds: IBounds, font?: string, size?: number, lineHeight?: number, absolute?: boolean);
+        s(ratio: number): Paragraph;
+        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        gP(context: CanvasRenderingContext2D): IPoint;
+        a(phrase: Phrase): Paragraph;
+        gT(): Phrase[];
+        c(): Paragraph;
+        gTf(): [number, number, string, number, string];
+        gTs(): [number, number, number, string];
+        to(offset: number): Paragraph;
+    }
     class Combo extends Animation {
         private _a;
         constructor(animations: Animation[]);
@@ -430,6 +475,13 @@ declare namespace __Bigine_C2D {
     class Bar extends Animation {
         constructor(color: Util.IHashTable<any>);
         protected $p(element: Element, elpased: number): void;
+    }
+    class Typing extends Animation {
+        private _r;
+        private _s;
+        constructor(rate?: number);
+        protected $p(element: Paragraph, elpased: number): void;
+        $h(): void;
     }
     var version: string;
 }

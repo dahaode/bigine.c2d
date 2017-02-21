@@ -2100,6 +2100,326 @@ var C2D;
     C2D.ColorLinear = ColorLinear;
 })(C2D || (C2D = {}));
 /**
+ * 定义雪碧图字库组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/FontBank.ts
+ */
+var C2D;
+(function (C2D) {
+    var WIDTH = 1960;
+    var HEIGHT = 1280;
+    /**
+     * 唯一实例。
+     */
+    var instance;
+    var FontBank = (function () {
+        /**
+         * 构造函数。
+         */
+        function FontBank() {
+            this._c = [];
+            this._s = {};
+            this._x = 0;
+            this.c();
+        }
+        /**
+         * 文字预处理。
+         */
+        FontBank.a = function (clobs, font, shadow) {
+            if (!clobs.length)
+                return;
+            if (!instance)
+                instance = new FontBank;
+            for (var i = 0; i < clobs.length; i++) {
+                instance.d(clobs[i], font, shadow);
+            }
+        };
+        /**
+         * 获取 canvas。
+         */
+        FontBank.c = function (n) {
+            if (!instance)
+                instance = new FontBank;
+            return instance.gC(n);
+        };
+        /**
+         * 获取文本范围。
+         */
+        FontBank.s = function (clob) {
+            if (!clob.length)
+                return;
+            if (!instance)
+                instance = new FontBank;
+            return instance.gS(clob);
+        };
+        /**
+         * 创建 canvas。
+         */
+        FontBank.prototype.c = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = WIDTH;
+            canvas.height = HEIGHT;
+            this._c.push(canvas.getContext('2d'));
+            this._h = 0;
+            this._o = 0;
+            this._n = this._c.length - 1;
+        };
+        /**
+         * 获取 canvas。
+         */
+        FontBank.prototype.gC = function (n) {
+            return this._c[n].canvas;
+        };
+        /**
+         * 获取文本范围。
+         */
+        FontBank.prototype.gS = function (clob) {
+            return this._s[clob];
+        };
+        /**
+         * 绘制。
+         */
+        FontBank.prototype.d = function (clob, font, shadow) {
+            var key = clob + font[2] + font[0].toString() + font[1];
+            if (key in this._s)
+                return;
+            var w = this.w(clob, font, shadow), m = Math.ceil(font[0] / 2);
+            if (this._x + w > WIDTH) {
+                this._x = 0;
+                this._o = this._o + this._h + 1;
+                this._h = font[0];
+                if (this._o > HEIGHT)
+                    this.c();
+            }
+            this._y = this._o + m;
+            this._h = this._h > font[0] ? this._h : font[0];
+            this._c[this._n].save();
+            this._c[this._n].fillStyle = font[1];
+            this._c[this._n].font = font[0] + 'px "' + font[2] + '", ' + C2D.TextPhrase.FONT;
+            this._c[this._n].textBaseline = 'middle';
+            if (shadow[2]) {
+                this._c[this._n].shadowBlur = shadow[2];
+                this._c[this._n].shadowOffsetX = shadow[0];
+                this._c[this._n].shadowOffsetY = shadow[1];
+                this._c[this._n].shadowColor = shadow[3];
+            }
+            var bound = { n: this._n, x: this._x, y: this._y - m, w: w, h: font[0] + 1 };
+            this._c[this._n].fillText(clob, this._x, this._y);
+            this._c[this._n].restore();
+            this._s[key] = bound;
+            this._x = this._x + w;
+        };
+        /**
+         * 获取文本宽度。
+         */
+        FontBank.prototype.w = function (clob, font, shadow) {
+            this._c[0].save();
+            this._c[0].fillStyle = font[1];
+            this._c[0].font = font[0] + 'px "' + font[2] + '", ' + C2D.TextPhrase.FONT;
+            this._c[0].textBaseline = 'middle';
+            var w = Math.ceil(this._c[0].measureText(clob).width);
+            this._c[0].restore();
+            return w;
+        };
+        return FontBank;
+    }());
+    C2D.FontBank = FontBank;
+})(C2D || (C2D = {}));
+/**
+ * 定义画面短句组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Phrase.ts
+ */
+/// <reference path="Paragraph.ts" />
+/// <reference path="FontBank.ts" />
+/// <reference path="IPoint.ts" />
+var C2D;
+(function (C2D) {
+    var Phrase = (function () {
+        /**
+         * 构造函数。
+         */
+        function Phrase(clob, color) {
+            this._t = (clob || '').toString();
+            this._c = color;
+        }
+        /**
+         * 设置主画面元素。
+         */
+        Phrase.prototype.p = function (text) {
+            this._p = text;
+            var tf = this._p.gTf();
+            this._c = this._c || tf[2];
+            C2D.FontBank.a(this._t, [tf[0], this._c, tf[4]], this._p.gTs());
+            return this;
+        };
+        /**
+         * 绘制。
+         */
+        Phrase.prototype.d = function (context, x, y) {
+            if (!this._p || !this._t.length)
+                return { x: x, y: y };
+            var pb = this._p.gB(), tf = this._p.gTf();
+            for (var i = 0; i < this._t.length; i++) {
+                var key = this._t[i] + tf[4] + tf[0].toString() + this._c;
+                var bounds = C2D.FontBank.s(key);
+                var canvas = C2D.FontBank.c(bounds['n']);
+                if (x + bounds.w - pb.x > pb.w) {
+                    x = pb.x;
+                    y += tf[1];
+                }
+                context.drawImage(canvas, bounds.x, bounds.y, bounds.w, bounds.h, x, y, bounds.w, bounds.h);
+                x = x + 2 * tf[3] + bounds.w;
+            }
+            return { x: x, y: y };
+        };
+        /**
+         * 获取长度。
+         */
+        Phrase.prototype.gL = function () {
+            return this._t.length;
+        };
+        /**
+         * 截取。
+         */
+        Phrase.prototype.a = function (length) {
+            return new Phrase(this._t.substr(0, length), this._c);
+        };
+        return Phrase;
+    }());
+    C2D.Phrase = Phrase;
+})(C2D || (C2D = {}));
+/**
+ * 定义文字段落画面元素组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Element/Paragraph.ts
+ */
+/// <reference path="Element.ts" />
+/// <reference path="Phrase.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var Paragraph = (function (_super) {
+        __extends(Paragraph, _super);
+        function Paragraph(x, y, w, h, font, size, lineHeight, absolute) {
+            if ('object' == typeof x) {
+                _super.call(this, x, font);
+                this._tf = [16, 24, '#000', 0, ''];
+                this._tf[0] = 0 | w;
+                this._tf[1] = 0 | Math.max(w, h);
+                this._tf[2] = x['c'] || '#000';
+                this._tf[3] = x['ls'] || 0;
+                this._tf[4] = y || '';
+            }
+            else {
+                _super.call(this, x, y, w, h, absolute);
+                this._tf = [16, 24, '#000', 0, ''];
+                this._tf[0] = 0 | size;
+                this._tf[1] = 0 | Math.max(size, lineHeight);
+                this._tf[4] = font || '';
+            }
+            this._t = [];
+            this._ts = [0, 0, 0, '#000'];
+            this._to = 0;
+        }
+        /**
+         * 缩放。
+         */
+        Paragraph.prototype.s = function (ratio) {
+            if (1 == ratio)
+                return this;
+            this._tf[0] = 0 | this._tf[0] * ratio;
+            this._tf[1] = 0 | this._tf[1] * ratio;
+            this._ts[0] = 0 | this._ts[0] * ratio;
+            this._ts[1] = 0 | this._ts[1] * ratio;
+            this._ts[2] = 0 | this._ts[2] * ratio;
+            return _super.prototype.s.call(this, ratio);
+        };
+        /**
+         * 绘制。
+         */
+        Paragraph.prototype.d = function (context) {
+            var opacity = this.gO(), bounds = this.gB(), x = this._to || bounds.x, y = bounds.y;
+            if (opacity && this._t.length) {
+                if (1 != opacity) {
+                    context.save();
+                    context.globalAlpha = opacity;
+                }
+                Util.each(this._t, function (phrase) {
+                    var pnt = phrase.d(context, x, y);
+                    x = pnt.x;
+                    y = pnt.y;
+                });
+                if (1 != opacity)
+                    context.restore();
+            }
+            return _super.prototype.d.call(this, context);
+        };
+        /**
+         * 获取末尾文字坐标。
+         */
+        Paragraph.prototype.gP = function (context) {
+            var bounds = this.gB(), x = this._to || bounds.x, y = bounds.y;
+            Util.each(this._t, function (phrase) {
+                var pnt = phrase.d(context, x, y);
+                x = pnt.x;
+                y = pnt.y;
+            });
+            return { x: x, y: y };
+        };
+        /**
+         * 添加文字。
+         */
+        Paragraph.prototype.a = function (phrase) {
+            this._t.push(phrase.p(this));
+            return this.f();
+        };
+        /**
+         * 获取文字。
+         */
+        Paragraph.prototype.gT = function () {
+            return this._t;
+        };
+        /**
+         * 清空所有已添加文字。
+         */
+        Paragraph.prototype.c = function () {
+            this._t = [];
+            return this.f();
+        };
+        /**
+         * 获取字号。
+         */
+        Paragraph.prototype.gTf = function () {
+            return this._tf;
+        };
+        /**
+         * 获取阴影（横向偏移，纵向偏移，大小，颜色）。
+         */
+        Paragraph.prototype.gTs = function () {
+            return this._ts;
+        };
+        /**
+         * 设置当前文本首行偏移 offset。
+         */
+        Paragraph.prototype.to = function (offset) {
+            this._to = offset || 0;
+            return this;
+        };
+        return Paragraph;
+    }(C2D.Element));
+    C2D.Paragraph = Paragraph;
+})(C2D || (C2D = {}));
+/**
  * 定义画面组合动画组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3036,6 +3356,70 @@ var C2D;
     C2D.Bar = Bar;
 })(C2D || (C2D = {}));
 /**
+ * 定义打字效果动画组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      C2D/_Animation/Typing.ts
+ */
+/// <reference path="Animation.ts" />
+/// <reference path="../_Element/Paragraph.ts" />
+var C2D;
+(function (C2D) {
+    var Util = __Bigine_Util;
+    var Typing = (function (_super) {
+        __extends(Typing, _super);
+        /**
+         * 构造函数。
+         */
+        function Typing(rate) {
+            _super.call(this, 17);
+            this._r = rate || 1;
+            if (0 > this._r)
+                this._r = 1;
+        }
+        /**
+         * 帧执行。
+         */
+        Typing.prototype.$p = function (element, elpased) {
+            var length = 0;
+            if (1 == elpased) {
+                Util.each(this._s = element.gT(), function (phrase) {
+                    length += phrase.gL();
+                });
+                this._d = 0 | length * this._r;
+                this._r = this._d / length;
+            }
+            elpased = 0 | elpased / this._r;
+            element.c().o(1);
+            Util.each(this._s, function (phrase) {
+                length = phrase.gL();
+                if (length < elpased) {
+                    element.a(phrase);
+                    elpased -= length;
+                }
+                else if (elpased) {
+                    element.a(phrase.a(elpased));
+                    elpased = 0;
+                }
+            });
+        };
+        /**
+         * 中止。
+         */
+        Typing.prototype.$h = function () {
+            var _this = this;
+            this._t.c();
+            Util.each(this._s, function (phrase) {
+                _this._t.a(phrase);
+            });
+        };
+        return Typing;
+    }(C2D.Animation));
+    C2D.Typing = Typing;
+})(C2D || (C2D = {}));
+/**
  * 定义包主程序文件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3050,6 +3434,7 @@ var C2D;
 /// <reference path="C2D/_Element/Button.ts" />
 /// <reference path="C2D/_Element/Component.ts" />
 /// <reference path="C2D/_Element/ColorLinear.ts" />
+/// <reference path="C2D/_Element/Paragraph.ts" />
 /// <reference path="C2D/_Animation/Combo.ts" />
 /// <reference path="C2D/_Animation/AudioFadeOut.ts" />
 /// <reference path="C2D/_Animation/FadeIn.ts" />
@@ -3066,9 +3451,10 @@ var C2D;
 /// <reference path="C2D/_Animation/Progress.ts" />
 /// <reference path="C2D/_Animation/Gif.ts" />
 /// <reference path="C2D/_Animation/Bar.ts" />
+/// <reference path="C2D/_Animation/Typing.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.4';
+    C2D.version = '0.3.5';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

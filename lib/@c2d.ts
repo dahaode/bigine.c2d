@@ -14,6 +14,7 @@
 /// <reference path="C2D/_Element/Button.ts" />
 /// <reference path="C2D/_Element/Component.ts" />
 /// <reference path="C2D/_Element/ColorLinear.ts" />
+/// <reference path="C2D/_Element/Paragraph.ts" />
 /// <reference path="C2D/_Animation/Combo.ts" />
 /// <reference path="C2D/_Animation/AudioFadeOut.ts" />
 /// <reference path="C2D/_Animation/FadeIn.ts" />
@@ -30,6 +31,7 @@
 /// <reference path="C2D/_Animation/Progress.ts" />
 /// <reference path="C2D/_Animation/Gif.ts" />
 /// <reference path="C2D/_Animation/Bar.ts" />
+/// <reference path="C2D/_Animation/Typing.ts" />
 
 namespace C2D {
     export var version: string = '${BIGINE_MODULE_VERSION}';
