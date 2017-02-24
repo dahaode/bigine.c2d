@@ -18,8 +18,8 @@ namespace C2D {
          */
         direction: string;
         /**
-         * 是否取大尺寸图片。
+         * 图片尺寸。
          */
-        bsize: boolean;
+        size: number;
     }
 }

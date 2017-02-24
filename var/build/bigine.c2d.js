@@ -1382,8 +1382,14 @@ var C2D;
                         context.save();
                         context.globalAlpha = opacity;
                     }
-                    var bounds = _this.gB();
-                    _this._l ? context.drawImage(img, bounds.x / _this._l, bounds.y / _this._l, bounds.w / _this._l, bounds.h / _this._l, bounds.x, bounds.y, bounds.w, bounds.h) :
+                    var bounds = _this.gB(), x = bounds.x, y = bounds.y, w = bounds.w, h = bounds.h;
+                    if (_this._l) {
+                        x = Math.round(x / 720 * _this._l);
+                        y = Math.round(y / 720 * _this._l);
+                        w = Math.round(w / 720 * _this._l);
+                        h = Math.round(h / 720 * _this._l);
+                    }
+                    _this._l ? context.drawImage(img, x, y, w, h, bounds.x, bounds.y, bounds.w, bounds.h) :
                         context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
                     if (1 != opacity)
                         context.restore();
@@ -2764,7 +2770,7 @@ var C2D;
                     for (var i = 0; i < count; i++) {
                         var bound = metas.direction == 'H' ?
                             { x: 0, y: maxH * i, w: 1280, h: Math.ceil(maxH / this._d) } :
-                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(room.$d(), bound, false, metas['bsize'] ? 1 : 2);
+                            { x: maxW * i, y: 0, w: Math.ceil(maxW / this._d), h: 720 }, image = new C2D.Image(room.$d(), bound, false, metas['size']);
                         element.a(image, room, 1);
                         this._cs.push(image);
                     }

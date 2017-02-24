@@ -58,8 +58,18 @@ namespace C2D {
                         context.save();
                         context.globalAlpha = opacity;
                     }
-                    var bounds: IBounds = this.gB();
-                    this._l ? context.drawImage(img, bounds.x / this._l, bounds.y / this._l, bounds.w / this._l, bounds.h / this._l, bounds.x, bounds.y, bounds.w, bounds.h) :
+                    var bounds: IBounds = this.gB(),
+                        x: number = bounds.x,
+                        y: number = bounds.y,
+                        w: number = bounds.w,
+                        h: number = bounds.h;
+                    if (this._l) {
+                        x = Math.round(x / 720 * this._l);
+                        y = Math.round(y / 720 * this._l);
+                        w = Math.round(w / 720 * this._l);
+                        h = Math.round(h / 720 * this._l);
+                    }
+                    this._l ? context.drawImage(img, x, y, w, h, bounds.x, bounds.y, bounds.w, bounds.h) :
                         context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
                     if (1 != opacity)
                         context.restore();

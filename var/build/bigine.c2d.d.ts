@@ -373,7 +373,7 @@ declare namespace __Bigine_C2D {
     }
     interface IShutterMetas extends Util.IHashTable<any> {
         direction: string;
-        bsize: boolean;
+        size: number;
     }
     class Shutter extends Animation {
         private _cs;
