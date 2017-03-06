@@ -131,7 +131,7 @@ namespace C2D {
                 m: number = Math.ceil(font[0] / 2);
             if (this._x + w > WIDTH) {
                 this._x = 0;
-                this._o = this._o + this._h + 1;
+                this._o = this._o + this._h + 2;
                 this._h = font[0];
                 if (this._o > HEIGHT) this.c();
             }
