@@ -1382,15 +1382,25 @@ var C2D;
                         context.save();
                         context.globalAlpha = opacity;
                     }
-                    var bounds = _this.gB(), x = bounds.x, y = bounds.y, w = bounds.w, h = bounds.h;
+                    var bounds = _this.gB(), x, y, w, h;
                     if (_this._l) {
-                        x = Math.round(x / 720 * _this._l);
-                        y = Math.round(y / 720 * _this._l);
-                        w = Math.round(w / 720 * _this._l);
-                        h = Math.round(h / 720 * _this._l);
+                        if ('number' == typeof _this._l) {
+                            x = Math.round(bounds.x / 720 * _this._l);
+                            y = Math.round(bounds.y / 720 * _this._l);
+                            w = Math.round(bounds.w / 720 * _this._l);
+                            h = Math.round(bounds.h / 720 * _this._l);
+                        }
+                        else {
+                            x = _this._l['x'];
+                            y = _this._l['y'];
+                            w = _this._l['w'];
+                            h = _this._l['h'];
+                        }
+                        context.drawImage(img, x, y, w, h, bounds.x, bounds.y, bounds.w, bounds.h);
                     }
-                    _this._l ? context.drawImage(img, x, y, w, h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                    else {
                         context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    }
                     if (1 != opacity)
                         context.restore();
                     return context;
@@ -3460,7 +3470,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Typing.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.5';
+    C2D.version = '0.3.6';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

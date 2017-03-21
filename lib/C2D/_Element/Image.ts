@@ -19,13 +19,13 @@ namespace C2D {
         /**
          * 平铺。
          */
-        private _l: number;
+        private _l: any;
 
         /**
          * 构造函数。
          */
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: number);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: number);
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: any);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: any);
         constructor(image: Promise<HTMLImageElement>, x?: any, y?: any, w?: any, h?: any, absolute?: any, tile?: any) {
             super(x, y, w, h, absolute);
             this._d = image;
@@ -59,18 +59,26 @@ namespace C2D {
                         context.globalAlpha = opacity;
                     }
                     var bounds: IBounds = this.gB(),
-                        x: number = bounds.x,
-                        y: number = bounds.y,
-                        w: number = bounds.w,
-                        h: number = bounds.h;
+                        x: number,
+                        y: number,
+                        w: number,
+                        h: number;
                     if (this._l) {
-                        x = Math.round(x / 720 * this._l);
-                        y = Math.round(y / 720 * this._l);
-                        w = Math.round(w / 720 * this._l);
-                        h = Math.round(h / 720 * this._l);
-                    }
-                    this._l ? context.drawImage(img, x, y, w, h, bounds.x, bounds.y, bounds.w, bounds.h) :
+                        if ('number' == typeof this._l) {
+                            x = Math.round(bounds.x / 720 * this._l);
+                            y = Math.round(bounds.y / 720 * this._l);
+                            w = Math.round(bounds.w / 720 * this._l);
+                            h = Math.round(bounds.h / 720 * this._l);
+                        } else {
+                            x = this._l['x'];
+                            y = this._l['y'];
+                            w = this._l['w'];
+                            h = this._l['h'];
+                        }
+                        context.drawImage(img, x, y, w, h, bounds.x, bounds.y, bounds.w, bounds.h);
+                    } else {
                         context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    }
                     if (1 != opacity)
                         context.restore();
                     return context;

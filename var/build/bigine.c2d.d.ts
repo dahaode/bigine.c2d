@@ -188,8 +188,8 @@ declare namespace __Bigine_C2D {
     class Image extends Element {
         private _d;
         private _l;
-        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: number);
-        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: number);
+        constructor(image: Promise<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean, tile?: any);
+        constructor(image: Promise<HTMLImageElement>, bounds?: IBounds, absolute?: boolean, tile?: any);
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
         protected $r(): Promise<HTMLImageElement>[];
         $d(): Promise<HTMLImageElement>;
