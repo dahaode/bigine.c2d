@@ -2882,8 +2882,9 @@ var C2D;
         /**
          * 构造函数。
          */
-        function Shake(duration) {
+        function Shake(duration, offset) {
             _super.call(this, duration || 500);
+            this._o = offset || 3;
         }
         /**
          * 帧执行。
@@ -2899,7 +2900,7 @@ var C2D;
                     .y(this._y);
             }
             else {
-                var mod = elpased % 4, rector = 3;
+                var mod = elpased % 4, rector = this._o;
                 switch (mod) {
                     case 1:
                         element.x(this._y + rector);
@@ -3470,7 +3471,7 @@ var C2D;
 /// <reference path="C2D/_Animation/Typing.ts" />
 var C2D;
 (function (C2D) {
-    C2D.version = '0.3.6';
+    C2D.version = '0.3.7';
 })(C2D || (C2D = {}));
 module.exports = C2D;
 //# sourceMappingURL=bigine.c2d.js.map

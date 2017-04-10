@@ -22,11 +22,14 @@ namespace C2D {
          */
         private _y: number;
 
+        private _o: number;
+
         /**
          * 构造函数。
          */
-        constructor(duration: number) {
+        constructor(duration: number, offset: number) {
             super(duration || 500);
+            this._o = offset || 3;
         }
 
         /**
@@ -44,7 +47,7 @@ namespace C2D {
                     .y(this._y);
             } else {
                 var mod: number = elpased % 4,
-                    rector: number = 3;
+                    rector: number = this._o;
                 switch (mod) {
                     case 1:
                         element.x(this._y + rector);

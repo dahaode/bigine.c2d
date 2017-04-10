@@ -394,7 +394,8 @@ declare namespace __Bigine_C2D {
     class Shake extends Animation {
         private _x;
         private _y;
-        constructor(duration: number);
+        private _o;
+        constructor(duration: number, offset: number);
         protected $p(element: Element, elpased: number): void;
     }
     class AudioFade extends Animation {
